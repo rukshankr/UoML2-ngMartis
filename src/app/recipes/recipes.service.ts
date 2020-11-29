@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Recipe } from './recipe.model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,16 @@ export class RecipesService {
   }
 
   getRecipe (recipeId: string){
-    return this.recipes.find()
+    return { //to add to a new object 
+      ...this.recipes.find(recipe => {
+      return recipe.id === recipeId;
+    })
+  };
+  }
+  deleteRecipe (recipeId: string){
+    this.recipes = this.recipes.filter(recipe => {
+      return recipe.id !== recipeId;
+    })
   }
 }
 

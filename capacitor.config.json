@@ -1,0 +1,13 @@
+{
+  "appId": "com.recipe.viewer",
+  "appName": "MARTIS",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}
