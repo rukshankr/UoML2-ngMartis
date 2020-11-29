@@ -1,0 +1,25 @@
+.squarebutton {
+	width: 100px;
+	height: 100px;
+	font-weight: bold;
+}
+
+.divclass {
+	flex-direction: column;
+	display: flex;
+	align-items: center;
+	color: black;
+}
+.alltest {
+	--background: white;
+	color: black;
+}
+
+.iconsize {
+	font-size: 20px;
+}
+
+.theme {
+	--background: #eb445a;
+	color: white;
+}

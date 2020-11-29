@@ -10,7 +10,7 @@
           <ion-row>
             <ion-col>
             <ion-button href="/assign" fill="solid" color="danger" expand="block">
-                <ion-icon name="add" slot="icon-only"></ion-icon>
+                <ion-icon name="add" slot="icon-only" size="large"></ion-icon>
                 Create Tests</ion-button>
             </ion-col>
           </ion-row>
@@ -22,109 +22,145 @@
             </ion-button>
         </ion-col>
       </ion-row>
-      <ion-row>
-        <ion-col className="ion-text-center" size="4">
-
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-
-                <ion-icon className="iconsize" slot="icon-only" name="shuffle"></ion-icon>
-Grade <br />Crossings <br />Tests
-</div></ion-button>
-        </ion-col>
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="alertCircleOutline"></ion-icon>
-Defect <br />Detector<br />  Tests
-</div></ion-button>
-
+      <!-- the 9x9 -->
+      <ion-row class="text-class-center">
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="shuffle" size="large"></ion-icon>
+          <br/>
+          Grade<br/> Crossings
+        </div>
+        </ion-button>
         </ion-col>
 
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="construct"></ion-icon>
-Signal<br /> Structure<br /> Tests
-</div></ion-button>
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="alert-circle-outline" size="large"></ion-icon>
+          <br/>
+          Defect<br/> Detector<br/> Tests
+          </div>
+        </ion-button>
         </ion-col>
 
-
-    </ion-row>
-    <ion-row>
-
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="lockClosed"></ion-icon>
-Locking <br />Tests
-</div></ion-button>
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="construct" size="large"></ion-icon>
+          <br/>
+          Signal<br/> Structure<br/> Tests
+            </div>
+          </ion-button>
         </ion-col>
-        <ion-col className="ion-text-center" size="4">
-
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="codeWorking"></ion-icon>
-Bridge<br /> Tests
-</div></ion-button>
-        </ion-col>
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="megaphone"></ion-icon>
-Signal<br /> Tests
-</div></ion-button>
-        </ion-col>
-    </ion-row>
-
-    <ion-row>
-
-        <ion-col className="ion-text-wrap" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="toggle"></ion-icon>
-Switch<br/> Tests
-</div></ion-button>
-        </ion-col>
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="gitMergeOutline"></ion-icon>
-Relay<br /> Tests
-</div></ion-button>
-        </ion-col>
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="stopwatch"></ion-icon>
-Timing<br /> Tests
-</div></ion-button>
-        </ion-col>
-    </ion-row>
-
-    <ion-row >
-
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="flashOff"></ion-icon>
-Grounds<br /> Test
-</div></ion-button>
+      </ion-row>
+      <!---->
+      <ion-row class="text-class-center">
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="lock-closed" size="large"></ion-icon>
+          <br/>
+          Locking<br/> Tests
+            </div>
+          </ion-button>
         </ion-col>
 
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="linkSharp"></ion-icon>
-Insulation<br /> Tests
-</div></ion-button>
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="code-working" size="large"></ion-icon>
+          <br/>
+          Bridge<br/> Tests
+            </div>
+          </ion-button>
+        </ion-col>
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="megaphone" size="large"></ion-icon>
+          <br/>
+          Signal<br/> Tests
+            </div>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <!---->
+      <ion-row class="text-class-center">
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="toggle" size="large"></ion-icon>
+          <br/>
+          Switch<br/> Tests
+            </div>
+          </ion-button>
         </ion-col>
 
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="calendar"></ion-icon>
-Weekly<br /> Crossing<br /> Tests
-</div></ion-button>
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="git-merge-outline" size="large"></ion-icon>
+          <br/>
+          Relay<br/> Tests
+            </div>
+          </ion-button>
+        </ion-col>
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="stopwatch" size="large"></ion-icon>
+          <br/>
+          Timing<br/> Tests
+            </div>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <!---->
+      <ion-row class="text-class-center">
+        
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="flash-off" size="large"></ion-icon>
+          <br/>
+          Grounds<br/> Tests
+          </div>
+        </ion-button>
         </ion-col>
 
-    </ion-row>
-    <ion-row>
-
-        <ion-col className="ion-text-center" size="4">
-            <ion-button href="/assign" className="squarebutton" fill="clear"><div className="divclass">
-                <ion-icon className="iconsize" slot="icon-only" name="train"></ion-icon>
-Track<br /> Circuits<br /> Tests
-</div></ion-button>
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="link-sharp" size="large"></ion-icon>
+          <br/>
+          Insulation<br/> Tests
+            </div>
+          </ion-button>
         </ion-col>
-    </ion-row>
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="calendar" size="large"></ion-icon>
+          <br/>
+          Weekly<br/> Crossing<br/> Tests
+            </div>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <!---->
+      <ion-row class="text-class-center">
+        <ion-col class="text-class-center" size="4"></ion-col>
+        <ion-col class="text-class-center" size="4">
+          <ion-button fill="clear" class="squarebutton">
+            <div class="divclass">
+          <ion-icon name="train" size="large"></ion-icon>
+          <br/>
+          Track<br/> Circuits<br/> Tests
+            </div>
+          </ion-button>
+        </ion-col>
+        <ion-col class="text-class-center" size="4"></ion-col>
+      </ion-row>
 </ion-grid>
 </ion-content>
