@@ -8,34 +8,38 @@
     <ion-content>
       <ion-list>
         <ion-menu-toggle>
-        <ion-item>
-          <ion-icon name="add" slot="start"></ion-icon>
-          Create Asset</ion-item>
-        <ion-item routerLink="/">
+          <ion-item routerLink="/create-asset">
+            <ion-icon name="add" slot="start"></ion-icon>
+            Create Asset</ion-item
+          >
+          <ion-item routerLink="/">
             <ion-icon name="home" slot="start"></ion-icon>
             Test Selection
-        </ion-item>
-        <ion-item>
-          <ion-icon name="add" slot="start"></ion-icon>
-          Create Inspection
-        </ion-item>
-        <ion-item routerLink="/inspection-list">
-          <ion-icon name="list" slot="start"></ion-icon>
-          Inspections List</ion-item>
-        <ion-item routerLink="/repair-list">
-          <ion-icon name="list" slot="start"></ion-icon>
-          Repairs List</ion-item>
-        <ion-item routerLink="/repair-form">
-          <ion-icon name="add" slot="start"></ion-icon>
-          Create Repair</ion-item>
-        <ion-item>
-          <ion-icon name="text" slot="start"></ion-icon>
-          Generate Report
-        </ion-item>
-      </ion-menu-toggle>
+          </ion-item>
+          <ion-item routerLink="/create-inspection">
+            <ion-icon name="add" slot="start"></ion-icon>
+            Create Inspection
+          </ion-item>
+          <ion-item routerLink="/inspection-list">
+            <ion-icon name="list" slot="start"></ion-icon>
+            Inspections List</ion-item
+          >
+          <ion-item routerLink="/repair-list">
+            <ion-icon name="list" slot="start"></ion-icon>
+            Repairs List</ion-item
+          >
+          <ion-item routerLink="/repair-form">
+            <ion-icon name="add" slot="start"></ion-icon>
+            Create Repair</ion-item
+          >
+          <ion-item>
+            <ion-icon name="text" slot="start"></ion-icon>
+            Generate Report
+          </ion-item>
+        </ion-menu-toggle>
       </ion-list>
     </ion-content>
   </ion-menu>
-  
+
   <ion-router-outlet id="main"></ion-router-outlet>
 </ion-app>

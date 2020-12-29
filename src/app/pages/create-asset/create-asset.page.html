@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-title><h2>Create Asset</h2></ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="first" aria-disabled="false" aria-hidden="false">
+      </ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row>
+    <ion-col>
+      <ion-card>
+        <ion-card-header mode="ios" class="cardhead">
+          <ion-card-title>Asset Information</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-row>
+            <ion-col>
+              <ion-label position="fixed">Asset ID:</ion-label>
+              <ion-item>
+                <ion-input></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-label position="fixed">Nearest Mile Post</ion-label>
+              <ion-item>
+                <ion-input></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-label position="fixed">Division</ion-label>
+              <ion-item>
+                <ion-input></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-label position="fixed">Sub Division</ion-label>
+              <ion-item>
+                <ion-input></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-label position="fixed">Region</ion-label>
+              <ion-item>
+                <ion-select value="REGION" interface="popover">
+                  <ion-select-option value="CAL">CAL</ion-select-option>
+                  <ion-select-option value="TEX">TEX</ion-select-option>
+                  <ion-select-option value="NY">NY</ion-select-option>
+                  <ion-select-option value="PEN">PEN</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-label position="fixed">GPS Longitude</ion-label>
+              <ion-item>
+                <ion-input></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-label position="fixed">GPS Latitude</ion-label>
+              <ion-item>
+                <ion-input></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-button color="danger" size="large" expand="block">Save</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

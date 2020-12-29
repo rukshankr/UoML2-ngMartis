@@ -38,10 +38,20 @@ const routes: Routes = [
 		path: 'inspection-list',
 		loadChildren: () =>
 			import('./pages/inspection-list/inspection-list.module').then((m) => m.InspectionListPageModule)
-	},  {
+	},
+  {
     path: 'repair-form',
     loadChildren: () => import('./repair-form/repair-form.module').then( m => m.RepairFormPageModule)
-  }
+  },  {
+    path: 'create-asset',
+    loadChildren: () => import('./pages/create-asset/create-asset.module').then( m => m.CreateAssetPageModule)
+  },
+  {
+    path: 'create-inspection',
+    loadChildren: () => import('./pages/create-inspection/create-inspection.module').then( m => m.CreateInspectionPageModule)
+  },
+
+
 
 ];
 
