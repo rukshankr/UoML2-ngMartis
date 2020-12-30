@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
 	{
 		path: '',
-		redirectTo: 'selection',
+		redirectTo: 'login',
 		pathMatch: 'full'
 	},
 	{
@@ -42,13 +42,18 @@ const routes: Routes = [
   {
     path: 'repair-form',
     loadChildren: () => import('./repair-form/repair-form.module').then( m => m.RepairFormPageModule)
-  },  {
+  },
+  {
     path: 'create-asset',
     loadChildren: () => import('./pages/create-asset/create-asset.module').then( m => m.CreateAssetPageModule)
   },
   {
     path: 'create-inspection',
     loadChildren: () => import('./pages/create-inspection/create-inspection.module').then( m => m.CreateInspectionPageModule)
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
 
 

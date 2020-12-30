@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-title>Login to MARTIS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <ion-card>
+                    <ion-card-content className="cardlogin">
+                        <ion-img className="martisImg" src="https://upload.wikimedia.org/wikipedia/en/thumb/d/d6/Wabtec_Logo.svg/1200px-Wabtec_Logo.svg.png"></ion-img>
+                    </ion-card-content>
+                </ion-card>                
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-card>
+                    <ion-card-content>
+                        <ion-grid>
+                          <ion-row>
+                  
+                              <ion-col>
+                                  <ion-item>
+                                      <ion-label position="floating">Your Username / Email</ion-label>
+                  
+                                      <ion-input type="text"></ion-input>
+                                  </ion-item>
+                              </ion-col>
+                          </ion-row> <br/><br/>
+                          <ion-row>
+                              <ion-col>
+                                  <ion-item>
+                                      <ion-label position="floating">Your Password</ion-label>
+                                      <ion-input type="password"></ion-input>
+                                  </ion-item>
+                              </ion-col>
+                          </ion-row> <br/><br/>
+                          <ion-row>
+                              <ion-col>
+                                  <ion-item>
+                                      <ion-checkbox color="danger" slot="start"></ion-checkbox>
+                                      <ion-label> Remember Me</ion-label>
+                                  </ion-item>
+                              </ion-col>
+                              <ion-col>
+                                  <ion-item>
+                                      <a href="/selection">Forgot Password?</a>
+                                  </ion-item>
+                              </ion-col>
+                          </ion-row> 
+                        </ion-grid>
+                      </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-button href="" shape="round" size="large">Sign Up</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button href="/selection" shape="round" size="large">Login</ion-button>   
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
