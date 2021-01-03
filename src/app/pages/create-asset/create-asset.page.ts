@@ -16,13 +16,14 @@ export class CreateAssetPage implements OnInit {
 
   createAssetForm = this.formBuilder.group({
     AssetID : [''],
-    Satus : "Functions",
+    Status : "Functions",
     NearestMilePost :[''],
     Division : [''],
     SubDivision : [''],
     Region : [''],
     GPSLongitude : [''],
-    GPSLatitude : ['']
+    GPSLatitude : [''],
+    LastTestedDate : ""
   });
 
   constructor(private formBuilder: FormBuilder, private assetService: AssetService) { }
@@ -72,11 +73,12 @@ export class CreateAssetPage implements OnInit {
 
 export class Posts {
   AssetID : string;
-    Satus : string;
+    Status : string;
     NearestMilePost :string;
     Sivision : string;
     SubDivision : string;
     Region : string;
     GPSLongitude : string;
     GPSLatitude : string;
+    LastTestedDate : string;
 }
