@@ -1,20 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
 import { CreateAssetPageRoutingModule } from './create-asset-routing.module';
-
 import { CreateAssetPage } from './create-asset.page';
+import { AssetService } from 'src/app/services/asset-service.service';
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     IonicModule,
     CreateAssetPageRoutingModule
   ],
+  providers: [AssetService],
   declarations: [CreateAssetPage]
 })
 export class CreateAssetPageModule {}
