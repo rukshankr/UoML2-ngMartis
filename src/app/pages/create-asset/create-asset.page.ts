@@ -29,25 +29,7 @@ export class CreateAssetPage implements OnInit {
   constructor(private formBuilder: FormBuilder, private assetService: AssetService) { }
 
   ngOnInit() {
-    this.assetService.getComments()
-    .subscribe
-    (
-      data =>
-      {
-        this.results = data;
-        console.log(this.results);
-      }
-    )
-
-    this.assetService.getCommentsByParam()
-    .subscribe
-    (
-      data =>
-      {
-        this.results = data;
-        console.log("Comments by params:", this.results);
-      }
-    );
+    
 
   }
 
