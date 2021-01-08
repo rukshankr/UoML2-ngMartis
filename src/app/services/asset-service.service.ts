@@ -22,7 +22,6 @@ export class AssetService {
    */
   constructor(private http: HttpClient) { }
 
-
 ////////////////if this doesn't work, it's not an error here, but in the API//////////////////////
   post(opost: Posts): Observable <any> {
     return this.http.post("http://localhost:3000/asset/createNewAsset",opost);

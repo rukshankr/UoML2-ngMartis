@@ -10,82 +10,116 @@
 
 <ion-content>
   <form [formGroup]="createAssetForm" (ngSubmit)="onSave()">
-  <ion-row>
-    <ion-col>
-      <ion-card>
-        <ion-card-header mode="ios" class="cardhead">
-          <ion-card-title>Asset Information</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Asset ID:</ion-label>
-              <ion-item>
-                <ion-input formControlName="AssetID" autofocus=true enterkeyhint="next"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Nearest Mile Post</ion-label>
-              <ion-item>
-                <ion-input formControlName="NearestMilePost"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Division</ion-label>
-              <ion-item>
-                <ion-input formControlName="Division"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Sub Division</ion-label>
-              <ion-item>
-                <ion-input formControlName="SubDivision"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Region</ion-label>
-              <ion-item>
-                <ion-select formControlName="Region" value="REGION" interface="popover">
-                  <ion-select-option value="CAL">CAL</ion-select-option>
-                  <ion-select-option value="TEX">TEX</ion-select-option>
-                  <ion-select-option value="NY">NY</ion-select-option>
-                  <ion-select-option value="PEN">PEN</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">GPS Longitude</ion-label>
-              <ion-item>
-                <ion-input formControlName="GPSLongitude"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">GPS Latitude</ion-label>
-              <ion-item>
-                <ion-input formControlName="GPSLatitude"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-button type="submit" color="danger" size="large" expand="block">Save</ion-button>
-    </ion-col>
-  </ion-row>
-</form>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-header mode="ios" class="cardhead">
+            <ion-card-title>Asset Information</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Asset ID:</ion-label>
+                <ion-item>
+                  <ion-input
+                    formControlName="AssetID"
+                    autofocus="true"
+                    enterkeyhint="next"
+                  ></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Asset Type</ion-label>
+                <ion-item>
+                  <ion-select value="TYPE" interface="popover">
+                    <ion-select-option value="crossing"
+                      >Crossing</ion-select-option
+                    >
+                    <ion-select-option value="houseCase"
+                      >House/Case</ion-select-option
+                    >
+                    <ion-select-option value="switch">Switch</ion-select-option>
+                    <ion-select-option value="inductor"
+                      >Inductor</ion-select-option
+                    >
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Nearest Mile Post</ion-label>
+                <ion-item>
+                  <ion-input formControlName="NearestMilePost"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Division</ion-label>
+                <ion-item>
+                  <ion-input formControlName="Division"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Sub Division</ion-label>
+                <ion-item>
+                  <ion-input formControlName="SubDivision"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Region</ion-label>
+                <ion-item>
+                  <ion-select
+                    formControlName="Region"
+                    value="REGION"
+                    interface="popover"
+                  >
+                    <ion-select-option value="CAL">CAL</ion-select-option>
+                    <ion-select-option value="TEX">TEX</ion-select-option>
+                    <ion-select-option value="NY">NY</ion-select-option>
+                    <ion-select-option value="PEN">PEN</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">GPS Latitude</ion-label>
+                <ion-item>
+                  <ion-input formControlName="GPSLatitude" [(ngModel)]="createAssetForm['GPSLatitude']"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">GPS Longitude</ion-label>
+                <ion-item>
+                  <ion-input formControlName="GPSLongitude" [(ngModel)]="createAssetForm['GPSLongitude']"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-button color="success" (click)="getCoords()">Get GPS location</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button type="submit" color="danger" size="large" expand="block"
+          >Save</ion-button
+        >
+      </ion-col>
+    </ion-row>
+  </form>
 </ion-content>
