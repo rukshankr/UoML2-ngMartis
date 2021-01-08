@@ -7,14 +7,12 @@ import { IonicModule } from '@ionic/angular';
 import { InspectionListPageRoutingModule } from './inspection-list-routing.module';
 
 import { InspectionListPage } from './inspection-list.page';
+import { HttpClientModule } from '@angular/common/http';
+import { inspectionListService } from 'src/app/services/inspection-list.service';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    InspectionListPageRoutingModule
-  ],
-  declarations: [InspectionListPage]
+	imports: [ CommonModule, FormsModule, IonicModule, InspectionListPageRoutingModule, HttpClientModule ],
+	declarations: [ InspectionListPage ],
+	providers: [ inspectionListService ]
 })
 export class InspectionListPageModule {}
