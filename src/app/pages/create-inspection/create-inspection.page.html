@@ -12,99 +12,130 @@
 </ion-header>
 
 <ion-content>
-  <ion-row>
-    <ion-col>
-      <ion-card>
-        <ion-card-header mode="ios" class="cardhead">
-          <ion-card-title>Asset Information</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Asset ID:</ion-label>
-              <ion-item>
-                <ion-input></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-card>
-        <ion-card-header mode="ios" class="cardhead">
-          <ion-card-title>Personnel Information</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Inspector ID:</ion-label>
-              <ion-item>
-                <ion-input></ion-input>
-              </ion-item>
-            </ion-col>
-            <ion-col>
-              <ion-label position="fixed">Supervisor ID:</ion-label>
-              <ion-item>
-                <ion-input></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-card>
-        <ion-card-header mode="ios" class="cardhead">
-          <ion-card-title>Inspection Information</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Frequency:</ion-label>
-              <ion-item>
-                <ion-select value="REGION" interface="popover">
-                  <ion-select-option value="1Y">1Y</ion-select-option>
-                  <ion-select-option value="2Y">2Y</ion-select-option>
-                  <ion-select-option value="3Y">3Y</ion-select-option>
-                  <ion-select-option value="4Y">4Y</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Test Module ID:</ion-label>
-              <ion-item>
-                <ion-input></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-label position="fixed">Priority:</ion-label>
-              <ion-item>
-                <ion-select value="REGION" interface="popover">
-                  <ion-select-option value="1">1</ion-select-option>
-                  <ion-select-option value="2">2</ion-select-option>
-                  <ion-select-option value="3">3</ion-select-option>
-                  <ion-select-option value="4">4</ion-select-option>
-                  <ion-select-option value="5">5</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-button color="danger" size="large" expand="block">Save</ion-button>
-    </ion-col>
-  </ion-row>
+  <form [formGroup]="createInspectionForm" (ngSubmit)="onSave()">
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-header mode="ios" class="cardhead">
+            <ion-card-title>Test Information</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Test ID:</ion-label>
+                <ion-item>
+                  <ion-input formControlName="TestID"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-header mode="ios" class="cardhead">
+            <ion-card-title>Asset Information</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Asset ID:</ion-label>
+                <ion-item>
+                  <ion-input formControlName="AssetID"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-header mode="ios" class="cardhead">
+            <ion-card-title>Personnel Information</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Inspector ID:</ion-label>
+                <ion-item>
+                  <ion-input formControlName="InspectorID"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col>
+                <ion-label position="fixed">Supervisor ID:</ion-label>
+                <ion-item>
+                  <ion-input formControlName="SupervisorID"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-header mode="ios" class="cardhead">
+            <ion-card-title>Inspection Information</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Frequency:</ion-label>
+                <ion-item>
+                  <ion-select
+                    value="REGION"
+                    interface="popover"
+                    formControlName="Frequency"
+                  >
+                    <ion-select-option value="1Y">1Y</ion-select-option>
+                    <ion-select-option value="2Y">2Y</ion-select-option>
+                    <ion-select-option value="3Y">3Y</ion-select-option>
+                    <ion-select-option value="4Y">4Y</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Test Module ID:</ion-label>
+                <ion-item>
+                  <ion-input formControlName="TestModuleID"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="fixed">Priority:</ion-label>
+                <ion-item>
+                  <ion-select
+                    value="REGION"
+                    interface="popover"
+                    formControlName="Priority"
+                  >
+                    <ion-select-option value="1">1</ion-select-option>
+                    <ion-select-option value="2">2</ion-select-option>
+                    <ion-select-option value="3">3</ion-select-option>
+                    <ion-select-option value="4">4</ion-select-option>
+                    <ion-select-option value="5">5</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button type="submit" color="danger" size="large" expand="block"
+          >Save</ion-button
+        >
+      </ion-col>
+    </ion-row>
+  </form>
 </ion-content>

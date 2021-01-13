@@ -33,7 +33,11 @@
               <ion-col>
                 <ion-label position="fixed">Asset Type</ion-label>
                 <ion-item>
-                  <ion-select value="TYPE" interface="popover">
+                  <ion-select
+                    value="TYPE"
+                    interface="popover"
+                    formControlName="AssetType"
+                  >
                     <ion-select-option value="crossing"
                       >Crossing</ion-select-option
                     >
@@ -93,7 +97,10 @@
               <ion-col>
                 <ion-label position="fixed">GPS Latitude</ion-label>
                 <ion-item>
-                  <ion-input formControlName="GPSLatitude" [(ngModel)]="createAssetForm['GPSLatitude']"></ion-input>
+                  <ion-input
+                    formControlName="GPSLatitude"
+                    [(ngModel)]="createAssetForm['GPSLatitude']"
+                  ></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>
@@ -101,13 +108,18 @@
               <ion-col>
                 <ion-label position="fixed">GPS Longitude</ion-label>
                 <ion-item>
-                  <ion-input formControlName="GPSLongitude" [(ngModel)]="createAssetForm['GPSLongitude']"></ion-input>
+                  <ion-input
+                    formControlName="GPSLongitude"
+                    [(ngModel)]="createAssetForm['GPSLongitude']"
+                  ></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>
             <ion-row>
               <ion-col>
-                <ion-button color="success" (click)="getCoords()">Get GPS location</ion-button>
+                <ion-button color="success" (click)="getCoords()"
+                  >Get GPS location</ion-button
+                >
               </ion-col>
             </ion-row>
           </ion-card-content>
