@@ -1,20 +1,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
 import { CreateInspectionPageRoutingModule } from './create-inspection-routing.module';
 
 import { CreateInspectionPage } from './create-inspection.page';
+import { InspectionService } from 'src/app/services/create-inspection.service';
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     IonicModule,
     CreateInspectionPageRoutingModule
   ],
+  providers: [InspectionService],
   declarations: [CreateInspectionPage]
 })
 export class CreateInspectionPageModule {}

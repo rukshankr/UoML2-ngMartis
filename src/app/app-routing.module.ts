@@ -54,7 +54,8 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
-  },  {
+  },
+  {
     path: 'report-generation',
     loadChildren: () => import('./pages/report-generation/report-generation.module').then( m => m.ReportGenerationPageModule)
   },
