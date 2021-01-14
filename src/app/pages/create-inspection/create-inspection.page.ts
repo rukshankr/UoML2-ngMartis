@@ -14,13 +14,42 @@ export class CreateInspectionPage implements OnInit {
 
   opost = new Posts();
 
+  get testId(){
+    return this.createInspectionForm.get('TestID');
+  };
+  get insId(){
+    return this.createInspectionForm.get('InspectorID');
+  };
+  get supId(){
+    return this.createInspectionForm.get('SupervisorID');
+  };
+  get assetId(){
+    return this.createInspectionForm.get('AssetID');
+  }
+
+  public errorMessage = {
+    testID: [
+      {type: 'required', message: 'Test ID is required'},
+      {type: 'pattern', message: 'Must be in the form: T000'}
+    ],
+    empID: [
+      {type: 'required', message: 'Employee ID is required'},
+      {type: 'pattern', message: 'Must be in the form: EMP000'}
+    ],
+    assetID: [
+      {type: 'required', message: 'Asset ID is required'},
+      {type: 'pattern', message: 'Must be in the form: A000'}
+    ]
+  };
+
+
   createInspectionForm = this.formBuilder.group({
-    TestID: [""],
-    AssetID: [""],
-    InspectorID: [""],
-    SupervisorID: [""],
+    TestID: ["",[Validators.required,Validators.pattern('^T[0-9]{3}')]],
+    AssetID: ["",[Validators.required,Validators.pattern('^A[0-9]{3}')]],
+    InspectorID: ["",[Validators.required,Validators.pattern('^EMP[0-9]{3}')]],
+    SupervisorID: ["",[Validators.required,Validators.pattern('^EMP[0-9]{3}')]],
     Frequency: [""],
-    TestModuleID: [""],
+    TestModuleID: ["",[Validators.required,Validators.pattern('^TM[0-9]{3}')]],
     Priority: [""]
   });
 
