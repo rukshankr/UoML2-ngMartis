@@ -1,9 +1,9 @@
-<ion-header>
+<ion-header> 
   <ion-toolbar color="danger">
     <ion-title><h2>Create Asset</h2></ion-title>
     <ion-buttons slot="start">
       <ion-menu-button menu="first" aria-disabled="false" aria-hidden="false">
-      </ion-menu-button>
+      </ion-menu-button> 
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -27,6 +27,11 @@
                     enterkeyhint="next"
                   ></ion-input>
                 </ion-item>
+                <div *ngFor="let error of errorMessage.assetID">
+                  <ng-container *ngIf="assetID.hasError(error.type) && (assetID.dirty || assetID.touched)">
+                    <small class="error-message">{{error.message}}</small>
+                  </ng-container>
+                </div>
               </ion-col>
             </ion-row>
             <ion-row>
@@ -95,6 +100,11 @@
                 <ion-item>
                   <ion-input formControlName="GPSLatitude" [(ngModel)]="createAssetForm['GPSLatitude']"></ion-input>
                 </ion-item>
+                <div *ngFor="let error of errorMessage.gps">
+                  <ng-container *ngIf="gpsLat.hasError(error.type) && (gpsLat.dirty || gpsLat.touched)">
+                    <small class="error-message">{{error.message}}</small>
+                  </ng-container>
+                </div>
               </ion-col>
             </ion-row>
             <ion-row>
@@ -103,6 +113,11 @@
                 <ion-item>
                   <ion-input formControlName="GPSLongitude" [(ngModel)]="createAssetForm['GPSLongitude']"></ion-input>
                 </ion-item>
+                <div *ngFor="let error of errorMessage.gps">
+                  <ng-container *ngIf="gpsLong.hasError(error.type) && (gpsLong.dirty || gpsLong.touched)">
+                    <small class="error-message">{{error.message}}</small>
+                  </ng-container>
+                </div>
               </ion-col>
             </ion-row>
             <ion-row>

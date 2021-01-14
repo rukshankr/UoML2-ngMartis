@@ -10,19 +10,39 @@ import { Geolocation } from "@ionic-native/geolocation/ngx";
   styleUrls: ["./create-asset.page.scss"],
 })
 export class CreateAssetPage implements OnInit {
-  results: object[]; //for all the objects that come along commentsAPI
 
   opost = new Posts();
 
+  get assetID(){
+    return this.createAssetForm.get('AssetID');
+  };
+  get gpsLat(){
+    return this.createAssetForm.get('GPSLatitude');
+  };
+  get gpsLong(){
+    return this.createAssetForm.get('GPSLongitude');
+  };
+
+  public errorMessage = {
+    assetID: [
+      {type: 'required', message: 'Asset ID is required'},
+      {type: 'maxlength', message: 'Can\'t be longer than 4 characters'},
+      {type: 'pattern', message: 'Should start with an A'}
+    ],
+    gps:[
+      {type: 'pattern', message: 'Please enter a valid number only'}
+    ]
+  };
+
   createAssetForm = this.formBuilder.group({
-    AssetID: [""],
+    AssetID: ["",[Validators.required,Validators.pattern('^A[0-9]{3}'),Validators.maxLength(4)]],
     Status: "Functions",
-    NearestMilePost: [""],
+    NearestMilePost: ["",[Validators.pattern('^MP[0-9]{3}'),Validators.maxLength(5)]],
     Division: [""],
     SubDivision: [""],
     Region: [""],
-    GPSLongitude: [""],
-    GPSLatitude: [""],
+    GPSLongitude: ["",[Validators.pattern('^[0-9]+.?[0-9]*')]],
+    GPSLatitude: ["",[Validators.pattern('^[0-9]+.?[0-9]*')]],
     LastTestedDate: "",
   });
 

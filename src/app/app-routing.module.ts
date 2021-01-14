@@ -7,20 +7,20 @@ const routes: Routes = [
 		redirectTo: 'login',
 		pathMatch: 'full'
 	},
-	{
-		path: 'recipes',
-		children: [
-			{
-				path: '',
-				loadChildren: () => import('./recipes/recipes.module').then((m) => m.RecipesPageModule)
-			},
-			{
-				path: ':recipeId',
-				loadChildren: () =>
-					import('./recipes/recipe-detail/recipe-detail.module').then((m) => m.RecipeDetailPageModule)
-			}
-		]
-	},
+	// {
+	// 	path: 'recipes',
+	// 	children: [
+	// 		{
+	// 			path: '',
+	// 			loadChildren: () => import('./recipes/recipes.module').then((m) => m.RecipesPageModule)
+	// 		},
+	// 		{
+	// 			path: ':recipeId',
+	// 			loadChildren: () =>
+	// 				import('./recipes/recipe-detail/recipe-detail.module').then((m) => m.RecipeDetailPageModule)
+	// 		}
+	// 	]
+	// },
 	{
 		path: 'selection',
 		loadChildren: () => import('./pages/selection/selection.module').then((m) => m.SelectionPageModule)
@@ -54,7 +54,11 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+  },  {
+    path: 'report-generation',
+    loadChildren: () => import('./pages/report-generation/report-generation.module').then( m => m.ReportGenerationPageModule)
   },
+
 
 
 

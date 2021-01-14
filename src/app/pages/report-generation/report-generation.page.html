@@ -1,0 +1,143 @@
+<!-- <ion-header>
+  <ion-toolbar color="danger">
+    <ion-title>Report Generation</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="first" aria-disabled="false" aria-hidden="false"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+  <ion-content>
+    <ion-grid className="ion-text-center ion-margin">
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-card-header mode="ios" className="cardhead">
+              <ion-card-title>Search for Reports</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating">Employee ID: </ion-label>
+                    <ion-input type="search"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-input ></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-input >
+                      To:
+                    </ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-button color="danger">
+                    Search
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-card-header mode="ios" className="cardhead">
+              <ion-card-title>
+                Inspection Report - Signal Tests and Inspections
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col>
+                  <ion-label position="fixed">
+                    Employee's Name: {emID ? emID : ""}
+                  </ion-label>
+                  <br />
+                  <br />
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label position="fixed">
+                    Divsion: {division ? division : ""}
+                  </ion-label>
+                  <br />
+                  <br />
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label position="fixed">
+                    Subdivison:{subdivision ? subdivision : ""}
+                  </ion-label>
+                  <br />
+                  <br />
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row className="ion-text-center ion-align-items-center">
+        <ion-col>
+          <ion-card>
+            <ion-card-header mode="ios" className="cardhead">
+              <ion-row>
+                <ion-col>
+                  <ion-card-title>Inspections and Repairs</ion-card-title>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-card-subtitle>Test Module No</ion-card-subtitle>
+                </ion-col>
+                <ion-col size="4">
+                  <ion-card-subtitle>Test Descripton</ion-card-subtitle>
+                </ion-col>
+                <ion-col size="4">
+                  <ion-card-subtitle>Condition</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+            </ion-card-header>
+            <ion-card-content>
+              {reports.map((item) => {
+                return (
+                  <ion-row className="ion-justify-content-center">
+                    <ion-col size="4">{item["testID"]}</ion-col>
+                    <ion-col size="4">{item["Division"]}</ion-col>
+                    <ion-col size="4">{item["result"]}</ion-col>
+                  </ion-row>
+                );
+              })}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-button color="danger" size="large" expand="block">
+            Download as PDF
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-button color="primary" size="large" expand="block">
+            Send to email
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+</ion-page> -->
