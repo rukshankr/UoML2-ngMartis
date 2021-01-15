@@ -16,7 +16,7 @@ export class CreateAssetPage implements OnInit {
   opost = new Posts();
 
   createAssetForm = this.formBuilder.group({
-    AssetID: [""],
+    AssetID: null,
     AssetType: [""],
     Status: "Functions",
     NearestMilePost: [""],
@@ -46,10 +46,10 @@ export class CreateAssetPage implements OnInit {
 
      this.assetService.post(this.opost).subscribe((data) => {
       console.log("Post method success?: ", data);
-      if(data){
-        this.showAlert(true);
-      }else{
+      if(data === "Error"){
         this.showAlert(false);
+      }else{
+        this.showAlert(true);
       }
     });
 

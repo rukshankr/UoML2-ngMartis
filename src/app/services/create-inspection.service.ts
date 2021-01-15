@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Posts } from '../pages/create-inspection/create-inspection.page';
+import { InspectionPosts } from '../pages/create-inspection/create-inspection.page';
  
  
 @Injectable({
@@ -16,7 +16,7 @@ export class InspectionService {
   constructor(private http: HttpClient) { }
 
 ////////////////if this doesn't work, it's not an error here, but in the API//////////////////////
-  post(opost: Posts): Observable <any> {
+  post(opost: InspectionPosts): Observable <any> {
     return this.http.post("http://localhost:3000/test/createNewTest",opost);
   }
 }

@@ -12,7 +12,7 @@ import { AlertController } from '@ionic/angular';
 export class CreateInspectionPage implements OnInit {
   results: object[]; 
 
-  opost = new Posts();
+  inspectionPost = new InspectionPosts();
 
   createInspectionForm = this.formBuilder.group({
     TestID: [""],
@@ -20,7 +20,7 @@ export class CreateInspectionPage implements OnInit {
     InspectorID: [""],
     SupervisorID: [""],
     Frequency: [""],
-    TestModuleID: [""],
+    TestModID: [""],
     Priority: [""]
   });
 
@@ -34,16 +34,16 @@ export class CreateInspectionPage implements OnInit {
   }
 
   onSave() {
-    this.opost = this.createInspectionForm.value;
+    this.inspectionPost = this.createInspectionForm.value;
 
-    console.log("Page Saved", this.opost);
+    console.log("Page Saved", this.inspectionPost);
 
-     this.inspectionService.post(this.opost).subscribe((data) => {
-      console.log("Post method success?: ", data);
-      if(data){
-        this.showAlert(true);
-      }else{
+     this.inspectionService.post(this.inspectionPost).subscribe((data) => {
+      console.log("Post method success?: ", data.reply);
+      if(data.reply === "Error"){
         this.showAlert(false);
+      }else{
+        this.showAlert(true);
       }
     });
 
@@ -66,12 +66,12 @@ async showAlert(val){
 
 }
 
-export class Posts {
+export class InspectionPosts {
   TestID: string;
   AssetID: string;
   InspectorID: string;
   SupervisorID: string;
   Frequency: string;
-  TestModuleID: string;
+  TestModID: string;
   Priority: string;
 }
