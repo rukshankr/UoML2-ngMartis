@@ -26,6 +26,11 @@
                 <ion-item>
                   <ion-input formControlName="TestID"></ion-input>
                 </ion-item>
+                <div *ngFor="let error of errorMessage.testID">
+                  <ng-container *ngIf="testId.hasError(error.type) && (testId.dirty || testId.touched)">
+                    <small class="error-message">{{error.message}}</small>
+                  </ng-container>
+                </div>
               </ion-col>
             </ion-row>
           </ion-card-content>
@@ -45,6 +50,11 @@
                 <ion-item>
                   <ion-input formControlName="AssetID"></ion-input>
                 </ion-item>
+                <div *ngFor="let error of errorMessage.assetID">
+                  <ng-container *ngIf="assetId.hasError(error.type) && (assetId.dirty || assetId.touched)">
+                    <small class="error-message">{{error.message}}</small>
+                  </ng-container>
+                </div>
               </ion-col>
             </ion-row>
           </ion-card-content>
@@ -64,12 +74,22 @@
                 <ion-item>
                   <ion-input formControlName="InspectorID"></ion-input>
                 </ion-item>
+                <div *ngFor="let error of errorMessage.empID">
+                  <ng-container *ngIf="insId.hasError(error.type) && (insId.dirty || insId.touched)">
+                    <small class="error-message">{{error.message}}</small>
+                  </ng-container>
+                </div>
               </ion-col>
               <ion-col>
                 <ion-label position="fixed">Supervisor ID:</ion-label>
                 <ion-item>
                   <ion-input formControlName="SupervisorID"></ion-input>
                 </ion-item>
+                <div *ngFor="let error of errorMessage.empID">
+                  <ng-container *ngIf="supId.hasError(error.type) && (supId.dirty || supId.touched)">
+                    <small class="error-message">{{error.message}}</small>
+                  </ng-container>
+                </div>
               </ion-col>
             </ion-row>
           </ion-card-content>
