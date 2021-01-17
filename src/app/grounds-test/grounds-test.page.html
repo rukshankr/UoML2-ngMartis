@@ -131,14 +131,14 @@
                     <ion-row>
                         <ion-col>
                             <ion-label>Condition:</ion-label>
-                            <ion-radio-group name="condition" value="opt1">
+                            <ion-radio-group formControlName= "Result">
                                 <div className="dateSearchRadio">
                                     <ion-item lines="none" className="radioItem">
-                                        <ion-radio formControlName= "Result" id="function" name="function" value="good" slot="start" ></ion-radio>
+                                        <ion-radio   value="pass" slot="start" ></ion-radio>
                                         <ion-label>Functional</ion-label>
                                     </ion-item>
                                     <ion-item lines="none" className="radioItem">
-                                        <ion-radio formControlName= "Result" id="maintain" name="maintain" value="bad" slot="start" ></ion-radio>
+                                        <ion-radio value="fail" slot="start" ></ion-radio>
                                         <ion-label>Needs maintenance</ion-label>
                                     </ion-item>
                                 </div>
