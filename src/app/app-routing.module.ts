@@ -22,6 +22,10 @@ const routes: Routes = [
 	// 	]
 	// },
 	{
+		path: 'grounds-test',
+		loadChildren: () => import('./grounds-test/grounds-test.module').then((m) => m.GroundsTestPageModule)
+	},
+	{
 		path: 'selection',
 		loadChildren: () => import('./pages/selection/selection.module').then((m) => m.SelectionPageModule)
 	},
@@ -39,30 +43,28 @@ const routes: Routes = [
 		loadChildren: () =>
 			import('./pages/inspection-list/inspection-list.module').then((m) => m.InspectionListPageModule)
 	},
-  {
-    path: 'repair-form',
-    loadChildren: () => import('./repair-form/repair-form.module').then( m => m.RepairFormPageModule)
-  },
-  {
-    path: 'create-asset',
-    loadChildren: () => import('./pages/create-asset/create-asset.module').then( m => m.CreateAssetPageModule)
-  },
-  {
-    path: 'create-inspection',
-    loadChildren: () => import('./pages/create-inspection/create-inspection.module').then( m => m.CreateInspectionPageModule)
-  },
-  {
-    path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
-  },
-  {
-    path: 'report-generation',
-    loadChildren: () => import('./pages/report-generation/report-generation.module').then( m => m.ReportGenerationPageModule)
-  },
-
-
-
-
+	{
+		path: 'repair-form',
+		loadChildren: () => import('./repair-form/repair-form.module').then((m) => m.RepairFormPageModule)
+	},
+	{
+		path: 'create-asset',
+		loadChildren: () => import('./pages/create-asset/create-asset.module').then((m) => m.CreateAssetPageModule)
+	},
+	{
+		path: 'create-inspection',
+		loadChildren: () =>
+			import('./pages/create-inspection/create-inspection.module').then((m) => m.CreateInspectionPageModule)
+	},
+	{
+		path: 'login',
+		loadChildren: () => import('./pages/login/login.module').then((m) => m.LoginPageModule)
+	},
+	{
+		path: 'report-generation',
+		loadChildren: () =>
+			import('./pages/report-generation/report-generation.module').then((m) => m.ReportGenerationPageModule)
+	}
 ];
 
 @NgModule({

@@ -11,6 +11,7 @@
 
 
 <ion-content>
+<form [formGroup]="createTestForm" (ngSubmit)="onSave()">
   <ion-grid className="ion-text-center ion-margin">
     <ion-row>
         <ion-col>
@@ -23,7 +24,10 @@
                         <ion-col>
                             <ion-item>
                                 <ion-label position="floating">Asset ID:</ion-label>
-                                <ion-input type="text" ></ion-input>
+                                <ion-input formControlName="AssetID"
+                                    autofocus="true"
+                                    enterkeyhint="next" 
+                                    type="text" ></ion-input>
                             </ion-item>
                         </ion-col>
                     </ion-row>
@@ -31,7 +35,7 @@
                         <ion-col>
                             <ion-item>
                                 <ion-label position="floating">Description:</ion-label>
-                                <ion-input type="text"></ion-input>
+                                <ion-input formControlName="comment" type="text"></ion-input>
                             </ion-item>
                         </ion-col>
                     </ion-row>
@@ -43,14 +47,16 @@
         <ion-col>
             <ion-card>
                 <ion-card-header mode="ios" class="cardhead">
-                    <ion-card-title>Personnel Information</ion-card-title>
+                    <ion-card-title>Test Information</ion-card-title>
                 </ion-card-header>
                 <ion-card-content>
                     <ion-row>
                         <ion-col>
-                            <ion-label position="fixed">Inspector ID:</ion-label>
-                            <ion-item>
-                                <ion-input
+                            <ion-label position="fixed">Test ID:</ion-label>
+                            <ion-item >
+                                <ion-input  formControlName="TestID"
+                                    autofocus="true"
+                                    enterkeyhint="next" 
                                     type="text"
                                 ></ion-input>
                             </ion-item>
@@ -69,9 +75,9 @@
                 <ion-card-content>
                     <ion-row>
                         <ion-col>
-                            <ion-item>
+                            <ion-item >
                                 <ion-label position="floating">Inspection Date:</ion-label>
-                                <ion-input type="date" id="due_date" name="due_date" min="2019-01-01" max="2029-12-31" placeholder="Any"></ion-input>
+                                <ion-input formControlName="DateCompleted" type="date" id="due_date" name="due_date" min="2019-01-01" max="2029-12-31" placeholder="Any"></ion-input>
 
                             </ion-item>
                         </ion-col>
@@ -118,21 +124,21 @@
                         <ion-col>
                             <ion-item>
                                 <ion-label position="floating">Bus name:</ion-label>
-                                <ion-input type="text"></ion-input>
+                                <ion-input  type="text"></ion-input>
                             </ion-item>
                         </ion-col>
                     </ion-row>
                     <ion-row>
                         <ion-col>
                             <ion-label>Condition:</ion-label>
-                            <ion-radio-group name="condition" value="opt1">
+                            <ion-radio-group formControlName= "Result">
                                 <div className="dateSearchRadio">
                                     <ion-item lines="none" className="radioItem">
-                                        <ion-radio id="functional" name="functional" value="good" slot="start" ></ion-radio>
+                                        <ion-radio   value="pass" slot="start" ></ion-radio>
                                         <ion-label>Functional</ion-label>
                                     </ion-item>
                                     <ion-item lines="none" className="radioItem">
-                                        <ion-radio id="maintenance" name="maintain" value="bad" slot="start" ></ion-radio>
+                                        <ion-radio value="fail" slot="start" ></ion-radio>
                                         <ion-label>Needs maintenance</ion-label>
                                     </ion-item>
                                 </div>
@@ -167,8 +173,9 @@
     </ion-row>
     <ion-row>
         <ion-col>
-            <ion-button  color="danger" size="large" expand="block">Save</ion-button>
+            <ion-button type="submit" color="danger" size="large" expand="block">Save</ion-button>
         </ion-col>
     </ion-row>
   </ion-grid>
+  </form>
 </ion-content>
