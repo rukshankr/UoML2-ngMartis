@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AlertController } from '@ionic/angular';
 import { SetresultGroundsService } from '../services/setresult-grounds.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-grounds-test',
@@ -10,6 +11,8 @@ import { SetresultGroundsService } from '../services/setresult-grounds.service';
 })
 export class GroundsTestPage implements OnInit {
 	opost = new Posts();
+
+	assetid: String;
 
 	createTestForm = this.formBuilder.group({
 		AssetID: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
@@ -22,7 +25,8 @@ export class GroundsTestPage implements OnInit {
 	constructor(
 		private formBuilder: FormBuilder,
 		private setresult: SetresultGroundsService,
-		private alertCtrl: AlertController
+		private alertCtrl: AlertController,
+		private route: ActivatedRoute
 	) {}
 
 	get assetID() {
@@ -41,7 +45,10 @@ export class GroundsTestPage implements OnInit {
 		return this.createTestForm.get('DateCompleted');
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		console.log(this.route.snapshot.params.assetid);
+		this.assetid = this.route.snapshot.params.assetid;
+	}
 
 	onSave() {
 		this.opost = this.createTestForm.value;
