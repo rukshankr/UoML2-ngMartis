@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS access(
     AccessID TEXT PRIMARY KEY NOT NULL,
-    Access TEXT NOT NULL,
+    Access TEXT NOT NULL
 );
 INSERT OR IGNORE INTO access VALUES ('AC01','Update, Delete');
 INSERT OR IGNORE INTO access VALUES ('AC02','View');
@@ -23,7 +23,7 @@ VALUES
 ('A102', 'Functions', '40.96418572610003', '-76.5923811201172', 'PA', 'Mechanicsville', 'Brook Avenue', 'MP211', '2018-09-12 03:16:39'),
 ('A103', 'Not functioning', '39.283157046013734', '-80.50712966683095', 'WV', 'Lake Floyd', 'Country route', 'MP511', '2018-01-24 07:36:06');
 
--- role --
+-- -- role --
 CREATE TABLE IF NOT EXISTS role (
     RoleID TEXT PRIMARY KEY NOT NULL,
     Title TEXT NOT NULL,
@@ -48,7 +48,8 @@ CREATE TABLE IF NOT EXISTS user (
     Email TEXT NOT NULL,
     Password TEXT NOT NULL,
     Region TEXT NOT NULL,
-    RoleID TEXT NOT NULL,
+    RoleID TEXT NOT NULL
+    ,
     CONSTRAINT user_ibfk_1 FOREIGN KEY (RoleID) REFERENCES role (RoleID)
 );
 
@@ -61,7 +62,7 @@ VALUES
 ('EMP105', 'Robson Eaton', 'Robson.E@Martis.com', '$2b$10$YCQ92k1H6FfgJZMuJou2Quo1e5kcafyX0taibfxqztk.Scxfo4AKW', 'NC', 'R103');
 
 
---device ---
+-- --device ---
 CREATE TABLE IF NOT EXISTS device(
     DeviceID TEXT PRIMARY KEY NOT NULL,
     UserID TEXT KEY NOT NULL,
@@ -95,9 +96,9 @@ VALUES
 ('EMP101', 'A102', '2020-06-18 08:24:40', NULL, '');
 
 
---
--- Table structure for table `roleaccess`
---
+-- --
+-- -- Table structure for table `roleaccess`
+-- --
 
 CREATE TABLE IF NOT EXISTS roleaccess(
     RoleID TEXT NOT NULL,
@@ -117,14 +118,15 @@ VALUES
 ('R103', 'A101', '2019-09-13 00:00:00', NULL, '2020-06-24 06:24:33'),
 ('R103', 'A102', '2020-01-24 05:19:29', '2020-04-17 07:22:09', NULL);
 
---
--- Table structure for table `testmodule`
---
+-- --
+-- -- Table structure for table `testmodule`
+-- --
 
 CREATE TABLE IF NOT EXISTS testmodule (
     TestModID TEXT PRIMARY KEY NOT NULL,
     SupervisorID TEXT NOT NULL,
-    Description TEXT NOT NULL,
+    Description TEXT NOT NULL
+    ,
     CONSTRAINT testmodule_ibfk_1 FOREIGN KEY (SupervisorID) REFERENCES user (UserID)
 );
 
@@ -150,7 +152,8 @@ CREATE TABLE IF NOT EXISTS test (
     Frequency INTEGER NOT NULL,
     Urgent INTEGER NOT NULL,
     TestModID TEXT NOT NULL,
-    comments TEXT NOT NULL,
+    comments TEXT NOT NULL
+    ,
     CONSTRAINT test_ibfk_1 FOREIGN KEY (AssetID) REFERENCES asset(AssetID),
     CONSTRAINT test_ibfk_2 FOREIGN KEY (InspectorID) REFERENCES user(UserID),
     CONSTRAINT test_ibfk_3 FOREIGN KEY (SupervisorID) REFERENCES user (UserID),
@@ -168,12 +171,12 @@ VALUES
 -- Triggers test
 --
 
-CREATE TRIGGER IF NOT EXISTS CreateNewRepair 
-AFTER INSERT 
-ON test 
-FOR EACH ROW 
-BEGIN
-    INSERT INTO repair (AssetID, CreatedDate)
-    VALUES ("@AssetID", NOW());
-END;
+-- CREATE TRIGGER IF NOT EXISTS CreateNewRepair 
+-- AFTER INSERT 
+-- ON test 
+-- FOR EACH ROW 
+-- BEGIN
+--     INSERT INTO repair (AssetID, CreatedDate)
+--     VALUES ("@AssetID", NOW());
+-- END;
 

@@ -9,35 +9,73 @@
 
 <ion-content>
   <ion-grid>
-    <ion-row>
-      <ion-col  *ngFor="let item of lst[0]">
-        <ion-card>
-          <ion-card-header class="cardhead" >
-            <ion-card-title >
-              TestId:{{item.TestID}}
-            </ion-card-title>
-            <ion-card-subtitle >
-              AssetId:{{item.AssetID}}
-            </ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list>
-              <ion-item>
-                <ion-label>InspectorID:{{item.InspectorID}}</ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-button [routerLink]="['/','grounds-test',item.AssetID]" >
-                  Inspect
-                </ion-button>
-              </ion-item>
-            </ion-list>
-            
-          </ion-card-content>
-
-        </ion-card>
-
-      </ion-col>
-    </ion-row>
+    <div [ngSwitch] ="desktop">
+      <div *ngSwitchCase="false">
+        <ion-row>
+          <p>MOBILE</p>
+        </ion-row>
+        <ion-row>
+          <ion-col  *ngFor="let item of lest">
+            <ion-card>
+              <ion-card-header class="cardhead" >
+                <ion-card-title >
+                  TestId:{{item.TestID}}
+                </ion-card-title>
+                <ion-card-subtitle >
+                  AssetId:{{item.AssetID}}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-list>
+                  <ion-item>
+                    <ion-label>InspectorID:{{item.InspectorID}}</ion-label>
+                  </ion-item>
+                  <ion-item>
+                    <ion-button [routerLink]="['/','grounds-test',item.AssetID]" >
+                      Inspect
+                    </ion-button>
+                  </ion-item>
+                </ion-list>
+                
+              </ion-card-content>
+    
+            </ion-card>
+    
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngSwitchCase="true">
+        <ion-row>
+          <ion-col  *ngFor="let item of lst[0]">
+            <ion-card>
+              <ion-card-header class="cardhead" >
+                <ion-card-title >
+                  TestId:{{item.TestID}}
+                </ion-card-title>
+                <ion-card-subtitle >
+                  AssetId:{{item.AssetID}}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-list>
+                  <ion-item>
+                    <ion-label>InspectorID:{{item.InspectorID}}</ion-label>
+                  </ion-item>
+                  <ion-item>
+                    <ion-button [routerLink]="['/','grounds-test',item.AssetID]" >
+                      Inspect
+                    </ion-button>
+                  </ion-item>
+                </ion-list>
+                
+              </ion-card-content>
+    
+            </ion-card>
+    
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
   </ion-grid>
 
 </ion-content>

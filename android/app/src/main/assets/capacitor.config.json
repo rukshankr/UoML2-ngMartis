@@ -1,5 +1,5 @@
 {
-  "appId": "com.recipe.viewer",
+  "appId": "com.martis.app",
   "appName": "MARTIS",
   "bundledWebRuntime": false,
   "npmClient": "npm",
@@ -9,5 +9,8 @@
       "launchShowDuration": 0
     }
   },
-  "cordova": {}
+  "cordova": {},
+  "server": {
+    "url": "http://192.168.1.6:8100"
+  }
 }
