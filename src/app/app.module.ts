@@ -12,6 +12,8 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { HttpClientModule } from '@angular/common/http'; //added for API calls
 import { FormsModule } from '@angular/forms';
+import { SQLite } from '@ionic-native/sqlite/ngx';
+import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,7 +29,9 @@ import { FormsModule } from '@angular/forms';
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    Geolocation
+    Geolocation,
+    SQLite,
+    SQLitePorter
   ],
   bootstrap: [AppComponent]
 })
