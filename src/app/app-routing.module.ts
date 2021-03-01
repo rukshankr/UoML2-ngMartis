@@ -22,6 +22,10 @@ const routes: Routes = [
 	// 	]
 	// },
 	{
+		path: 'grounds-test/:assetid',
+		loadChildren: () => import('./grounds-test/grounds-test.module').then((m) => m.GroundsTestPageModule)
+	},
+	{
 		path: 'grounds-test',
 		loadChildren: () => import('./grounds-test/grounds-test.module').then((m) => m.GroundsTestPageModule)
 	},

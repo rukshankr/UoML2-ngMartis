@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { inspectionListService } from 'src/app/services/inspection-list.service';
-
 @Component({
 	selector: 'app-inspection-list',
 	templateUrl: './inspection-list.page.html',
