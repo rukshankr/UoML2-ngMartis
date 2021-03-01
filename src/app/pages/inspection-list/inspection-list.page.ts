@@ -21,7 +21,7 @@ export class InspectionListPage implements OnInit {
   desktop: boolean = true;
 
   ngOnInit() {
-    this.checkPlatform();
+    //this.checkPlatform();
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
       this.db.getDatabaseState().subscribe((rdy) => {
