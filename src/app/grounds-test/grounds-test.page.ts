@@ -13,6 +13,7 @@ export class GroundsTestPage implements OnInit {
 	opost = new Posts();
 
 	assetid: String;
+	testid: String;
 
 	createTestForm = this.formBuilder.group({
 		AssetID: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
@@ -48,6 +49,7 @@ export class GroundsTestPage implements OnInit {
 	ngOnInit() {
 		console.log(this.route.snapshot.params.assetid);
 		this.assetid = this.route.snapshot.params.assetid;
+		this.testid = this.route.snapshot.params.testid;
 	}
 
 	onSave() {

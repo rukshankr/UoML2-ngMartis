@@ -22,7 +22,7 @@ const routes: Routes = [
 	// 	]
 	// },
 	{
-		path: 'grounds-test/:assetid',
+		path: 'grounds-test/:assetid/:testid',
 		loadChildren: () => import('./grounds-test/grounds-test.module').then((m) => m.GroundsTestPageModule)
 	},
 	{
