@@ -17,7 +17,7 @@ export class GroundsTestPage implements OnInit {
 
 	createTestForm = this.formBuilder.group({
 		AssetID: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
-		TestID: [ '' , [ Validators.required, Validators.pattern('^T[0-9]{3}'), Validators.maxLength(4) ]],
+		TestID: [ '', [ Validators.required, Validators.pattern('^T[0-9]{3}'), Validators.maxLength(4) ] ],
 		comment: [ '' ],
 		Result: [ '' ],
 		DateCompleted: [ '' ]

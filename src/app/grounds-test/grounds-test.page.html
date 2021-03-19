@@ -27,7 +27,7 @@
                                 <ion-input formControlName="AssetID"
                                     autofocus="true"
                                     enterkeyhint="next" 
-                                    type="text" >{{assetid}}</ion-input>
+                                    type="text" [ngModel]="assetid" ></ion-input>
                             </ion-item>
                         </ion-col>
                     </ion-row>
@@ -57,8 +57,8 @@
                                 <ion-input  formControlName="TestID"
                                     autofocus="true"
                                     enterkeyhint="next" 
-                                    type="text"
-                                >{{testid}}</ion-input>
+                                    type="text"  [ngModel]="testid"
+                                ></ion-input>
                             </ion-item>
                           </ion-col>
                         </ion-row>
