@@ -23,7 +23,7 @@ VALUES
 ('A102', 'Functions', '40.96418572610003', '-76.5923811201172', 'PA', 'Mechanicsville', 'Brook Avenue', 'MP211', '2018-09-12 03:16:39'),
 ('A103', 'Not functioning', '39.283157046013734', '-80.50712966683095', 'WV', 'Lake Floyd', 'Country route', 'MP511', '2018-01-24 07:36:06');
 
--- -- role --
+-- role --
 CREATE TABLE IF NOT EXISTS role (
     RoleID TEXT PRIMARY KEY NOT NULL,
     Title TEXT NOT NULL,
@@ -113,10 +113,10 @@ CREATE TABLE IF NOT EXISTS roleaccess(
 
 INSERT OR IGNORE INTO roleaccess (RoleID,AccessID,CreatedDate,UpdatedDate,DeletedDate)
 VALUES
-('R101', 'A101', '2019-11-22 07:20:15', NULL, NULL),
-('R102', 'A101', '2019-12-27 12:13:30', NULL, NULL),
-('R103', 'A101', '2019-09-13 00:00:00', NULL, '2020-06-24 06:24:33'),
-('R103', 'A102', '2020-01-24 05:19:29', '2020-04-17 07:22:09', NULL);
+('R101', 'AC01', '2019-11-22 07:20:15', NULL, NULL),
+('R102', 'AC01', '2019-12-27 12:13:30', NULL, NULL),
+('R103', 'AC01', '2019-09-13 00:00:00', NULL, '2020-06-24 06:24:33'),
+('R103', 'AC02', '2020-01-24 05:19:29', '2020-04-17 07:22:09', NULL);
 
 -- --
 -- -- Table structure for table `testmodule`

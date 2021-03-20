@@ -40,6 +40,7 @@ export class DatabaseService {
 
   assets = new BehaviorSubject([]);
   tests = new BehaviorSubject([]);
+  databaseErr: any;
 
   constructor(
     private plt: Platform,
@@ -70,7 +71,10 @@ export class DatabaseService {
             this.loadTests();
             this.dbReady.next(true);
           })
-          .catch((e) => console.error(e));
+          .catch((e) => {
+            console.error(e);
+            this.databaseErr = e;
+          });
       });
   }
 

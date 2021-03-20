@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
-//import { Observable } from "rxjs";
 import { AssetService } from "src/app/services/asset-service.service";
-import { Geolocation } from "@ionic-native/geolocation/ngx";
 import { AlertController } from '@ionic/angular';
+import { Plugins } from '@capacitor/core';
+const { Geolocation } = Plugins;
 
 @Component({
   selector: "app-create-asset",
@@ -51,7 +51,6 @@ export class CreateAssetPage implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private assetService: AssetService,
-    private geolocation: Geolocation,
     private alertCtrl: AlertController
   ) {}
 
@@ -90,19 +89,13 @@ export class CreateAssetPage implements OnInit {
     }).then(res => res.present())
   }
 
-  getCoords() {
-    this.geolocation
-      .getCurrentPosition()
-      .then((resp) => {
-        this.createAssetForm['GPSLatitude'] = resp.coords.latitude;
-        this.createAssetForm['GPSLongitude'] = resp.coords.longitude;
-        console.log("asset form:"+this.createAssetForm['GPSLatitude']);
-      })
-      .catch((error) => {
-        console.log("Error getting location", error);
-      });
+  async getCurrentPosition() {
+    const coordinates = await Geolocation.getCurrentPosition();
+    this.createAssetForm['GPSLatitude'] = coordinates.coords.latitude;
+    this.createAssetForm['GPSLongitude'] = coordinates.coords.longitude;
   }
 }
+
 
 export class Posts {
   AssetID: string;
