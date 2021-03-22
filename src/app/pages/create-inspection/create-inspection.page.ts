@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { InspectionService } from 'src/app/services/create-inspection.service';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AlertController } from '@ionic/angular';
 
 @Component({
@@ -55,7 +54,7 @@ export class CreateInspectionPage implements OnInit {
 	constructor(
 		private formBuilder: FormBuilder,
 		private inspectionService: InspectionService,
-		private geolocation: Geolocation,
+		//private geolocation: Geolocation,
 		private alertCtrl: AlertController
 	) {}
 

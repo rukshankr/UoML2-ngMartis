@@ -1,3 +1,4 @@
+export const createSchema : string = `
 CREATE TABLE IF NOT EXISTS access(
     AccessID TEXT PRIMARY KEY NOT NULL,
     Access TEXT NOT NULL
@@ -23,7 +24,7 @@ VALUES
 ('A102', 'Functions', '40.96418572610003', '-76.5923811201172', 'PA', 'Mechanicsville', 'Brook Avenue', 'MP211', '2018-09-12 03:16:39'),
 ('A103', 'Not functioning', '39.283157046013734', '-80.50712966683095', 'WV', 'Lake Floyd', 'Country route', 'MP511', '2018-01-24 07:36:06');
 
--- role --
+
 CREATE TABLE IF NOT EXISTS role (
     RoleID TEXT PRIMARY KEY NOT NULL,
     Title TEXT NOT NULL,
@@ -38,9 +39,7 @@ VALUES
 ('R102', 'Inspector', '2019-05-16 16:16:23', '2019-10-25 03:52:31', NULL),
 ('R103', 'Engineer', '2018-08-15 07:29:21', NULL, NULL);
 
---
--- Table structure for table `user`
---
+
 
 CREATE TABLE IF NOT EXISTS user (
     UserID TEXT PRIMARY KEY NOT NULL,
@@ -62,7 +61,7 @@ VALUES
 ('EMP105', 'Robson Eaton', 'Robson.E@Martis.com', '$2b$10$YCQ92k1H6FfgJZMuJou2Quo1e5kcafyX0taibfxqztk.Scxfo4AKW', 'NC', 'R103');
 
 
--- --device ---
+
 CREATE TABLE IF NOT EXISTS device(
     DeviceID TEXT PRIMARY KEY NOT NULL,
     UserID TEXT KEY NOT NULL,
@@ -95,9 +94,6 @@ VALUES
 ('EMP101', 'A102', '2020-06-18 08:24:40', NULL, '');
 
 
--- --
--- -- Table structure for table `roleaccess`
--- --
 
 CREATE TABLE IF NOT EXISTS roleaccess(
     RoleID TEXT NOT NULL,
@@ -105,7 +101,8 @@ CREATE TABLE IF NOT EXISTS roleaccess(
     CreatedDate TEXT NOT NULL,
     UpdatedDate TEXT DEFAULT NULL,
     DeletedDate TEXT DEFAULT NULL,
-    PRIMARY KEY (RoleID, AccessID),
+    PRIMARY KEY (RoleID, AccessID)
+    ,
     CONSTRAINT roleaccess_ibfk_1 FOREIGN KEY (RoleID) REFERENCES role(RoleID),
     CONSTRAINT roleaccess_ibfk_2 FOREIGN KEY (AccessID) REFERENCES access(AccessID)
 );
@@ -117,9 +114,6 @@ VALUES
 ('R103', 'AC01', '2019-09-13 00:00:00', NULL, '2020-06-24 06:24:33'),
 ('R103', 'AC02', '2020-01-24 05:19:29', '2020-04-17 07:22:09', NULL);
 
--- --
--- -- Table structure for table `testmodule`
--- --
 
 CREATE TABLE IF NOT EXISTS testmodule (
     TestModID TEXT PRIMARY KEY NOT NULL,
@@ -135,10 +129,6 @@ VALUES
 ('TM102', 'EMP105', 'Check Energy source');
 
 
-
---
--- Table structure for table `test`
---
 
 CREATE TABLE IF NOT EXISTS test (
     TestID TEXT PRIMARY KEY NOT NULL,
@@ -165,17 +155,4 @@ VALUES
 ('T102', '2020-04-23 01:17:28', 'A103', 'EMP101', 'Pending', 'EMP103', NULL, 1, 1, 'TM101', ''),
 ('T103', '2020-03-19 00:00:00', 'A102', 'EMP104', 'Pending', 'EMP102', NULL, 3, 0, 'TM102', ''),
 ('T104', '2020-07-16 19:13:09', 'A102', 'EMP101', 'Pass', 'EMP102', '2020-05-26 09:45:09', 1, 1, 'TM102', '');
-
---
--- Triggers test
---
-
--- CREATE TRIGGER IF NOT EXISTS CreateNewRepair 
--- AFTER INSERT 
--- ON test 
--- FOR EACH ROW 
--- BEGIN
---     INSERT INTO repair (AssetID, CreatedDate)
---     VALUES ("@AssetID", NOW());
--- END;
-
+`

@@ -2,8 +2,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { AssetService } from "src/app/services/asset-service.service";
 import { AlertController } from '@ionic/angular';
-import { Plugins } from '@capacitor/core';
-const { Geolocation } = Plugins;
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
   selector: "app-create-asset",
@@ -89,7 +88,7 @@ export class CreateAssetPage implements OnInit {
     }).then(res => res.present())
   }
 
-  async getCurrentPosition() {
+  async getCurrentPosition () {
     const coordinates = await Geolocation.getCurrentPosition();
     this.createAssetForm['GPSLatitude'] = coordinates.coords.latitude;
     this.createAssetForm['GPSLongitude'] = coordinates.coords.longitude;
