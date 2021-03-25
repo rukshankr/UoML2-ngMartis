@@ -7,23 +7,13 @@ const routes: Routes = [
 		redirectTo: 'login',
 		pathMatch: 'full'
 	},
-	// {
-	// 	path: 'recipes',
-	// 	children: [
-	// 		{
-	// 			path: '',
-	// 			loadChildren: () => import('./recipes/recipes.module').then((m) => m.RecipesPageModule)
-	// 		},
-	// 		{
-	// 			path: ':recipeId',
-	// 			loadChildren: () =>
-	// 				import('./recipes/recipe-detail/recipe-detail.module').then((m) => m.RecipeDetailPageModule)
-	// 		}
-	// 	]
-	// },
 	{
 		path: 'grounds-test/:assetid/:testid',
 		loadChildren: () => import('./grounds-test/grounds-test.module').then((m) => m.GroundsTestPageModule)
+	},
+	{
+		path: 'repair-form/:assetid/:engineerid/:comments/:createddate',
+		loadChildren: () => import('./repair-form/repair-form.module').then((m) => m.RepairFormPageModule)
 	},
 	{
 		path: 'grounds-test',
