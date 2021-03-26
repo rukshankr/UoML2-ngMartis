@@ -7,20 +7,6 @@ const routes: Routes = [
 		redirectTo: 'login',
 		pathMatch: 'full'
 	},
-	// {
-	// 	path: 'recipes',
-	// 	children: [
-	// 		{
-	// 			path: '',
-	// 			loadChildren: () => import('./recipes/recipes.module').then((m) => m.RecipesPageModule)
-	// 		},
-	// 		{
-	// 			path: ':recipeId',
-	// 			loadChildren: () =>
-	// 				import('./recipes/recipe-detail/recipe-detail.module').then((m) => m.RecipeDetailPageModule)
-	// 		}
-	// 	]
-	// },
 	{
 		path: 'grounds-test/:assetid/:testid',
 		loadChildren: () => import('./grounds-test/grounds-test.module').then((m) => m.GroundsTestPageModule)
@@ -68,7 +54,12 @@ const routes: Routes = [
 		path: 'report-generation',
 		loadChildren: () =>
 			import('./pages/report-generation/report-generation.module').then((m) => m.ReportGenerationPageModule)
-	}
+	},
+  {
+    path: 'syncer',
+    loadChildren: () => import('./pages/syncer/syncer.module').then( m => m.SyncerPageModule)
+  }
+
 ];
 
 @NgModule({

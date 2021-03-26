@@ -7,6 +7,6 @@ export class inspectionListService {
 	constructor(private httpclient: HttpClient) {}
 
 	getinspections(): Observable<any> {
-		return this.httpclient.get('http://localhost:3000/test/getTests');
+		return this.httpclient.get('https://martisapiversion1.herokuapp.com/test/getTests');
 	}
 }

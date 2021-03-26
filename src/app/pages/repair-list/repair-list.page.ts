@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { deleteDatabase } from 'src/assets/db-utils';
 import { createSchema } from 'src/assets/martis-utils';
@@ -15,8 +15,13 @@ export class RepairListPage implements OnInit {
   platform: string;
   handlerPermissions: any;
   initPlugin: boolean = false;
+  desktop: boolean = true;
 
-  constructor(private _sqlite: SqliteService, private alertCtrl: AlertController) {}
+  constructor(
+    private _sqlite: SqliteService, 
+    private alertCtrl: AlertController,
+    private plt: Platform
+    ) {}
 
   async ngOnInit() {
     const showAlert = async (message: string) => {
@@ -27,12 +32,17 @@ export class RepairListPage implements OnInit {
       });
       (await msg).present();
     };
-    try {
-      await this.runTest();
-      this.log += "\n$$$ runTest was successful\n";
-    } catch (err) {
-      this.log += "\n "+err.message;
-      await showAlert(err.message);
+    if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
+      this.desktop = false;
+      try {
+        await this.runTest();
+        this.log += "\n$$$ runTest was successful\n";
+      } catch (err) {
+        this.log += "\n "+err.message;
+        await showAlert(err.message);
+      }
+    } else if (this.plt.is("desktop")) {
+
     }
   }
 

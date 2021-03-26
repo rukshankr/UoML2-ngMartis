@@ -48,13 +48,15 @@
               <ion-col>
                 <ion-label position="fixed">Asset ID:</ion-label>
                 <ion-item>
-                  <ion-input formControlName="AssetID"></ion-input>
+                  <ion-select
+                    value="AssetID"
+                    interface="popover"
+                    formControlName="AssetID"
+                  >
+                    <ion-select-option *ngFor="let a of assets"
+                    value={{a.AssetID}}>{{a.AssetID}}</ion-select-option>
+                  </ion-select>
                 </ion-item>
-                <div *ngFor="let error of errorMessage.assetID">
-                  <ng-container *ngIf="assetId.hasError(error.type) && (assetId.dirty || assetId.touched)">
-                    <small class="error-message">{{error.message}}</small>
-                  </ng-container>
-                </div>
               </ion-col>
             </ion-row>
           </ion-card-content>
@@ -112,10 +114,10 @@
                     interface="popover"
                     formControlName="Frequency"
                   >
-                    <ion-select-option value="1Y">1Y</ion-select-option>
-                    <ion-select-option value="2Y">2Y</ion-select-option>
-                    <ion-select-option value="3Y">3Y</ion-select-option>
-                    <ion-select-option value="4Y">4Y</ion-select-option>
+                    <ion-select-option value=1>1Y</ion-select-option>
+                    <ion-select-option value=2>2Y</ion-select-option>
+                    <ion-select-option value=3>3Y</ion-select-option>
+                    <ion-select-option value=4>4Y</ion-select-option>
                   </ion-select>
                 </ion-item>
               </ion-col>
@@ -137,11 +139,11 @@
                     interface="popover"
                     formControlName="Priority"
                   >
-                    <ion-select-option value="1">1</ion-select-option>
-                    <ion-select-option value="2">2</ion-select-option>
-                    <ion-select-option value="3">3</ion-select-option>
-                    <ion-select-option value="4">4</ion-select-option>
-                    <ion-select-option value="5">5</ion-select-option>
+                    <ion-select-option value=1>1</ion-select-option>
+                    <ion-select-option value=2>2</ion-select-option>
+                    <ion-select-option value=3>3</ion-select-option>
+                    <ion-select-option value=4>4</ion-select-option>
+                    <ion-select-option value=5>5</ion-select-option>
                   </ion-select>
                 </ion-item>
               </ion-col>
@@ -156,6 +158,9 @@
           >Save</ion-button
         >
       </ion-col>
+    </ion-row>
+    <ion-row>
+      <p>{{log}}</p>
     </ion-row>
   </form>
 </ion-content>

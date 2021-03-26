@@ -8,6 +8,7 @@ INSERT OR IGNORE INTO access VALUES ('AC02','View');
 
 CREATE TABLE IF NOT EXISTS asset(
   AssetID TEXT NOT NULL PRIMARY KEY,
+  AssetType TEXT NOT NULL,
   Satus TEXT NOT NULL,
   GPSLatitude TEXT NOT NULL,
   GPSLongitude TEXT NOT NULL,
@@ -18,11 +19,11 @@ CREATE TABLE IF NOT EXISTS asset(
   LastTestedDate TEXT NOT NULL
 );
 
-INSERT OR IGNORE INTO asset (AssetID, Satus, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate)
+INSERT OR IGNORE INTO asset (AssetID, AssetType, Satus, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate)
 VALUES
-('A101', 'Functions', '40.741895', '-73.989308', 'NY', 'Manhatten', 'Bronx', 'MP251', '2019-08-14 00:00:00'),
-('A102', 'Functions', '40.96418572610003', '-76.5923811201172', 'PA', 'Mechanicsville', 'Brook Avenue', 'MP211', '2018-09-12 03:16:39'),
-('A103', 'Not functioning', '39.283157046013734', '-80.50712966683095', 'WV', 'Lake Floyd', 'Country route', 'MP511', '2018-01-24 07:36:06');
+('A101', 'House', 'Functions', '40.741895', '-73.989308', 'NY', 'Manhatten', 'Bronx', 'MP251', '2019-08-14 00:00:00'),
+('A102', 'Relay', 'Functions', '40.96418572610003', '-76.5923811201172', 'PA', 'Mechanicsville', 'Brook Avenue', 'MP211', '2018-09-12 03:16:39'),
+('A103', 'Bus', 'Not functioning', '39.283157046013734', '-80.50712966683095', 'WV', 'Lake Floyd', 'Country route', 'MP511', '2018-01-24 07:36:06');
 
 
 CREATE TABLE IF NOT EXISTS role (
@@ -135,13 +136,13 @@ CREATE TABLE IF NOT EXISTS test (
     DateIssued TEXT NOT NULL,
     AssetID TEXT NOT NULL,
     InspectorID TEXT NOT NULL,
-    Result TEXT NOT NULL,
+    Result TEXT,
     SupervisorID TEXT NOT NULL,
     DateCompleted TEXT DEFAULT NULL,
     Frequency INTEGER NOT NULL,
-    Urgent INTEGER NOT NULL,
+    Priority INTEGER NOT NULL,
     TestModID TEXT NOT NULL,
-    comments TEXT NOT NULL
+    comments TEXT
     ,
     CONSTRAINT test_ibfk_1 FOREIGN KEY (AssetID) REFERENCES asset(AssetID),
     CONSTRAINT test_ibfk_2 FOREIGN KEY (InspectorID) REFERENCES user(UserID),
@@ -149,10 +150,10 @@ CREATE TABLE IF NOT EXISTS test (
     CONSTRAINT test_ibfk_4 FOREIGN KEY (TestModID) REFERENCES testmodule (TestModID)
 );
 
-INSERT OR IGNORE INTO test (TestID,DateIssued, AssetID, InspectorID,Result,SupervisorID,DateCompleted,Frequency,Urgent,TestModID,comments)
+INSERT OR IGNORE INTO test (TestID,DateIssued, AssetID, InspectorID,Result,SupervisorID,DateCompleted,Frequency,Priority,TestModID,comments)
 VALUES
-('T101', '2019-09-20 08:25:04', 'A102', 'EMP104', 'Completed', 'EMP105', '2020-07-16 19:13:09', 2, 0, 'TM102', ''),
-('T102', '2020-04-23 01:17:28', 'A103', 'EMP101', 'Pending', 'EMP103', NULL, 1, 1, 'TM101', ''),
-('T103', '2020-03-19 00:00:00', 'A102', 'EMP104', 'Pending', 'EMP102', NULL, 3, 0, 'TM102', ''),
-('T104', '2020-07-16 19:13:09', 'A102', 'EMP101', 'Pass', 'EMP102', '2020-05-26 09:45:09', 1, 1, 'TM102', '');
+('T101', '2019-09-20 08:25:04', 'A102', 'EMP104', 'Completed', 'EMP105', '2020-07-16 19:13:09', 2, 1, 'TM102', ''),
+('T102', '2020-04-23 01:17:28', 'A103', 'EMP101', 'Pending', 'EMP103', NULL, 1, 2, 'TM101', ''),
+('T103', '2020-03-19 00:00:00', 'A102', 'EMP104', 'Pending', 'EMP102', NULL, 3, 3, 'TM102', ''),
+('T104', '2020-07-16 19:13:09', 'A102', 'EMP101', 'Pass', 'EMP102', '2020-05-26 09:45:09', 1, 4, 'TM102', '');
 `
