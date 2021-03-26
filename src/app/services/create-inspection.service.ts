@@ -16,7 +16,7 @@ export class InspectionService {
 
 	////////////////if this doesn't work, it's not an error here, but in the API//////////////////////
 	post(opost: Posts): Observable<any> {
-		return this.http.post('http://localhost:3000/test/createNewTest', opost);
+		return this.http.post('https://martisapiversion1.herokuapp.com/test/createNewTest', opost);
 	}
 
 	// // patch(opost: Posts): Observable<any> {

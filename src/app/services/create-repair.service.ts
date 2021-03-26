@@ -12,6 +12,6 @@ export class CreateRepairService {
 	constructor(private http: HttpClient) {}
 
 	put(opost: Posts): Observable<any> {
-		return this.http.put('http://localhost:3000/repair/addCompletedDateAndComments', opost);
+		return this.http.put('https://martisapiversion1.herokuapp.com/repair/addCompletedDateAndComments', opost);
 	}
 }
