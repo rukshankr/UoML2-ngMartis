@@ -7,6 +7,6 @@ export class RepairListService {
 	constructor(private httpclient: HttpClient) {}
 
 	getrepairs(): Observable<any> {
-		return this.httpclient.get('http://localhost:3000/repair/getRepairs');
+		return this.httpclient.get('https://martisapiversion1.herokuapp.com/repair/getRepairs');
 	}
 }
