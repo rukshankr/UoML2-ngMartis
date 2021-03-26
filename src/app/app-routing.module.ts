@@ -12,6 +12,10 @@ const routes: Routes = [
 		loadChildren: () => import('./grounds-test/grounds-test.module').then((m) => m.GroundsTestPageModule)
 	},
 	{
+		path: 'repair-form/:assetid/:engineerid/:comments/:createddate',
+		loadChildren: () => import('./repair-form/repair-form.module').then((m) => m.RepairFormPageModule)
+	},
+	{
 		path: 'grounds-test',
 		loadChildren: () => import('./grounds-test/grounds-test.module').then((m) => m.GroundsTestPageModule)
 	},

@@ -4,14 +4,14 @@ import { Routes, RouterModule } from '@angular/router';
 import { RepairFormPage } from './repair-form.page';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: RepairFormPage
-  }
+	{
+		path: '',
+		component: RepairFormPage
+	}
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+	imports: [ RouterModule.forChild(routes) ],
+	exports: [ RouterModule ]
 })
 export class RepairFormPageRoutingModule {}
