@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { deleteDatabase } from 'src/assets/db-utils';
 import { createSchema } from 'src/assets/martis-utils';
@@ -15,7 +15,10 @@ import { createSchema } from 'src/assets/martis-utils';
 export class SelectionPage implements OnInit {
 	log : string = "";
 
-	constructor(public atrCtrl: AlertController, private _sqlite: SqliteService) {}
+	constructor(
+		public atrCtrl: AlertController, 
+		private _sqlite: SqliteService,
+		private plt: Platform) {}
 
 	async showError(data: any) {
 		let alert = this.atrCtrl.create({
@@ -75,21 +78,23 @@ export class SelectionPage implements OnInit {
 	}
 
 	async ngOnInit() {
-		const showAlert = async (message: string) => {
-			let msg = this.atrCtrl.create({
-			header: 'Error',
-			message: message,
-			buttons: ['OK']
-			});
-			(await msg).present();
-		  };
-		  try {
-			await this.runDB();
-			this.log += "\n$$$ runDB was successful\n";
-		  } catch (err) {
-			this.log += "\n "+err.message;
-			await showAlert(err.message);
-		  }
+		if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
+			const showAlert = async (message: string) => {
+				let msg = this.atrCtrl.create({
+				header: 'Error',
+				message: message,
+				buttons: ['OK']
+				});
+				(await msg).present();
+			  };
+			  try {
+				await this.runDB();
+				this.log += "\n$$$ runDB was successful\n";
+			  } catch (err) {
+				this.log += "\n "+err.message;
+				await showAlert(err.message);
+			  }	
+		}
 	}
 
 	async runDB(): Promise<void> {

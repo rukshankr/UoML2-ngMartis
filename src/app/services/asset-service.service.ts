@@ -26,5 +26,9 @@ export class AssetService {
   post(opost: Posts): Observable <any> {
     return this.http.post("https://martisapiversion1.herokuapp.com/asset/createNewAsset",opost);
   }
+
+  getAssets(): Observable<any> {
+		return this.http.get('https://martisapiversion1.herokuapp.com/asset/getAssets');
+	}
 }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -22,6 +22,9 @@ export class RepairFormPage implements OnInit {
 
 	opost = new Posts();
 
+	//platform
+	desktop: boolean = true;
+
 	createRepairForm = this.formBuilder.group({
 		AssetId: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
 		EngineerID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}') ] ],
@@ -37,6 +40,12 @@ export class RepairFormPage implements OnInit {
 		this.engineerid = this.route.snapshot.params.engineerid;
 		this.comments = this.route.snapshot.params.comments;
 		this.createddate = this.route.snapshot.params.createddate;
+
+		if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
+			this.desktop =false;
+		} else if (this.plt.is("desktop")) {
+			this.desktop = true;
+		}
 	}
 
 	constructor(
@@ -44,10 +53,15 @@ export class RepairFormPage implements OnInit {
 		private setRepair: CreateRepairService,
 		private alertCtrl: AlertController,
 		private route: ActivatedRoute,
-		private datePipe: DatePipe
+		private datePipe: DatePipe,
+		private plt: Platform
 	) {}
 
 	onSave() {
+		if(!this.desktop){
+			//sqlite code
+			return;
+		}
 		let date = this.route.snapshot.params.createddate;
 		this.opost = this.createRepairForm.value;
 		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss').toString();

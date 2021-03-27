@@ -53,7 +53,7 @@
                     interface="popover"
                     formControlName="AssetID"
                   >
-                    <ion-select-option *ngFor="let a of assets"
+                    <ion-select-option *ngFor="let a of (desktop ? assets[0] : assets)"
                     value={{a.AssetID}}>{{a.AssetID}}</ion-select-option>
                   </ion-select>
                 </ion-item>
