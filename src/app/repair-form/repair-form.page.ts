@@ -35,6 +35,8 @@ export class RepairFormPage implements OnInit {
 	ngOnInit() {
 		console.log(this.route.snapshot.params.assetid);
 		let date = new Date(this.route.snapshot.params.createddate);
+		console.log(date);
+
 		console.log(this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss'));
 		this.assetid = this.route.snapshot.params.assetid;
 		this.engineerid = this.route.snapshot.params.engineerid;
@@ -64,8 +66,8 @@ export class RepairFormPage implements OnInit {
 		}
 		let date = this.route.snapshot.params.createddate;
 		this.opost = this.createRepairForm.value;
-		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss').toString();
-		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-ddThh:mm:ss.000') + 'Z';
+		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'utc').toString();
+		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-dd HH:mm:ss');
 		console.log(this.opost.CompletedDate);
 
 		console.log('Page Saved', this.opost);
