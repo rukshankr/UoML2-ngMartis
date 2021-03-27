@@ -94,8 +94,8 @@ export class InspectionListPage implements OnInit {
       // select all assets in db
       ret = await db.query("SELECT * FROM test;");
       this.lest = ret.values;
-      if(ret.values.length !== 4) {
-        return Promise.reject(new Error("Query 2 asset failed"));
+      if(ret.values.length === 0) {
+        return Promise.reject(new Error("getTests query failed"));
       }
       this.log +="\nquery done.";
       // Close Connection MyDB        
@@ -104,6 +104,10 @@ export class InspectionListPage implements OnInit {
 
       return Promise.resolve();
     } catch (err) {
+      // Close Connection MyDB        
+      await this._sqlite.closeConnection("martis"); 
+      this.log += "\n> closed Connection: 'martis'\n";
+      //error message
       this.log += "\nrejected";
       return Promise.reject(err);
     }

@@ -11,6 +11,6 @@ export class SetresultGroundsService {
 	constructor(private http: HttpClient) {}
 
 	patch(opost: Posts): Observable<any> {
-		return this.http.patch('http://localhost:3000/test/setresult', opost);
+		return this.http.patch('https://martisapiversion1.herokuapp.com/test/setresult', opost);
 	}
 }

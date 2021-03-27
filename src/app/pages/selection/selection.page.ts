@@ -85,7 +85,7 @@ export class SelectionPage implements OnInit {
 		  };
 		  try {
 			await this.runDB();
-			this.log += "\n$$$ runTest was successful\n";
+			this.log += "\n$$$ runDB was successful\n";
 		  } catch (err) {
 			this.log += "\n "+err.message;
 			await showAlert(err.message);

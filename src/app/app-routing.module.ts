@@ -58,7 +58,12 @@ const routes: Routes = [
 		path: 'report-generation',
 		loadChildren: () =>
 			import('./pages/report-generation/report-generation.module').then((m) => m.ReportGenerationPageModule)
-	}
+	},
+  {
+    path: 'syncer',
+    loadChildren: () => import('./pages/syncer/syncer.module').then( m => m.SyncerPageModule)
+  }
+
 ];
 
 @NgModule({

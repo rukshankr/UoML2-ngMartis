@@ -3,6 +3,8 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { AssetService } from "src/app/services/asset-service.service";
 import { AlertController } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
+import { SqliteService } from "src/app/services/sqlite.service";
+import { capSQLiteChanges } from "@capacitor-community/sqlite";
 
 @Component({
   selector: "app-create-asset",
@@ -12,6 +14,8 @@ import { Geolocation } from '@capacitor/geolocation';
 export class CreateAssetPage implements OnInit {
 
   opost = new Posts();
+  sendToMain : boolean = true;
+  log: string = "";
 
   get assetID(){
     return this.createAssetForm.get('AssetID');
@@ -50,6 +54,7 @@ export class CreateAssetPage implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private assetService: AssetService,
+    private _sqlite: SqliteService,
     private alertCtrl: AlertController
   ) {}
 
@@ -57,21 +62,60 @@ export class CreateAssetPage implements OnInit {
 
   ngOnInit() {}
 
-  onSave() {
-    this.opost = this.createAssetForm.value;
-
-    console.log("Page Saved", this.opost);
-
-     this.assetService.post(this.opost).subscribe((data) => {
-      console.log("Post method success?: ", data);
-      if(data){
-        this.showAlert(true);
-      }else{
-        this.showAlert(false);
-      }
-    });
-
+  async onSave() {
+    const showAlert = async (message: string) => {
+      let msg = this.alertCtrl.create({
+      header: 'Error',
+      message: message,
+      buttons: ['OK']
+      });
+      (await msg).present();
+    };
+    try{
+      //connect
+      const db = await this._sqlite
+                  .createConnection("martis", false, "no-encryption", 1);
+      this.log +="\ndb connected " + db;
+      //open
+      await db.open();
+      this.log +="\ndb opened.\n";
+      //insert
+      let sqlcmd :string = 
+      "INSERT INTO asset (AssetID, AssetType, Satus, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate) VALUES (?,?,?,?,?,?,?,?,?,?)"
+      this.opost = this.createAssetForm.value;
+      var p = this.opost;
+      let postableChanges = [p.AssetID,p.AssetType,p.Status,p.GPSLatitude,p.GPSLongitude,p.Region,p.Division,p.SubDivision,p.NearestMilePost,p.LastTestedDate];
+      let ret: any = await db.run(sqlcmd,postableChanges);
     
+      //check insert
+      if (ret.changes.changes !== 1){
+        return Promise.reject(new Error("Execution failed"));
+      }
+      this.log += "\ninsertion successful\n";
+      //disconnect
+      // Close Connection MyDB        
+      await this._sqlite.closeConnection("martis"); 
+      this.log += "\n> closeConnection 'myDb' successful\n";
+
+      await showAlert("asset added.");
+      return Promise.resolve();
+    }
+    catch(err){
+      await showAlert(err.message);
+    }
+    //==============================================
+    // this.opost = this.createAssetForm.value;
+
+    // console.log("Page Saved", this.opost);
+
+    //  this.assetService.post(this.opost).subscribe((data) => {
+    //   console.log("Post method success?: ", data);
+    //   if(data){
+    //     this.showAlert(true);
+    //   }else{
+    //     this.showAlert(false);
+    //   }
+    // });
 
   }
 
@@ -101,7 +145,7 @@ export class Posts {
   AssetType: string;
   Status: string;
   NearestMilePost: string;
-  Sivision: string;
+  Division: string;
   SubDivision: string;
   Region: string;
   GPSLongitude: string;
