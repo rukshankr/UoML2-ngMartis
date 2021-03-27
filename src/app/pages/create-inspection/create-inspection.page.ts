@@ -4,7 +4,7 @@ import { InspectionService } from "src/app/services/create-inspection.service";
 import { AlertController, Platform } from "@ionic/angular";
 import { SqliteService } from "src/app/services/sqlite.service";
 import { AssetService } from "src/app/services/asset-service.service";
-//import { DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: "app-create-inspection",
@@ -57,7 +57,7 @@ export class CreateInspectionPage implements OnInit {
       [Validators.required, Validators.pattern("^EMP[0-9]{3}")],
     ],
     Frequency: [""],
-    TestModuleID: [
+    TestModID: [
       "",
       [Validators.required, Validators.pattern("^TM[0-9]{3}")],
     ],
@@ -70,7 +70,8 @@ export class CreateInspectionPage implements OnInit {
     private _sqlite: SqliteService,
     private alertCtrl: AlertController,
     private plt: Platform,
-    private _assetService: AssetService //private datePipe: DatePipe
+    private _assetService: AssetService,
+    private datePipe: DatePipe
   ) {}
 
   showAlert = async (heading: string, message: string) => {
@@ -188,7 +189,7 @@ export class CreateInspectionPage implements OnInit {
     
     this.opost = this.createInspectionForm.value;
     let today = new Date();
-    this.opost.DateIssued = today.toISOString();
+    this.opost.DateIssued = this.datePipe.transform(today, 'yyyy-MM-dd HH:mm:ss').toString();
 
     console.log('Page Saved', this.opost);
 
