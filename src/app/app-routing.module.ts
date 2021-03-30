@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import {SelectionPageModule} from './pages/selection/selection.module';
 
 const routes: Routes = [
 	{
@@ -7,6 +8,7 @@ const routes: Routes = [
 		redirectTo: 'login',
 		pathMatch: 'full'
 	},
+	
 	// {
 	// 	path: 'recipes',
 	// 	children: [
