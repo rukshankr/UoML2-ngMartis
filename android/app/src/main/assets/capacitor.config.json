@@ -1,13 +1,17 @@
 {
-  "appId": "com.recipe.viewer",
-  "appName": "MARTIS",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www",
-  "plugins": {
-    "SplashScreen": {
-      "launchShowDuration": 0
-    }
-  },
-  "cordova": {}
+	"appId": "com.martis.app",
+	"appName": "MARTIS",
+	"bundledWebRuntime": false,
+	"npmClient": "npm",
+	"webDir": "www",
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 0
+		}
+	},
+	"cordova": {},
+	"server": {
+		"url": "http://192.168.1.2:8100",
+		"originalUrl": "http://192.168.1.2:8100"
+	}
 }

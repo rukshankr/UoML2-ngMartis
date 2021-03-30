@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
@@ -16,7 +16,7 @@ import { InspectionService } from 'src/app/services/create-inspection.service';
     IonicModule,
     CreateInspectionPageRoutingModule
   ],
-  providers: [InspectionService],
+  providers: [InspectionService, DatePipe],
   declarations: [CreateInspectionPage]
 })
 export class CreateInspectionPageModule {}
