@@ -12,6 +12,10 @@ const routes: Routes = [
 		loadChildren: () => import('./grounds-test/grounds-test.module').then((m) => m.GroundsTestPageModule)
 	},
 	{
+		path: 'signal-test/:assetid/:testid',
+		loadChildren: () => import('./signal-test/signal-test.module').then((m) => m.SignalTestPageModule)
+	},
+	{
 		path: 'repair-form/:assetid/:engineerid/:comments/:createddate',
 		loadChildren: () => import('./repair-form/repair-form.module').then((m) => m.RepairFormPageModule)
 	},
@@ -59,11 +63,14 @@ const routes: Routes = [
 		loadChildren: () =>
 			import('./pages/report-generation/report-generation.module').then((m) => m.ReportGenerationPageModule)
 	},
-  {
-    path: 'syncer',
-    loadChildren: () => import('./pages/syncer/syncer.module').then( m => m.SyncerPageModule)
-  }
-
+	{
+		path: 'syncer',
+		loadChildren: () => import('./pages/syncer/syncer.module').then((m) => m.SyncerPageModule)
+	},
+	{
+		path: 'signal-test',
+		loadChildren: () => import('./signal-test/signal-test.module').then((m) => m.SignalTestPageModule)
+	}
 ];
 
 @NgModule({
