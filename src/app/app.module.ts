@@ -13,9 +13,10 @@ import { AppRoutingModule } from "./app-routing.module";
 import { HttpClientModule } from "@angular/common/http"; //added for API calls
 import { FormsModule } from "@angular/forms";
 import { SqliteService } from "./services/sqlite.service";
+import { LoginComponent } from "./login-comp/login-comp.component";
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, LoginComponent],
   entryComponents: [],
   imports: [
     BrowserModule,

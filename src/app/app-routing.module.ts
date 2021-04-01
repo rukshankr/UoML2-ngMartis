@@ -1,7 +1,34 @@
 import { NgModule } from "@angular/core";
-import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
+import { BrowserModule } from "@angular/platform-browser";
+import {
+  PreloadAllModules,
+  Router,
+  RouterModule,
+  Routes,
+} from "@angular/router";
 import { SelectionPageModule } from "./pages/selection/selection.module";
-import { OktaCallbackComponent, OktaAuthGuard } from "@okta/okta-angular";
+import {
+  OKTA_CONFIG,
+  OktaAuthModule,
+  OktaCallbackComponent,
+  OktaAuthGuard,
+} from "@okta/okta-angular";
+import { LoginComponent } from "./login-comp/login-comp.component";
+import { AppComponent } from "./app.component";
+
+const config = {
+  issuer: "https://dev-44560058.okta.com/oauth2/default",
+  redirectUri: "http://localhost:8100/selection",
+  clientId: "0oag5ujmllTDi2zrM5d6",
+  pkce: true,
+};
+
+export function onAuthRequired(oktaAuth, injector) {
+  const router = injector.get(Router);
+
+  // Redirect the user to your custom login page
+  router.navigate(["/login"]);
+}
 
 const routes: Routes = [
   {
@@ -32,11 +59,14 @@ const routes: Routes = [
   },
   {
     path: "selection",
+    canActivateChild: [OktaAuthGuard],
+    data: {
+      onAuthRequired,
+    },
     loadChildren: () =>
       import("./pages/selection/selection.module").then(
         (m) => m.SelectionPageModule
       ),
-    //canActivate: [OktaAuthGuard],
   },
   {
     path: "manage-repairs",
@@ -82,8 +112,9 @@ const routes: Routes = [
   },
   {
     path: "login",
-    loadChildren: () =>
-      import("./pages/login/login.module").then((m) => m.LoginPageModule),
+    // loadChildren: () =>
+    //   import("./pages/login/login.module").then((m) => m.LoginPageModule),
+    component: LoginComponent,
   },
   {
     path: "report-generation",
@@ -97,16 +128,18 @@ const routes: Routes = [
     loadChildren: () =>
       import("./pages/syncer/syncer.module").then((m) => m.SyncerPageModule),
   },
-  // {
-  //   path: "login/callback",
-  //   component: OktaCallbackComponent,
-  // },
+  {
+    path: "login/callback",
+    component: OktaCallbackComponent,
+  },
 ];
 
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
+    OktaAuthModule,
   ],
+  providers: [{ provide: OKTA_CONFIG, useValue: config }],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

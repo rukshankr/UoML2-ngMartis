@@ -10,14 +10,10 @@ const routes: Routes = [
     path: "",
     component: LoginPage,
   },
-  {
-    path: "login/callback",
-    component: OktaCallbackComponent,
-  },
-  {
-    path: "selection",
-    component: SelectionPageModule,
-  },
+  // {
+  //   path: "selection",
+  //   component: SelectionPageModule,
+  // },
 ];
 
 @NgModule({
