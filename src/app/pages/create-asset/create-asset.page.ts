@@ -39,9 +39,6 @@ export class CreateAssetPage implements OnInit {
   };
 
   createAssetForm = this.formBuilder.group({
-<<<<<<< HEAD
-    AssetID: [null ,[Validators.required,Validators.pattern('^A[0-9]{3}'),Validators.maxLength(4)]],
-=======
     AssetID: [
       "",
       [
@@ -50,10 +47,12 @@ export class CreateAssetPage implements OnInit {
         Validators.maxLength(4),
       ],
     ],
->>>>>>> fbca71649f9de5c5baefb049d784c8f76aebf904
     AssetType: [""],
     Status: "Functions",
-    NearestMilePost: [ "", [Validators.pattern("^MP[0-9]{3}"), Validators.maxLength(5)], ],
+    NearestMilePost: [
+      "",
+      [Validators.pattern("^MP[0-9]{3}"), Validators.maxLength(5)],
+    ],
     Division: [""],
     SubDivision: [""],
     Region: [""],
@@ -78,14 +77,6 @@ export class CreateAssetPage implements OnInit {
     }
   }
 
-<<<<<<< HEAD
-     this.assetService.post(this.opost).subscribe((data) => {
-      console.log("Post method success?: ", data);
-      if(data === "Error"){
-        this.showAlert(false);
-      }else{
-        this.showAlert(true);
-=======
   async onSave() {
     if (!this.desktop) {
       try {
@@ -133,10 +124,9 @@ export class CreateAssetPage implements OnInit {
         return Promise.resolve();
       } catch (err) {
         await this.showAlert(err.message);
->>>>>>> fbca71649f9de5c5baefb049d784c8f76aebf904
       }
     } else {
-      console.log("platform-desktop: "+this.desktop);
+      console.log("platform-desktop: " + this.desktop);
 
       this.opost = this.createAssetForm.value;
 

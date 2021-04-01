@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
 import { SelectionPageModule } from "./pages/selection/selection.module";
+import { OktaCallbackComponent, OktaAuthGuard } from "@okta/okta-angular";
 
 const routes: Routes = [
   {
@@ -35,6 +36,7 @@ const routes: Routes = [
       import("./pages/selection/selection.module").then(
         (m) => m.SelectionPageModule
       ),
+    //canActivate: [OktaAuthGuard],
   },
   {
     path: "manage-repairs",
@@ -95,6 +97,10 @@ const routes: Routes = [
     loadChildren: () =>
       import("./pages/syncer/syncer.module").then((m) => m.SyncerPageModule),
   },
+  // {
+  //   path: "login/callback",
+  //   component: OktaCallbackComponent,
+  // },
 ];
 
 @NgModule({
