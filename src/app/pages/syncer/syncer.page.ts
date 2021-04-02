@@ -161,7 +161,7 @@ export class SyncerPage implements OnInit {
       const syncDate: string = "2020-11-25T08:30:25.000Z";
       await db.setSyncDate(syncDate);
 
-      ret = await db.query("SELECT * FROM test;");
+      ret = await db.query("SELECT * FROM role;");
       this.localTests = ret.values;
       if (ret.values.length === 0) {
         return Promise.reject(new Error("getTests query failed"));
@@ -191,13 +191,6 @@ export class SyncerPage implements OnInit {
 
       // open db testNew
       await db.open();
-
-      // // create synchronization table
-      // let result: any = await db.createSyncTable();
-
-      // // set the synchronization date
-      // const syncDate: string = "2020-11-25T08:30:25.000Z";
-      // await db.setSyncDate(syncDate);
 
       this.exportedJson += "\n>>> before partial export\n";
       // export json
