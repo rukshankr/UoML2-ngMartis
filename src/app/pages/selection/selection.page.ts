@@ -107,28 +107,28 @@ export class SelectionPage implements OnInit {
 
   async runDB(): Promise<void> {
     try {
-      let martisExists = await this._sqlite.sqlite.isDatabase("martis");
-      if (martisExists.result) {
-		  this.log+= "((martis db exists))";
-        let partialJson = await this._mainService.partialImportAll();
+    //   let martisExists = await this._sqlite.sqlite.isDatabase("martis");
+    //   if (martisExists.result) {
+	// 	  this.log+= "((martis db exists))";
+    //     let partialJson = await this._mainService.partialImportAll();
 
-        let result = await this._sqlite.isJsonValid(
-          JSON.stringify(partialJson)
-        );
-        if (!result.result) {
-          return Promise.reject(new Error("IsJsonValid failed"));
-        }
-        this.log += "\n$$$ dataToImport Json Object is valid $$$\n";
-        // full import
-        let ret = await this._sqlite.importFromJson(
-          JSON.stringify(partialJson)
-        );
-        this.log += `\n||| full import result ${ret.changes.changes}`;
-        if (ret.changes.changes === -1)
-          return Promise.reject(
-            new Error("ImportFromJson 'full' dataToImport failed")
-          );
-      } else {
+    //     let result = await this._sqlite.isJsonValid(
+    //       JSON.stringify(partialJson)
+    //     );
+    //     if (!result.result) {
+    //       return Promise.reject(new Error("IsJsonValid failed"));
+    //     }
+    //     this.log += "\n$$$ dataToImport Json Object is valid $$$\n";
+    //     // full import
+    //     let ret = await this._sqlite.importFromJson(
+    //       JSON.stringify(partialJson)
+    //     );
+    //     this.log += `\n||| full import result ${ret.changes.changes}`;
+    //     if (ret.changes.changes === -1)
+    //       return Promise.reject(
+    //         new Error("ImportFromJson 'full' dataToImport failed")
+    //       );
+    //   } else {
         //import fully from mysql
 		let imported = await this._mainService.fullImportAll();
 
@@ -145,7 +145,7 @@ export class SelectionPage implements OnInit {
           return Promise.reject(
             new Error("ImportFromJson 'full' dataToImport failed")
           );
-      }
+      //}
 
       // check if the databases exist
       // and delete it for multiple successive tests

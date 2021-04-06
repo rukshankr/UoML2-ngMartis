@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { capSQLiteSet } from "@capacitor-community/sqlite";
 import { AlertController } from "@ionic/angular";
 import { InspectionService } from "src/app/services/create-inspection.service";
+import { DatabaseService } from "src/app/services/database.service";
 import { inspectionListService } from "src/app/services/inspection-list.service";
 import { SqliteService } from "src/app/services/sqlite.service";
 
@@ -30,6 +31,7 @@ export class SyncerPage implements OnInit {
 
   constructor(
     private _sqlite: SqliteService,
+    private _dbService: DatabaseService,
     private _inspectionService: InspectionService,
     private _inspectionListService: inspectionListService,
     private alertCtrl: AlertController
@@ -161,7 +163,7 @@ export class SyncerPage implements OnInit {
       const syncDate: string = "2020-11-25T08:30:25.000Z";
       await db.setSyncDate(syncDate);
 
-      ret = await db.query("SELECT * FROM role;");
+      ret = await db.query("SELECT * FROM test;");
       this.localTests = ret.values;
       if (ret.values.length === 0) {
         return Promise.reject(new Error("getTests query failed"));
@@ -189,14 +191,14 @@ export class SyncerPage implements OnInit {
         1
       );
 
-      // open db testNew
+      // open db martis
       await db.open();
 
-      this.exportedJson += "\n>>> before partial export\n";
       // export json
       let jsonObj: any = await db.exportToJson("full");
 
       this.exportedJson += JSON.stringify(jsonObj.export);
+      
       // test Json object validity
       let result = await this._sqlite.isJsonValid(
         JSON.stringify(jsonObj.export)
@@ -208,6 +210,17 @@ export class SyncerPage implements OnInit {
 
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");
+
+      //export to Main DB
+      this._dbService.fullExportAll(jsonObj.export).subscribe((data) => {
+        console.log('Export post method success?: ', data);
+        if (data) {
+          this.showAlert("Success","Completely Exported");
+        } else {
+          this.showAlert("Error", "Export not added.");
+        }
+      });
+
       this.showAlert("Success", "exported");
       return Promise.resolve();
     } catch (err) {

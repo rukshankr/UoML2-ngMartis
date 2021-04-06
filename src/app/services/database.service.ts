@@ -54,4 +54,9 @@ export class DatabaseService {
 		return this.http.get('https://martisapiversion1.herokuapp.com/sync/partialexport').toPromise();
 			
 	}
+
+	//full db export
+	fullExportAll(exported: Object): Observable <any> {
+		return this.http.post("https://martisapiversion1.herokuapp.com/sync/fullimport",exported);
+	  }
 }

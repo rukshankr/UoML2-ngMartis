@@ -86,10 +86,30 @@ export class RepairFormPage implements OnInit {
 			  	//insert
 				  let sqlcmd: string =
 				  "UPDATE repair SET CompletedDate = ? , comments = ? WHERE AssetID = ? AND CreatedDate = ?";
+				
+				  let postableChanges = [this.opost.CompletedDate,this.opost.comments,this.opost.AssetId, this.opost.CreatedDate];
+				  let ret: any = await db.run(sqlcmd, postableChanges);
+			
+				  //check insert
+				  if (ret.changes.changes !== 1) {
+					return Promise.reject(new Error("Execution failed"));
+				  }
+				  this.log += "\nupdate successful\n";
+				  //disconnect
+				  // Close Connection MyDB
+				  await this._sqlite.closeConnection("martis");
+				  this.log += "\n> closeConnection 'martis' successful\n";
+			
+				  await this.showAlert(true);
+				  return Promise.resolve();
 
 			}
 			catch(err){
-
+				// Close Connection MyDB
+				await this._sqlite.closeConnection("martis");
+				this.log += "\n> closeConnection 'martis' successful\n";
+				//error message
+				return await this.showAlert(false);
 			}
 			return;
 		}
