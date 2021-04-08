@@ -30,6 +30,7 @@
     "@ionic/angular": "latest",
     "@okta/okta-angular": "^3.0.1",
     "@okta/okta-signin-widget": "^5.5.0",
+    "angular-cli-ghpages": "^1.0.0-rc.1",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"
