@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
 import { CreateRepairService } from 'src/app/services/create-repair.service';
+import { SqliteService } from '../services/sqlite.service';
 
 @Component({
 	selector: 'app-repair-form',
@@ -21,6 +22,7 @@ export class RepairFormPage implements OnInit {
 	createddate = String;
 
 	opost = new Posts();
+	log: string = "";
 
 	//platform
 	desktop: boolean = true;
@@ -54,21 +56,63 @@ export class RepairFormPage implements OnInit {
 		private formBuilder: FormBuilder,
 		private setRepair: CreateRepairService,
 		private alertCtrl: AlertController,
+		private _sqlite: SqliteService,
 		private route: ActivatedRoute,
 		private datePipe: DatePipe,
 		private plt: Platform
 	) {}
 
-	onSave() {
-		if(!this.desktop){
-			//sqlite code
-			return;
-		}
+	async onSave() {
 		let date = this.route.snapshot.params.createddate;
 		this.opost = this.createRepairForm.value;
 		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'utc').toString();
 		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-dd HH:mm:ss');
 		console.log(this.opost.CompletedDate);
+
+		if(!this.desktop){
+			try{
+				//connect
+				const db = await this._sqlite.createConnection(
+				"martis",
+				false,
+				"no-encryption",
+				1
+			  	);
+			  	this.log += "\ndb connected " + db;
+			  	//open
+			  	await db.open();
+			  	this.log += "\ndb opened.\n";
+
+			  	//insert
+				  let sqlcmd: string =
+				  "UPDATE repair SET CompletedDate = ? , comments = ? WHERE AssetID = ? AND CreatedDate = ?";
+				
+				  let postableChanges = [this.opost.CompletedDate,this.opost.comments,this.opost.AssetId, this.opost.CreatedDate];
+				  let ret: any = await db.run(sqlcmd, postableChanges);
+			
+				  //check insert
+				  if (ret.changes.changes !== 1) {
+					return Promise.reject(new Error("Execution failed"));
+				  }
+				  this.log += "\nupdate successful\n";
+				  //disconnect
+				  // Close Connection MyDB
+				  await this._sqlite.closeConnection("martis");
+				  this.log += "\n> closeConnection 'martis' successful\n";
+			
+				  await this.showAlert(true);
+				  return Promise.resolve();
+
+			}
+			catch(err){
+				// Close Connection MyDB
+				await this._sqlite.closeConnection("martis");
+				this.log += "\n> closeConnection 'martis' successful\n";
+				//error message
+				return await this.showAlert(false);
+			}
+			return;
+		}
 
 		console.log('Page Saved', this.opost);
 

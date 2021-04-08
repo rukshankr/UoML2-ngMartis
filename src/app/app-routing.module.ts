@@ -37,6 +37,20 @@ const routes: Routes = [
       ),
   },
   {
+    path: "signal-test/:assetid/:testid",
+    loadChildren: () =>
+      import("./signal-test/signal-test.module").then(
+        (m) => m.SignalTestPageModule
+      ),
+  },
+  {
+    path: "repair-form/:assetid/:engineerid/:comments/:createddate",
+    loadChildren: () =>
+      import("./repair-form/repair-form.module").then(
+        (m) => m.RepairFormPageModule
+      ),
+  },
+  {
     path: "repair-form/:assetid/:engineerid/:comments/:createddate",
     loadChildren: () =>
       import("./repair-form/repair-form.module").then(
@@ -48,6 +62,13 @@ const routes: Routes = [
     loadChildren: () =>
       import("./grounds-test/grounds-test.module").then(
         (m) => m.GroundsTestPageModule
+      ),
+  },
+  {
+    path: "signal-test/:assetid/:testid",
+    loadChildren: () =>
+      import("./signal-test/signal-test.module").then(
+        (m) => m.SignalTestPageModule
       ),
   },
   {
@@ -116,6 +137,13 @@ const routes: Routes = [
     path: "syncer",
     loadChildren: () =>
       import("./pages/syncer/syncer.module").then((m) => m.SyncerPageModule),
+  },
+  {
+    path: "signal-test",
+    loadChildren: () =>
+      import("./signal-test/signal-test.module").then(
+        (m) => m.SignalTestPageModule
+      ),
   },
   {
     path: "login/callback",

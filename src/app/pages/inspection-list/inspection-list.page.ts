@@ -169,8 +169,4 @@ export class InspectionListPage implements OnInit {
       return Promise.reject(err);
     }
   }
-
-  check() {
-    console.log("test");
-  }
 }

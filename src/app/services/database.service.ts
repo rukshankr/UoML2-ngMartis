@@ -1,18 +1,17 @@
-import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
 
 export interface Asset {
-	aId: string;
-	status: string;
-	gpsLat: string;
-	gpsLong: string;
-	region: string;
-	division: string;
-	subdivision: string;
-	milepost: string;
-	lastTested: string;
+	AssetID: string;
+	Status: string;
+	GPSLatitude: string;
+	GPSLongitude: string;
+	Region: string;
+	Division: string;
+	SubDivision: string;
+	NearestMilePost: string;
+	LastTestedDate: string;
 }
 
 export interface Test {
@@ -24,46 +23,40 @@ export interface Test {
 	SupervisorID: string;
 	DateCompleted: string;
 	Frequency: string;
-	Urgent: string;
+	Priority: string;
 	TestModID: string;
 	comments: string;
 }
 export interface Repair {
-	AssetId: string;
-	EngineerId: string;
+	AssetID: string;
+	EngineerID: string;
 	CreatedDate: string;
 	CompletedDate: string;
-	Comments: string;
+	comments: string;
 }
 
 @Injectable({
 	providedIn: 'root'
 })
 export class DatabaseService {
-	private dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	
+	constructor(
+		private http: HttpClient
+	){}
 
-	assets = new BehaviorSubject([]);
-	tests = new BehaviorSubject([]);
-	databaseErr: any;
-	////
-	log: string;
-	////
-
-	constructor(private plt: Platform, private http: HttpClient) {
-		this.plt.ready().then(() => {});
+	//full db import 
+	fullImportAll(): Promise<Object> {
+		return this.http.get('https://martisapiversion1.herokuapp.com/sync/export').toPromise();
 	}
 
-	getDatabaseState() {
-		const redy = this.dbReady.asObservable();
-		this.log += '\n';
-		return redy;
+	partialImportAll(): Promise<Object>{
+		
+		return this.http.get('https://martisapiversion1.herokuapp.com/sync/partialexport').toPromise();
+			
 	}
 
-	getTests(): Observable<any[]> {
-		return this.tests.asObservable();
-	}
-
-	getRepairs(): Observable<any[]> {
-		return this.tests.asObservable();
-	}
+	//full db export
+	fullExportAll(exported: Object): Observable <any> {
+		return this.http.post("https://martisapiversion1.herokuapp.com/sync/fullimport",exported);
+	  }
 }

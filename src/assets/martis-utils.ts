@@ -9,7 +9,7 @@ INSERT OR IGNORE INTO access VALUES ('AC02','View');
 CREATE TABLE IF NOT EXISTS asset(
   AssetID TEXT NOT NULL PRIMARY KEY,
   AssetType TEXT NOT NULL,
-  Satus TEXT NOT NULL,
+  Status TEXT NOT NULL,
   GPSLatitude TEXT NOT NULL,
   GPSLongitude TEXT NOT NULL,
   Region TEXT NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS asset(
   LastTestedDate TEXT NOT NULL
 );
 
-INSERT OR IGNORE INTO asset (AssetID, AssetType, Satus, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate)
+INSERT OR IGNORE INTO asset (AssetID, AssetType, Status, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate)
 VALUES
 ('A101', 'House', 'Functions', '40.741895', '-73.989308', 'NY', 'Manhatten', 'Bronx', 'MP251', '2019-08-14 00:00:00'),
 ('A102', 'Relay', 'Functions', '40.96418572610003', '-76.5923811201172', 'PA', 'Mechanicsville', 'Brook Avenue', 'MP211', '2018-09-12 03:16:39'),

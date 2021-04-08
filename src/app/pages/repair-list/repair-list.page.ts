@@ -65,40 +65,36 @@ export class RepairListPage implements OnInit {
 			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
 			this.log += '\ndb connected ' + db;
 
-			// check if the databases exist
-			// and delete it for multiple successive tests
-			//await deleteDatabase(db);
-
+			
 			// open db testNew
 			await db.open();
 			this.log += '\ndb opened';
-			// create tables in db
-			// let ret: any = await db.execute(createSchema);
-			// if (ret.changes.changes < 0) {
-			//   return Promise.reject(new Error("Execute createSchema failed"));
-			// }
-
+			
 			// create synchronization table
-			let ret: any = await db.createSyncTable();
-			console.log('$$$ createSyncTable ret.changes.changes in db ' + ret.changes.changes);
+			// let ret: any = await db.createSyncTable();
+			// console.log('$$$ createSyncTable ret.changes.changes in db ' + ret.changes.changes);
 
-			// set the synchronization date
-			const syncDate: string = '2020-11-25T08:30:25.000Z';
-			await db.setSyncDate(syncDate);
+			// // set the synchronization date
+			// const syncDate: string = '2020-11-25T08:30:25.000Z';
+			// await db.setSyncDate(syncDate);
 
 			// select all assets in db
-			ret = await db.query('SELECT * FROM repair;');
+			let ret = await db.query('SELECT * FROM repair;');
 			this.repairs = ret.values;
-			if (ret.values.length !== 3) {
-				return Promise.reject(new Error('Query 2 asset failed'));
+			if (ret.values.length === 0) {
+				return Promise.reject(new Error('Query 2 repair failed'));
 			}
 			this.log += '\nquery done.';
 			// Close Connection MyDB
 			await this._sqlite.closeConnection('martis');
-			this.log += "\n> closeConnection 'myDb' successful\n";
+			this.log += "\n> closeConnection 'martis' successful\n";
 
 			return Promise.resolve();
 		} catch (err) {
+			// Close Connection MyDB
+			await this._sqlite.closeConnection('martis');
+			this.log += "\n> closeConnection 'martis' successful\n";
+
 			this.log += '\nrejected';
 			return Promise.reject(err);
 		}

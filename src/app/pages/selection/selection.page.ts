@@ -6,6 +6,10 @@ import { createSchema } from "src/assets/martis-utils";
 
 import { OktaAuthService } from "@okta/okta-angular";
 import { HttpClient } from "@angular/common/http";
+import { ThrowStmt } from "@angular/compiler";
+import { capSQLiteJson, capSQLiteValues } from "@capacitor-community/sqlite";
+
+import { DatabaseService } from "src/app/services/database.service";
 
 // import { TIMEOUT } from 'dns';
 // import { type } from 'os';
@@ -21,13 +25,15 @@ export class SelectionPage implements OnInit {
   username: string;
   userPin: number;
   pinValidated: boolean = false;
+  importJson;
 
   constructor(
     public atrCtrl: AlertController,
     private _sqlite: SqliteService,
     private plt: Platform,
     private oktaAuth: OktaAuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private _mainService: DatabaseService
   ) {}
 
   async showError(data: any) {
@@ -140,8 +146,50 @@ export class SelectionPage implements OnInit {
 
   async runDB(): Promise<void> {
     try {
-      let result: any = await this._sqlite.echo("Hello World");
-      this.log += " from Echo " + result.value;
+      //   let martisExists = await this._sqlite.sqlite.isDatabase("martis");
+      //   if (martisExists.result) {
+      // 	  this.log+= "((martis db exists))";
+      //     let partialJson = await this._mainService.partialImportAll();
+
+      //     let result = await this._sqlite.isJsonValid(
+      //       JSON.stringify(partialJson)
+      //     );
+      //     if (!result.result) {
+      //       return Promise.reject(new Error("IsJsonValid failed"));
+      //     }
+      //     this.log += "\n$$$ dataToImport Json Object is valid $$$\n";
+      //     // full import
+      //     let ret = await this._sqlite.importFromJson(
+      //       JSON.stringify(partialJson)
+      //     );
+      //     this.log += `\n||| full import result ${ret.changes.changes}`;
+      //     if (ret.changes.changes === -1)
+      //       return Promise.reject(
+      //         new Error("ImportFromJson 'full' dataToImport failed")
+      //       );
+      //   } else {
+      //import fully from mysql
+      let imported = await this._mainService.fullImportAll();
+
+      // test Json object validity
+      let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
+      if (!result.result) {
+        return Promise.reject(new Error("IsJsonValid failed"));
+      }
+      this.log += "\n$$$ dataToImport Json Object is valid $$$\n";
+      // full import
+      let rets = await this._sqlite.importFromJson(JSON.stringify(imported));
+      this.log += `\n||| full import result ${rets.changes.changes}`;
+      if (rets.changes.changes === -1)
+        return Promise.reject(
+          new Error("ImportFromJson 'full' dataToImport failed")
+        );
+      //}
+
+      // check if the databases exist
+      // and delete it for multiple successive tests
+      //await deleteDatabase(db);
+
       // initialize the connection
       const db = await this._sqlite.createConnection(
         "martis",
@@ -151,18 +199,22 @@ export class SelectionPage implements OnInit {
       );
       this.log += "\ndb connected " + db;
 
-      // check if the databases exist
-      // and delete it for multiple successive tests
-      await deleteDatabase(db);
-
       // open db testNew
       await db.open();
       this.log += "\ndb opened";
+
+      //table exists
+      let isTable = await db.isTable("repair");
+      this.log += "\n???is table repair?: " + isTable.result + "|\n";
+
+      let res = await db.query("SELECT * FROM role;");
+      this.log += "\nrole;;: " + res.values.length + " \n";
+
       // create tables in db
-      let ret: any = await db.execute(createSchema);
-      if (ret.changes.changes < 0) {
-        return Promise.reject(new Error("Execute createSchema failed"));
-      }
+      //let ret: any = await db.execute(createSchema);
+      //   if (ret.changes.changes < 0) {
+      // 	return Promise.reject(new Error("Execute createSchema failed"));
+      //   }
 
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");
@@ -171,6 +223,7 @@ export class SelectionPage implements OnInit {
       return Promise.resolve();
     } catch (err) {
       this.log += "\nrejected";
+      this.showError(err.message);
       return Promise.reject(err);
     }
   }
