@@ -70,7 +70,7 @@ export class GroundsTestPage implements OnInit {
 		await this.alertCtrl
 			.create({
 				header: 'Result',
-				message: val ? 'Test added Sucessfully' : 'Error',
+				message: val ? 'Test added Successfully' : 'Error',
 				buttons: [
 					{
 						text: 'OK',
