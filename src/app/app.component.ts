@@ -14,8 +14,10 @@ import { OktaAuthService } from "@okta/okta-angular";
   styleUrls: ["app.component.scss"],
 })
 export class AppComponent implements OnInit {
+  public userRole: string;
+  public userName: string;
   private initPlugin: boolean;
-  isAuthenticated: boolean;
+  public isAuthenticated: boolean;
 
   constructor(
     private platform: Platform,
@@ -26,23 +28,29 @@ export class AppComponent implements OnInit {
     private router: Router
   ) {
     this.initializeApp();
+    this.isAuthenticated = false;
     this.oktaAuth.$authenticationState.subscribe((auth) => {
       this.isAuthenticated = auth;
     });
   }
   async ngOnInit() {
     this.isAuthenticated = await this.oktaAuth.isAuthenticated();
-  }
-
-  login() {
-    this.oktaAuth.signInWithRedirect({
-      originalUri: "/selection",
-    });
+    //console.log(this.isAuthenticated);
+    const userClaims = await this.oktaAuth
+      .getUser()
+      .then((data) => {
+        console.log(data);
+        this.userRole = data.family_name.split(" ")[0];
+        this.userName = data.given_name;
+        console.log(this.userRole);
+        console.log(this.userName);
+      })
+      .catch((err) => console.log(err));
   }
 
   async logout() {
     await this.oktaAuth.signOut();
-    this.router.navigateByUrl("/");
+    this.router.navigateByUrl("/login");
   }
 
   initializeApp() {

@@ -16,13 +16,6 @@ import {
 import { LoginComponent } from "./login-comp/login-comp.component";
 import { AppComponent } from "./app.component";
 
-const config = {
-  issuer: "https://dev-44560058.okta.com/oauth2/default",
-  redirectUri: "http://localhost:8100/selection",
-  clientId: "0oag5ujmllTDi2zrM5d6",
-  pkce: true,
-};
-
 export function onAuthRequired(oktaAuth, injector) {
   const router = injector.get(Router);
 
@@ -59,10 +52,6 @@ const routes: Routes = [
   },
   {
     path: "selection",
-    canActivateChild: [OktaAuthGuard],
-    data: {
-      onAuthRequired,
-    },
     loadChildren: () =>
       import("./pages/selection/selection.module").then(
         (m) => m.SelectionPageModule
@@ -137,9 +126,9 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
-    OktaAuthModule,
+    // OktaAuthModule,
   ],
-  providers: [{ provide: OKTA_CONFIG, useValue: config }],
+  //providers: [{ provide: OKTA_CONFIG, useValue: config }, OktaAuthGuard],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
