@@ -16,7 +16,9 @@ export class inspectionListService {
 
   getinspections(): Observable<any> {
     //return this.httpclient.get('https://martisapiversion1.herokuapp.com/test/getTests');
-    return this.http.get("http://localhost:3000/test/getTests");
+    return this.http.get(
+      "https://martisapiversion1.herokuapp.com/test/getTests"
+    );
   }
 
   async getCoords() {
@@ -31,7 +33,7 @@ export class inspectionListService {
     // console.log(this.latitude);
     this.getCoords();
     return this.http.post(
-      "http://localhost:3000/test//orderByLocationAndInspector",
+      "https://martisapiversion1.herokuapp.com/test/orderByLocationAndInspector",
       {
         empLatitude: this.latitude,
         empLongitude: this.longitude,
