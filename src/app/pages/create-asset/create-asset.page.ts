@@ -49,7 +49,10 @@ export class CreateAssetPage implements OnInit {
     ],
     AssetType: [""],
     Status: "Functions",
-    NearestMilePost: [ "", [Validators.pattern("^MP[0-9]{3}"), Validators.maxLength(5)], ],
+    NearestMilePost: [
+      "",
+      [Validators.pattern("^MP[0-9]{3}"), Validators.maxLength(5)],
+    ],
     Division: [""],
     SubDivision: [""],
     Region: [""],
@@ -123,7 +126,7 @@ export class CreateAssetPage implements OnInit {
         await this.showAlert(err.message);
       }
     } else {
-      console.log("platform-desktop: "+this.desktop);
+      console.log("platform-desktop: " + this.desktop);
 
       this.opost = this.createAssetForm.value;
 

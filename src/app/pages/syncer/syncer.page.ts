@@ -99,49 +99,49 @@ export class SyncerPage implements OnInit {
   }
 
   async exportToMain() {
-    this.log += "local length:"+ this.localTests.length;
-    if(this.localTests.length === 0){
+    this.log += "local length:" + this.localTests.length;
+    if (this.localTests.length === 0) {
       this.showAlert("Fail", "local db not loaded");
       return;
     }
     let i: number;
     let count: number = this.localTests.length;
-    for(i = 0; i < this.localTests.length; i++){
+    for (i = 0; i < this.localTests.length; i++) {
       this.oExportTest = {
         TestID: this.localTests[i].TestID,
-        DateIssued : this.localTests[i].DateIssued,
-	      AssetID : this.localTests[i].AssetID,
-	      InspectorID : this.localTests[i].InspectorID,
-        Result : this.localTests[i].Result,
-	      SupervisorID : this.localTests[i].SupervisorID,
-	      DateCompleted : this.localTests[i].DateCompleted,
-	      Frequency : this.localTests[i].Frequency,
-	      Priority : this.localTests[i].Priority,
-	      TestModID : this.localTests[i].TestModID,
-	      comments: this.localTests[i].comments
-        };
-        this.log += 'Page Saved: ' + this.oExportTest;
-        this._inspectionService.export(this.oExportTest).subscribe((data) => {
-          console.log("imported: ",data, " count: ", count);
-          if(data){
-            count--;
-          }
-        })
+        DateIssued: this.localTests[i].DateIssued,
+        AssetID: this.localTests[i].AssetID,
+        InspectorID: this.localTests[i].InspectorID,
+        Result: this.localTests[i].Result,
+        SupervisorID: this.localTests[i].SupervisorID,
+        DateCompleted: this.localTests[i].DateCompleted,
+        Frequency: this.localTests[i].Frequency,
+        Priority: this.localTests[i].Priority,
+        TestModID: this.localTests[i].TestModID,
+        comments: this.localTests[i].comments,
+      };
+      this.log += "Page Saved: " + this.oExportTest;
+      this._inspectionService.export(this.oExportTest).subscribe((data) => {
+        console.log("imported: ", data, " count: ", count);
+        if (data) {
+          count--;
+        }
+      });
     }
-    if (count === 0){
+    if (count === 0) {
       this.showAlert("Import Successful", "tests imported to Main DB");
     }
   }
 
-  getMainTable() {
-    this._inspectionListService.getinspections().subscribe((data) => {
-      this.mainTests = data;
-      this.mainTests = Array.of(this.mainTests.data);
-      console.log(this.mainTests);
-      this.log = this.mainTests[0];
-    });
-    this.showAlert("Success", "tests fetched from main");
-  }
+  // getMainTable() {
+  //   this._inspectionListService.getinspections().subscribe((data) => {
+  //     this.mainTests = data;
+  //     this.mainTests = Array.of(this.mainTests.data);
+  //     console.log(this.mainTests);
+  //     this.log = this.mainTests[0];
+  //   });
+  //   this.showAlert("Success", "tests fetched from main");
+  // }
 
   async getLocalTable(): Promise<void> {
     try {
@@ -233,16 +233,16 @@ export class SyncerPage implements OnInit {
   }
 }
 
-export class ExportTest{
-  TestID :string;
-	DateIssued : string;
-	AssetID : string;
-	InspectorID : string;
-  Result : string;
-	SupervisorID : string;
-	DateCompleted : string;
-	Frequency : string;
-	Priority : string;
-	TestModID : string;
-	comments : string;
+export class ExportTest {
+  TestID: string;
+  DateIssued: string;
+  AssetID: string;
+  InspectorID: string;
+  Result: string;
+  SupervisorID: string;
+  DateCompleted: string;
+  Frequency: string;
+  Priority: string;
+  TestModID: string;
+  comments: string;
 }
