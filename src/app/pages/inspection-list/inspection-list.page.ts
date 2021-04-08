@@ -56,11 +56,15 @@ export class InspectionListPage implements OnInit {
         })
         .then((loadingEl) => {
           loadingEl.present();
+          setTimeout(() => {
+            loadingEl.dismiss();
+          }, 5000);
           this._inspectionListService
             .sortInspectionsByPriority()
             .subscribe((inspections) => {
               loadingEl.dismiss();
               this.lst = Array.of(inspections.data);
+              //console.log(this.lst);
             });
         });
     }
@@ -76,11 +80,15 @@ export class InspectionListPage implements OnInit {
         })
         .then((loadingEl) => {
           loadingEl.present();
+          setTimeout(() => {
+            loadingEl.dismiss();
+          }, 5000);
           this._inspectionListService
             .sortInspectionsByPriority()
             .subscribe((inspections) => {
               loadingEl.dismiss();
               this.lst = Array.of(inspections.data);
+              //console.log
             });
         });
     } else {
@@ -90,6 +98,9 @@ export class InspectionListPage implements OnInit {
         })
         .then((loadingEl) => {
           loadingEl.present();
+          setTimeout(() => {
+            loadingEl.dismiss();
+          }, 5000);
           this._inspectionListService
             .sortInspectionsByDistance()
             .subscribe((inspections) => {
@@ -98,6 +109,7 @@ export class InspectionListPage implements OnInit {
               }
               loadingEl.dismiss();
               this.lst = Array.of(inspections.data);
+              console.log(this.lst);
             });
         });
     }

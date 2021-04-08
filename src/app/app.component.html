@@ -69,6 +69,7 @@
             routerLink="/inspection-list"
             *ngIf="userRole == 'Manager' || userRole == 'Inspector'"
           >
+<<<<<<< HEAD
             <!-- <ion-item routerLink="/inspection-list"> -->
             <ion-icon name="list" slot="start"></ion-icon>
             Inspections List
@@ -98,6 +99,39 @@
           <ion-item (click)="logout()" button>
             <ion-icon name="log-out" slot="start"></ion-icon>
             Log Out
+=======
+            <ion-item routerLink="/inspection-list">
+              <ion-icon name="list" slot="start"></ion-icon>
+              Inspections List</ion-item
+            >
+            <ion-item
+              routerLink="/repair-list"
+              *ngIf="userRole == 'Manager' || userRole == 'Engineer'"
+            >
+              <ion-icon name="list" slot="start"></ion-icon>
+              Repairs List</ion-item
+            >
+            <ion-item
+              routerLink="/repair-form"
+              *ngIf="userRole == 'Manager' || userRole == 'Inspector'"
+            >
+              <ion-icon name="add" slot="start"></ion-icon>
+              Create Repair</ion-item
+            >
+            <ion-item routerLink="/report-generation" *ngIf="userRole == 'Manager'">
+              <ion-icon name="text" slot="start"></ion-icon>
+              Generate Report
+            </ion-item>
+            
+            <ion-item routerLink="/syncer">
+              <ion-icon name="sync" slot="start"></ion-icon>
+              Sync
+            </ion-item>
+            <ion-item (click)="logout()" button>
+              <ion-icon name="log-out" slot="start"></ion-icon>
+              Log Out
+            </ion-item>
+>>>>>>> 14239530d97eee19b9cc4d04c9a316c73c251a79
           </ion-item>
         </ion-menu-toggle>
       </ion-list>

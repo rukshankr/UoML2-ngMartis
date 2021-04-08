@@ -102,6 +102,9 @@
                       :"Signals Test"}}</ion-label
                     >
                   </ion-item>
+                  <ion-item *ngIf="item.distance">
+                    <ion-label>Distance: {{ item.distance }}</ion-label>
+                  </ion-item>
                   <ion-item>
                     <ng-container *ngIf="item.TestModID=='TM101'">
                       <ion-button
