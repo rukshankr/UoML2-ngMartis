@@ -67,12 +67,9 @@
           </ion-item>
           <ion-item
             routerLink="/inspection-list"
-            *ngIf="userRole == 'Manager' || userRole == 'Inspector'"
-          >
-            <ion-item routerLink="/inspection-list">
+            *ngIf="userRole == 'Manager' || userRole == 'Inspector'">
               <ion-icon name="list" slot="start"></ion-icon>
-              Inspections List</ion-item
-            >
+              Inspections List</ion-item>
             <ion-item
               routerLink="/repair-list"
               *ngIf="userRole == 'Manager' || userRole == 'Engineer'"
@@ -100,7 +97,6 @@
               <ion-icon name="log-out" slot="start"></ion-icon>
               Log Out
             </ion-item>
-          </ion-item>
         </ion-menu-toggle>
       </ion-list>
     </ion-content>
