@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { AlertController, Platform } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
+
 import { CreateReportEmpidService } from 'src/app/services/create-report-empid.service';
 import { DatePipe } from '@angular/common';
 
@@ -13,7 +14,7 @@ export class ReportGenerationPage implements OnInit {
 	opost = new Posts();
 
 	createReportForm = this.formBuilder.group({
-		inspectorID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}'), Validators.maxLength(4) ] ],
+		inspectorID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}'), Validators.maxLength(6) ] ],
 		initialDate: [ '' ],
 		finalDate: [ '' ]
 	});

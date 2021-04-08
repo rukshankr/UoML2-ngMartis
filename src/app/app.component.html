@@ -87,7 +87,7 @@
             <ion-icon name="add" slot="start"></ion-icon>
             Create Repair</ion-item
           >
-          <ion-item *ngIf="userRole == 'Manager'">
+          <ion-item routerLink="/report-generation" *ngIf="userRole == 'Manager'">
             <ion-icon name="text" slot="start"></ion-icon>
             Generate Report
           </ion-item>
