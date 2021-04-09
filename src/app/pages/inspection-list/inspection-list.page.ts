@@ -37,7 +37,7 @@ export class InspectionListPage implements OnInit {
       this.desktop = false;
       try {
         await this.runTest();
-        this.log += "\n$$$ runTest was successful\n";
+        
       } catch (err) {
         this.log += "\n "+err.message;
         await showAlert(err.message);
@@ -66,49 +66,30 @@ export class InspectionListPage implements OnInit {
       let result: any = await this._sqlite.echo("Hello World");
       this.log += " from Echo " + result.value;
       // initialize the connection
-      const db = await this._sqlite
-                  .createConnection("martis", false, "no-encryption", 1);
+      const db = await this._sqlite.createConnection("martis", false, "no-encryption", 1);
       this.log +="\ndb connected " + db;
-
-      // check if the databases exist
-      // and delete it for multiple successive tests
-      //await deleteDatabase(db);
 
       // open db testNew
       await db.open();
       this.log += "\ndb opened";
-      // create tables in db
-      // let ret: any = await db.execute(createSchema);
-      // if (ret.changes.changes < 0) {
-      //   return Promise.reject(new Error("Execute createSchema failed"));
-      // }
-
-      // create synchronization table 
-      let ret: any = await db.createSyncTable();
-      console.log('$$$ createSyncTable ret.changes.changes in db ' + ret.changes.changes)
-      
-      // set the synchronization date
-      const syncDate: string = "2020-11-25T08:30:25.000Z";
-      await db.setSyncDate(syncDate);
 
       // select all assets in db
-      ret = await db.query("SELECT * FROM test;");
+      let ret = await db.query("SELECT * FROM test;");
       this.lest = ret.values;
+
       if(ret.values.length === 0) {
         return Promise.reject(new Error("getTests query failed"));
       }
-      this.log +="\nquery done.";
+
       // Close Connection MyDB        
       await this._sqlite.closeConnection("martis"); 
-      this.log += "\n> closeConnection 'myDb' successful\n";
 
       return Promise.resolve();
     } catch (err) {
       // Close Connection MyDB        
       await this._sqlite.closeConnection("martis"); 
-      this.log += "\n> closed Connection: 'martis'\n";
+      
       //error message
-      this.log += "\nrejected";
       return Promise.reject(err);
     }
   }

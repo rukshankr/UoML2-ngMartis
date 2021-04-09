@@ -12,8 +12,6 @@
     <div  [ngSwitch] ="desktop">
       <div *ngSwitchCase="false">
         <ion-row>          
-          <p>MOBILE</p>
-          <p>{{log}}</p>
           <ion-col *ngFor="let item of repairs">
             <ion-card>
               <ion-card-header class="cardhead" >

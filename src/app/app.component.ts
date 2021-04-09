@@ -5,6 +5,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SqliteService } from './services/sqlite.service';
 
+
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -26,8 +28,6 @@ export class AppComponent {
     this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      //this._detail.setExistingConnection(false);
-      //this._detail.setExportJson(false);
       this._sqlite.initializePlugin().then(ret => {
         this.initPlugin = ret;
         console.log(">>>> in App  this.initPlugin " + this.initPlugin)

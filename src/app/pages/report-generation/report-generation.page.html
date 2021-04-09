@@ -1,4 +1,4 @@
-<!-- <ion-header>
+<ion-header>
   <ion-toolbar color="danger">
     <ion-title>Report Generation</ion-title>
     <ion-buttons slot="start">
@@ -61,7 +61,7 @@
               <ion-row>
                 <ion-col>
                   <ion-label position="fixed">
-                    Employee's Name: {emID ? emID : ""}
+                    Employee's Name:
                   </ion-label>
                   <br />
                   <br />
@@ -70,7 +70,7 @@
               <ion-row>
                 <ion-col>
                   <ion-label position="fixed">
-                    Divsion: {division ? division : ""}
+                    Divsion:
                   </ion-label>
                   <br />
                   <br />
@@ -79,7 +79,7 @@
               <ion-row>
                 <ion-col>
                   <ion-label position="fixed">
-                    Subdivison:{subdivision ? subdivision : ""}
+                    Subdivison:
                   </ion-label>
                   <br />
                   <br />
@@ -111,7 +111,7 @@
               </ion-row>
             </ion-card-header>
             <ion-card-content>
-              {reports.map((item) => {
+              <!-- {reports.map((item) => {
                 return (
                   <ion-row className="ion-justify-content-center">
                     <ion-col size="4">{item["testID"]}</ion-col>
@@ -119,7 +119,7 @@
                     <ion-col size="4">{item["result"]}</ion-col>
                   </ion-row>
                 );
-              })}
+              })} -->
             </ion-card-content>
           </ion-card>
         </ion-col>
@@ -133,11 +133,10 @@
       </ion-row>
       <ion-row>
         <ion-col>
-          <ion-button color="primary" size="large" expand="block">
+          <ion-button color="primary" size="large" expand="block" (click)= "sendToEmail()">
             Send to email
           </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-content>
-</ion-page> -->
