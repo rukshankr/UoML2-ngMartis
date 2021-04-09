@@ -51,7 +51,7 @@ export class ReportGenerationPage implements OnInit {
 		await this.alertCtrl
 			.create({
 				header: 'Result',
-				message: val ? 'Report retrieved   Successfully' + val : 'Error',
+				message: val ? 'Report retrieved   Successfully' : 'Error',
 				buttons: [
 					{
 						text: 'OK',
