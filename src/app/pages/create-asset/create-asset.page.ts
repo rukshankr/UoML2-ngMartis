@@ -4,7 +4,6 @@ import { AssetService } from "src/app/services/asset-service.service";
 import { AlertController, Platform } from "@ionic/angular";
 import { Geolocation } from "@capacitor/geolocation";
 import { SqliteService } from "src/app/services/sqlite.service";
-import { capSQLiteChanges } from "@capacitor-community/sqlite";
 
 @Component({
   selector: "app-create-asset",
@@ -33,7 +32,7 @@ export class CreateAssetPage implements OnInit {
     assetID: [
       { type: "required", message: "Asset ID is required" },
       { type: "maxlength", message: "Can't be longer than 4 characters" },
-      { type: "pattern", message: "Should start with an A" },
+      { type: "pattern", message: "Should follow the pattern of A000" },
     ],
     gps: [{ type: "pattern", message: "Please enter a valid number only" }],
   };
@@ -49,12 +48,15 @@ export class CreateAssetPage implements OnInit {
     ],
     AssetType: [""],
     Status: "Functions",
-    NearestMilePost: [ "", [Validators.pattern("^MP[0-9]{3}"), Validators.maxLength(5)], ],
+    NearestMilePost: [
+      "",
+      [Validators.pattern("^MP[0-9]{3}"), Validators.maxLength(5)],
+    ],
     Division: [""],
     SubDivision: [""],
     Region: [""],
-    GPSLongitude: ["", [Validators.pattern("^[0-9]+.?[0-9]*")]],
-    GPSLatitude: ["", [Validators.pattern("^[0-9]+.?[0-9]*")]],
+    GPSLongitude: ["", [Validators.pattern("^[-]*[0-9]+.?[0-9]*")]],
+    GPSLatitude: ["", [Validators.pattern("^[-]*[0-9]+.?[0-9]*")]],
     LastTestedDate: null,
   });
 
@@ -111,11 +113,9 @@ export class CreateAssetPage implements OnInit {
         if (ret.changes.changes !== 1) {
           return Promise.reject(new Error("Execution failed"));
         }
-        this.log += "\ninsertion successful\n";
+        
         //disconnect
-        // Close Connection MyDB
         await this._sqlite.closeConnection("martis");
-        this.log += "\n> closeConnection 'myDb' successful\n";
 
         await this.showAlert("asset added.");
         return Promise.resolve();
@@ -123,7 +123,7 @@ export class CreateAssetPage implements OnInit {
         await this.showAlert(err.message);
       }
     } else {
-      console.log("platform-desktop: "+this.desktop);
+      console.log("platform-desktop: " + this.desktop);
 
       this.opost = this.createAssetForm.value;
 

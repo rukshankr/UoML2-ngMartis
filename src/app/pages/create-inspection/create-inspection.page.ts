@@ -1,15 +1,15 @@
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { InspectionService } from "src/app/services/create-inspection.service";
-import { AlertController, Platform } from "@ionic/angular";
-import { SqliteService } from "src/app/services/sqlite.service";
-import { AssetService } from "src/app/services/asset-service.service";
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { InspectionService } from 'src/app/services/create-inspection.service';
+import { AlertController, Platform } from '@ionic/angular';
+import { SqliteService } from 'src/app/services/sqlite.service';
+import { AssetService } from 'src/app/services/asset-service.service';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: "app-create-inspection",
-  templateUrl: "./create-inspection.page.html",
-  styleUrls: ["./create-inspection.page.scss"],
+	selector: 'app-create-inspection',
+	templateUrl: './create-inspection.page.html',
+	styleUrls: [ './create-inspection.page.scss' ]
 })
 export class CreateInspectionPage implements OnInit {
   results: object[];
@@ -89,11 +89,7 @@ export class CreateInspectionPage implements OnInit {
       try {
         // initialize the connection
         const db = await this._sqlite.createConnection(
-          "martis",
-          false,
-          "no-encryption",
-          1
-        );
+          "martis", false, "no-encryption",1);
         this.log += "\ndb connected " + db;
 
         // open db testNew
@@ -205,12 +201,12 @@ export class CreateInspectionPage implements OnInit {
 }
 
 export class Posts {
-  TestID: string;
-  DateIssued: string;
-  AssetID: string;
-  InspectorID: string;
-  SupervisorID: string;
-  Frequency: string;
-  TestModID: string;
-  Priority: string;
+	TestID: string;
+	DateIssued: string;
+	AssetID: string;
+	InspectorID: string;
+	SupervisorID: string;
+	Frequency: string;
+	TestModID: string;
+	Priority: string;
 }

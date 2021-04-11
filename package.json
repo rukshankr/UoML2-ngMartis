@@ -1,5 +1,5 @@
 {
-  "name": "MARTIS",
+  "name": "martis",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -25,10 +25,12 @@
     "@capacitor/core": "next",
     "@capacitor/geolocation": "^0.4.3",
     "@ionic-native/core": "latest",
+    "@ionic-native/geolocation": "^5.31.1",
     "@ionic-native/splash-screen": "latest",
     "@ionic-native/status-bar": "latest",
     "@ionic/angular": "latest",
-    "@ionic/pwa-elements": "^3.0.2",
+    "@okta/okta-angular": "^3.0.1",
+    "@okta/okta-signin-widget": "^5.5.0",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"

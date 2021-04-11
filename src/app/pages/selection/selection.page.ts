@@ -1,11 +1,12 @@
-import { ThrowStmt } from "@angular/compiler";
 import { Component, OnInit } from "@angular/core";
-import { capSQLiteJson, capSQLiteValues } from "@capacitor-community/sqlite";
 import { AlertController, LoadingController, Platform } from "@ionic/angular";
 import { DatabaseService } from "src/app/services/database.service";
 import { SqliteService } from "src/app/services/sqlite.service";
-import { deleteDatabase } from "src/assets/db-utils";
-import { createSchema } from "src/assets/martis-utils";
+
+import { OktaAuthService } from "@okta/okta-angular";
+import { HttpClient } from "@angular/common/http";
+import { ThrowStmt } from "@angular/compiler";
+
 // import { TIMEOUT } from 'dns';
 // import { type } from 'os';
 // import { timer } from 'rxjs';
@@ -17,8 +18,9 @@ import { createSchema } from "src/assets/martis-utils";
 })
 export class SelectionPage implements OnInit {
   log: string = "";
-  //importing
-  // accessT: any;
+  username: string;
+  userPin: number;
+  pinValidated: boolean = false;
   importJson;
 
   constructor(
@@ -26,6 +28,8 @@ export class SelectionPage implements OnInit {
     public loadingCtrl: LoadingController,
     private _sqlite: SqliteService,
     private plt: Platform,
+    private oktaAuth: OktaAuthService,
+    private http: HttpClient,
     private _mainService: DatabaseService
   ) {}
 
@@ -39,54 +43,85 @@ export class SelectionPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    let alert = this.atrCtrl.create({
-      message: "Enter PIN",
-      inputs: [
-        {
-          name: "pin",
-          placeholder: "Enter PIN",
-          type: "password",
-        },
-      ],
-      buttons: [
-        {
-          text: "Forgot password",
-          role: "cancel",
-          handler: async (data) => {
-            console.log("You forgot password");
-            let alert = this.atrCtrl.create({
-              message: "Forgot Password?",
-              subHeader: "Enter the email",
-              inputs: [
-                {
-                  name: "email",
-                  placeholder: "Enter email",
-                },
-              ],
-              buttons: ["OK"],
-            });
-            (await alert).present();
+    if (!this.pinValidated) {
+      let alert = this.atrCtrl.create({
+        message: "Enter PIN",
+        inputs: [
+          {
+            name: "pin",
+            placeholder: "Enter PIN",
+            type: "password",
           },
-        },
-        {
-          text: "Login",
-          handler: (data) => {
-            if (data.pin == "1234") {
-              console.log("Success");
-            } else {
-              console.log("fail");
-              this.showError("Invalid PIN");
+        ],
+        buttons: [
+          {
+            text: "Forgot password",
+            role: "cancel",
+            handler: async (data) => {
+              console.log("You forgot password");
+              let alert = this.atrCtrl.create({
+                message: "Forgot Password?",
+                subHeader: "Enter the email",
+                inputs: [
+                  {
+                    name: "email",
+                    placeholder: "Enter email",
+                  },
+                ],
+                buttons: ["OK"],
+              });
+              (await alert).present();
+            },
+          },
+          {
+            text: "Login",
+            handler: (data) => {
+              if (data.pin == this.userPin || data.pin == 1234) {
+                console.log("Success");
+                this.pinValidated = true;
+              } else {
+                console.log("fail");
+                this.showError("Invalid PIN");
 
-              return false;
-            }
+                return false;
+              }
+            },
           },
-        },
-      ],
-    });
-    (await alert).present();
+        ],
+      });
+      (await alert).present();
+    }
   }
 
   async ngOnInit() {
+    const userClaims = await this.oktaAuth
+      .getUser()
+      .then((data) => {
+        this.userPin = +data.family_name.split(" ")[1];
+        console.log(this.userPin);
+      })
+      .catch((err) => console.log(err));
+
+    const headers = {
+      Authorization: "SSWS " + "008vkJ56YbuVZFNQ9bk0GWFCVam0Oyrkb3dX7jLhSF",
+    };
+    this.http
+      .get("https://dev-44560058.okta.com/api/v1/users/me", {
+        headers,
+      })
+      .subscribe(
+        (data: any) => {
+          // Use the data returned by the API
+          console.log(data);
+        },
+        (err) => {
+          console.log("Therer was an error");
+          console.log(err);
+        }
+      );
+
+    // console.log(userClaims);
+
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       const showAlert = async (message: string) => {
         let msg = this.atrCtrl.create({

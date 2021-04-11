@@ -1,9 +1,13 @@
 import { Component, OnInit } from "@angular/core";
-import { AlertController, Platform } from "@ionic/angular";
-import { Observable } from "rxjs";
+import { AlertController, LoadingController, Platform } from "@ionic/angular";
+import { SegmentChangeEventDetail } from "@ionic/core";
+import { Observable, Subscription } from "rxjs";
 import { DatabaseService, Test } from "src/app/services/database.service";
 import { inspectionListService } from "src/app/services/inspection-list.service";
 import { SqliteService } from "src/app/services/sqlite.service";
+
+import { Geolocation } from "@ionic-native/geolocation/ngx";
+
 @Component({
   selector: "app-inspection-list",
   templateUrl: "./inspection-list.page.html",
@@ -14,7 +18,8 @@ export class InspectionListPage implements OnInit {
     private _inspectionListService: inspectionListService,
     private _sqlite: SqliteService,
     private plt: Platform,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private loadingctrl: LoadingController
   ) {}
 
   lst: any = [];
@@ -24,12 +29,14 @@ export class InspectionListPage implements OnInit {
   log: string;
   ////
 
+  filterOption = "priority";
+
   async ngOnInit() {
     const showAlert = async (message: string) => {
       let msg = this.alertCtrl.create({
-      header: 'Error',
-      message: message,
-      buttons: ['OK']
+        header: "Error",
+        message: message,
+        buttons: ["OK"],
       });
       (await msg).present();
     };
@@ -39,16 +46,72 @@ export class InspectionListPage implements OnInit {
         await this.runTest();
         
       } catch (err) {
-        this.log += "\n "+err.message;
+        this.log += "\n " + err.message;
         await showAlert(err.message);
       }
     } else if (this.plt.is("desktop")) {
-      this._inspectionListService.getinspections().subscribe((data) => {
-        this.lst = data;
-        this.lst = Array.of(this.lst.data);
+      this.loadingctrl
+        .create({
+          message: "Loading",
+        })
+        .then((loadingEl) => {
+          loadingEl.present();
+          setTimeout(() => {
+            loadingEl.dismiss();
+          }, 5000);
+          this._inspectionListService
+            .sortInspectionsByPriority()
+            .subscribe((inspections) => {
+              loadingEl.dismiss();
+              this.lst = Array.of(inspections.data);
+              //console.log(this.lst);
+            });
+        });
+    }
+  }
 
-        console.log(this.lst);
-      });
+  onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
+    this.filterOption = event.detail.value;
+
+    if (this.filterOption === "priority") {
+      this.loadingctrl
+        .create({
+          message: "Loading",
+        })
+        .then((loadingEl) => {
+          loadingEl.present();
+          setTimeout(() => {
+            loadingEl.dismiss();
+          }, 5000);
+          this._inspectionListService
+            .sortInspectionsByPriority()
+            .subscribe((inspections) => {
+              loadingEl.dismiss();
+              this.lst = Array.of(inspections.data);
+              //console.log
+            });
+        });
+    } else {
+      this.loadingctrl
+        .create({
+          message: "Loading",
+        })
+        .then((loadingEl) => {
+          loadingEl.present();
+          setTimeout(() => {
+            loadingEl.dismiss();
+          }, 5000);
+          this._inspectionListService
+            .sortInspectionsByDistance()
+            .subscribe((inspections) => {
+              if (inspections.data.length === 0) {
+                console.log("There was an error");
+              }
+              loadingEl.dismiss();
+              this.lst = Array.of(inspections.data);
+              console.log(this.lst);
+            });
+        });
     }
   }
 
@@ -63,17 +126,13 @@ export class InspectionListPage implements OnInit {
 
   async runTest(): Promise<void> {
     try {
-      let result: any = await this._sqlite.echo("Hello World");
-      this.log += " from Echo " + result.value;
       // initialize the connection
       const db = await this._sqlite.createConnection("martis", false, "no-encryption", 1);
-      this.log +="\ndb connected " + db;
 
-      // open db testNew
+      // open db martis
       await db.open();
-      this.log += "\ndb opened";
 
-      // select all assets in db
+      // select all tests in db
       let ret = await db.query("SELECT * FROM test;");
       this.lest = ret.values;
 

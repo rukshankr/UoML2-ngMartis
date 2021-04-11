@@ -1,16 +1,16 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { AssetServiceService } from './asset-service.service';
+import { AssetService } from "./asset-service.service";
 
-describe('AssetServiceService', () => {
-  let service: AssetServiceService;
+describe("AssetService", () => {
+  let service: AssetService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(AssetServiceService);
+    service = TestBed.inject(AssetService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

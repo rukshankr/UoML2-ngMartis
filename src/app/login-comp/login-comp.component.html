@@ -1,0 +1,26 @@
+<ion-content>
+  <div
+    style="
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    "
+  >
+    <ion-card>
+      <ion-card-header>
+        <ion-img
+          src="https://upload.wikimedia.org/wikipedia/en/thumb/d/d6/Wabtec_Logo.svg/1200px-Wabtec_Logo.svg.png"
+        ></ion-img>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button (click)="login()" color="danger" expand="block"
+          >Login with Okta</ion-button
+        >
+        <div *ngIf="!desktop">
+        <ion-button routerLink="/selection" color="success" expand="block">Login for Mobile</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
