@@ -26,6 +26,7 @@ export class ReportGenerationPage implements OnInit {
         Validators.required,
         Validators.pattern("^EMP[0-9]{3}"),
         Validators.maxLength(6),
+		Validators.minLength(6)
       ],
     ],
     initialDate: [""],
@@ -107,7 +108,7 @@ export class ReportGenerationPage implements OnInit {
         // Close Connection MyDB
         await this._sqlite.closeConnection("martis");
 
-        await this.showAlert("Success", "asset added.");
+        await this.showAlert("Success", "report fetched.");
         return Promise.resolve();
       } catch (err) {
         // Close Connection MyDB
@@ -197,14 +198,12 @@ export class ReportGenerationPage implements OnInit {
       this.users = ret.values;
 
       if (ret.values.length === 0) {
-        return Promise.reject(new Error("Query 2 asset failed"));
+        return Promise.reject(new Error("Query 2 emps failed"));
       }
       this.log += "\nquery done.";
 
       // Close Connection martis
       await this._sqlite.closeConnection("martis");
-
-      await this.showAlert(true);
 
       return Promise.resolve();
     } catch (err) {

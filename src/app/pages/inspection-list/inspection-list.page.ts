@@ -6,7 +6,7 @@ import { DatabaseService, Test } from "src/app/services/database.service";
 import { inspectionListService } from "src/app/services/inspection-list.service";
 import { SqliteService } from "src/app/services/sqlite.service";
 
-import { Geolocation } from "@ionic-native/geolocation/ngx";
+import { Geolocation } from "@capacitor/geolocation";
 
 @Component({
   selector: "app-inspection-list",
@@ -25,6 +25,8 @@ export class InspectionListPage implements OnInit {
   lst: any = [];
   lest = [];
   desktop: boolean = true;
+  empLocation : Coords;
+  
   ////
   log: string;
   ////
@@ -43,7 +45,7 @@ export class InspectionListPage implements OnInit {
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
       try {
-        await this.runTest();
+        await this.fetchTest(true);
         
       } catch (err) {
         this.log += "\n " + err.message;
@@ -70,8 +72,24 @@ export class InspectionListPage implements OnInit {
     }
   }
 
-  onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
+  async getCurrentPosition() {
+    const coordinates = await Geolocation.getCurrentPosition();
+    this.empLocation = new Coords(coordinates.coords.latitude, coordinates.coords.longitude);
+  }
+
+  async onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
     this.filterOption = event.detail.value;
+
+    if(!this.desktop){
+      if(this.filterOption === "priority"){
+        await this.fetchTest(true);
+      }
+      else{
+        await this.getCurrentPosition();
+        await this.fetchTest(false);
+      }
+      return;
+    }
 
     if (this.filterOption === "priority") {
       this.loadingctrl
@@ -115,26 +133,46 @@ export class InspectionListPage implements OnInit {
     }
   }
 
-  async checkPlatform() {
-    let alert = this.alertCtrl.create({
-      header: "Platform",
-      message: "You are running on: " + this.plt.platforms(),
-      buttons: ["OK"],
-    });
-    (await alert).present();
-  }
-
-  async runTest(): Promise<void> {
+  async fetchTest(priority: boolean): Promise<void> {
     try {
+      let nearByAssets = [];
       // initialize the connection
       const db = await this._sqlite.createConnection("martis", false, "no-encryption", 1);
 
       // open db martis
       await db.open();
 
-      // select all tests in db
-      let ret = await db.query("SELECT * FROM test;");
+      // select tests from db
+      let ret = priority? 
+      await db.query(`SELECT * from test where DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" ORDER by Priority ASC`)
+      : await db.query(`SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.TestID, t.TestModID
+      from test t, asset a
+      where t.AssetID = a.AssetID
+      AND t.InspectorID = 'EMP101'`);
+      
       this.lest = ret.values;
+
+      //sorting by distance
+      if(!priority){
+        this.lest.forEach((e) => {
+          let assetLoc = new Coords(e.GPSLatitude,e.GPSLongitude);
+          this.log += "\n assetloc: "+ assetLoc.latitude+ ", emploc: "+ this.empLocation.latitude;
+          const distance = Math.round(
+            this._sqlite.haversine(assetLoc, this.empLocation)
+          );
+          if (distance) {
+            nearByAssets.push({
+              distance: distance,
+              AssetID: e.AssetID,
+              InspectorID: e.InspectorID,
+              TestID: e.TestID,
+              TestModID: e.TestModID,
+            });
+          }
+        });
+
+        this.lest = nearByAssets.sort((a,b)=> a.distance-b.distance);
+      }
 
       if(ret.values.length === 0) {
         return Promise.reject(new Error("getTests query failed"));
@@ -153,3 +191,13 @@ export class InspectionListPage implements OnInit {
     }
   }
 }
+
+export class Coords{
+  latitude :number;
+  longitude:number;
+
+  constructor(lat?: number, long?: number){
+    this.latitude = lat;
+    this.longitude = long;
+  }
+};
