@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AlertController, Platform } from '@ionic/angular';
 import { SetresultGroundsService } from '../services/setresult-grounds.service';
+
 import { ActivatedRoute } from '@angular/router';
 import { SqliteService } from '../services/sqlite.service';
 
