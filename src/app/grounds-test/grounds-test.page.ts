@@ -110,15 +110,15 @@ export class GroundsTestPage implements OnInit {
 			} catch (err) {
 				// Close Connection Martis
 				await this._sqlite.closeConnection("martis");
-			  await this.showAlert(false);
+			  await this.showAlert(false, err.message);
 			}
 	}
 	}
-	async showAlert(val) {
+	async showAlert(val, msg?) {
 		await this.alertCtrl
 			.create({
 				header: 'Result',
-				message: val ? 'Test added Successfully' : 'Error',
+				message: val ? 'Test info added Successfully' : 'Error: '+ msg,
 				buttons: [
 					{
 						text: 'OK',

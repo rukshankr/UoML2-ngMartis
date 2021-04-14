@@ -132,7 +132,7 @@ export class SelectionPage implements OnInit {
         (await msg).present();
       };
       try {
-        await this.runDB();
+        //await this.runDB();
         
       } catch (err) {
         await showAlert(err.message);
