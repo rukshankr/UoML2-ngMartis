@@ -18,6 +18,9 @@ export class GroundsTestPage implements OnInit {
 	testid: String;
 	desktop: boolean;
 
+	//confirm date
+	confirm: boolean = false;
+
 	createTestForm = this.formBuilder.group({
 		AssetID: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
 		TestID: [ '', [ Validators.required, Validators.pattern('^T[0-9]{3}'), Validators.maxLength(4) ] ],
@@ -65,6 +68,10 @@ export class GroundsTestPage implements OnInit {
 	async onSave() {
 		this.opost = this.createTestForm.value;
 
+		if(this.date.value == '' || this.confirm == false){
+			this.showAlert(false, "Please confirm the Inspection Date.", true);
+			return;
+		}
 		if(this.desktop){
 
 		console.log('Page Saved', this.opost);
@@ -114,7 +121,7 @@ export class GroundsTestPage implements OnInit {
 			}
 	}
 	}
-	async showAlert(val, msg?) {
+	async showAlert(val, msg?, reset?:boolean) {
 		await this.alertCtrl
 			.create({
 				header: 'Result',
@@ -123,12 +130,18 @@ export class GroundsTestPage implements OnInit {
 					{
 						text: 'OK',
 						handler: () => {
-							this.createTestForm.reset();
+							if(!reset){
+								this.createTestForm.reset();
+							}
 						}
 					}
 				]
 			})
 			.then((res) => res.present());
+	}
+
+	confirmez(){
+		this.confirm = !this.confirm;
 	}
 }
 
