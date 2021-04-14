@@ -8,6 +8,9 @@
 </ion-header>
 
 <ion-content>
+    <ion-row>
+        <p>{{log}}</p>
+    </ion-row>
     <form [formGroup]="createRepairForm" (ngSubmit)="onSave()">
         <ion-row>
             <ion-col>
@@ -68,7 +71,6 @@
                                 <ion-item >
                                 <ion-label position="floating">Repair Completed Date:</ion-label>
                                 <ion-datetime display-timezone="utc"  formControlName="CompletedDate"  min="2019-01-01" max="2029-12-31"></ion-datetime>
-                                <!-- <ion-input displayTimezone="utc" type="date" formControlName="CompletedDate" id="due_date" name="due_date" min="2019-01-01" max="2029-12-31"></ion-input> -->
                                 </ion-item>
                             </ion-col>
                         </ion-row>
@@ -76,7 +78,7 @@
                             <ion-col>
                                 <ion-col>
                                     <ion-item lines="none">
-                                        <ion-checkbox slot="start" ></ion-checkbox>
+                                        <ion-checkbox slot="start" (click)="confirmez()"></ion-checkbox>
                                         <ion-label>Confirmed date</ion-label>
                                     </ion-item>
                                 </ion-col>
