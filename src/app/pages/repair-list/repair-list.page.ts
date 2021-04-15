@@ -3,6 +3,7 @@ import { AlertController, Platform } from '@ionic/angular';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { deleteDatabase } from 'src/assets/db-utils';
 import { createSchema } from 'src/assets/martis-utils';
+
 import { Repair } from 'src/app/services/database.service';
 import { RepairListService } from 'src/app/services/repair-list.service';
 
@@ -65,11 +66,10 @@ export class RepairListPage implements OnInit {
 			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
 			this.log += '\ndb connected ' + db;
 
-			
 			// open db testNew
 			await db.open();
 			this.log += '\ndb opened';
-			
+
 			// create synchronization table
 			// let ret: any = await db.createSyncTable();
 			// console.log('$$$ createSyncTable ret.changes.changes in db ' + ret.changes.changes);
