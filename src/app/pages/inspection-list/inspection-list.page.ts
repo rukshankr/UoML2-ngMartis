@@ -1,17 +1,17 @@
-import { Component, OnInit } from "@angular/core";
-import { AlertController, LoadingController, Platform } from "@ionic/angular";
-import { SegmentChangeEventDetail } from "@ionic/core";
-import { Observable, Subscription } from "rxjs";
-import { DatabaseService, Test } from "src/app/services/database.service";
-import { inspectionListService } from "src/app/services/inspection-list.service";
-import { SqliteService } from "src/app/services/sqlite.service";
+import { Component, OnInit } from '@angular/core';
+import { AlertController, LoadingController, Platform } from '@ionic/angular';
+import { SegmentChangeEventDetail } from '@ionic/core';
+import { Observable, Subscription } from 'rxjs';
+import { DatabaseService, Test } from 'src/app/services/database.service';
+import { inspectionListService } from 'src/app/services/inspection-list.service';
+import { SqliteService } from 'src/app/services/sqlite.service';
 
-import { Geolocation } from "@capacitor/geolocation";
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
-  selector: "app-inspection-list",
-  templateUrl: "./inspection-list.page.html",
-  styleUrls: ["./inspection-list.page.scss"],
+	selector: 'app-inspection-list',
+	templateUrl: './inspection-list.page.html',
+	styleUrls: [ './inspection-list.page.scss' ]
 })
 export class InspectionListPage implements OnInit {
   constructor(
@@ -192,12 +192,12 @@ export class InspectionListPage implements OnInit {
   }
 }
 
-export class Coords{
-  latitude :number;
-  longitude:number;
+export class Coords {
+	latitude: number;
+	longitude: number;
 
-  constructor(lat?: number, long?: number){
-    this.latitude = lat;
-    this.longitude = long;
-  }
-};
+	constructor(lat?: number, long?: number) {
+		this.latitude = lat;
+		this.longitude = long;
+	}
+}

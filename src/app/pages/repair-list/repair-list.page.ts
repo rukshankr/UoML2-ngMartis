@@ -3,6 +3,7 @@ import { AlertController, Platform } from '@ionic/angular';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { deleteDatabase } from 'src/assets/db-utils';
 import { createSchema } from 'src/assets/martis-utils';
+
 import { Repair } from 'src/app/services/database.service';
 import { RepairListService } from 'src/app/services/repair-list.service';
 
@@ -43,7 +44,6 @@ export class RepairListPage implements OnInit {
 			this.desktop = false;
 			try {
 				await this.runTest();
-				
 			} catch (err) {
 				this.log += '\n ' + err.message;
 				await showAlert(err.message);
@@ -65,15 +65,14 @@ export class RepairListPage implements OnInit {
 
 			// open db testNew
 			await db.open();
-			
-			
+
 			// select all assets in db
 			let ret = await db.query('SELECT * FROM repair;');
 			this.repairs = ret.values;
 			if (ret.values.length === 0) {
 				return Promise.reject(new Error('Query 2 repair failed'));
 			}
-			
+
 			// Close Connection MyDB
 			await this._sqlite.closeConnection('martis');
 
@@ -81,7 +80,7 @@ export class RepairListPage implements OnInit {
 		} catch (err) {
 			// Close Connection MyDB
 			await this._sqlite.closeConnection('martis');
-			
+
 			return Promise.reject(err);
 		}
 	}
