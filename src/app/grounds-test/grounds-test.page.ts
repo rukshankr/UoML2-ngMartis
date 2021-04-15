@@ -21,6 +21,9 @@ export class GroundsTestPage implements OnInit {
 	//confirm date
 	confirm: boolean = false;
 
+	//logging
+	log: string = "";
+
 	createTestForm = this.formBuilder.group({
 		AssetID: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
 		TestID: [ '', [ Validators.required, Validators.pattern('^T[0-9]{3}'), Validators.maxLength(4) ] ],
@@ -89,26 +92,27 @@ export class GroundsTestPage implements OnInit {
 		try{
 			//connect
 			const db = await this._sqlite.createConnection("martis",false,"no-encryption",1);
-			  
+			  this.log += "connected // ";//+ JSON.stringify(this.opost);
 			  //open
 			  await db.open();
 			  
 			  //insert
-			  let sqlcmd: string = 'UPDATE test SET Result = ?, DateCompleted = ?, comments = ? WHERE TestID = ?';
+			  let sqlcmd: string = 'UPDATE test SET Result = ?, DateCompleted = ?, comments = ? WHERE id = ?';
 			  var p = this.opost;
+			  this.log += " // dC: "+this.date.value+" ";
 			  let postableChanges = [
 				p.Result,
-				p.DataCompleted,
+				this.date.value,
 				p.comments,
 				p.TestID
 			  ];
 			  let ret: any = await db.run(sqlcmd, postableChanges);
-	  
+			  this.log += "query run // "+ ret.changes.changes;
 			  //check update
-			  if (ret.changes.changes !== 1) {
+			  if (ret.changes.changes === 0) {
 				return Promise.reject(new Error("Execution failed"));
 			  }
-			  
+			  this.log += " // query updates //";
 			  // Close Connection Martis
 			  await this._sqlite.closeConnection("martis");
 	  

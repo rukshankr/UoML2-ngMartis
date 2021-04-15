@@ -145,9 +145,9 @@ export class InspectionListPage implements OnInit {
       // select tests from db
       let ret = priority? 
       await db.query(`SELECT * from test where DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" ORDER by Priority ASC`)
-      : await db.query(`SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.TestID, t.TestModID
+      : await db.query(`SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
       from test t, asset a
-      where t.AssetID = a.AssetID
+      where t.AssetID = a.id
       AND t.InspectorID = 'EMP101'`);
       
       this.lest = ret.values;
@@ -165,7 +165,7 @@ export class InspectionListPage implements OnInit {
               distance: distance,
               AssetID: e.AssetID,
               InspectorID: e.InspectorID,
-              TestID: e.TestID,
+              id: e.id,
               TestModID: e.TestModID,
             });
           }

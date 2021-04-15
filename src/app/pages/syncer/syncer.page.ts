@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { capSQLiteSet } from "@capacitor-community/sqlite";
+import { capSQLiteSet, JsonSQLite } from "@capacitor-community/sqlite";
 import { AlertController, LoadingController } from "@ionic/angular";
 import { InspectionService } from "src/app/services/create-inspection.service";
 import { DatabaseService } from "src/app/services/database.service";
@@ -15,6 +15,7 @@ export class SyncerPage implements OnInit {
   mainTests: any = [];
   localTests = [];
   log: string = "Press the SYNC button to begin syncing.";
+  logs: string = "";
   exportedJson: string = "";
 
   ///
@@ -62,6 +63,8 @@ export class SyncerPage implements OnInit {
 
       this.exportedJson += JSON.stringify(jsonObj.export);
       
+      //this.logs = this.exportedJson;
+
       // test Json object validity
       let result = await this._sqlite.isJsonValid(
         JSON.stringify(jsonObj.export)
@@ -70,7 +73,8 @@ export class SyncerPage implements OnInit {
       if (!result.result) {
         return Promise.reject(new Error("IsJsonValid export 'full' failed"));
       }
-
+      //this.log = "Json export valid";
+      
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");
 
@@ -109,6 +113,8 @@ export class SyncerPage implements OnInit {
 
       return Promise.resolve();
     } catch (err) {
+      //dismiss loader 
+      await loading.dismiss();
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");
       //error message
@@ -116,7 +122,36 @@ export class SyncerPage implements OnInit {
       return Promise.reject(err);
     }
   }
+
+  //testing function
+  async fullImport(){
+    try{
+      /////////////////////////////import fully from mysql
+      let imported = await this._dbService.fullImportAll();
+      this.logs += JSON.stringify(imported);
+      // test Json object validity
+      let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
+      if (!result.result) {
+        return Promise.reject(new Error("IsJsonValid failed"));
+      }
+      this.log = "import json valid";
+      // full import
+      let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
+      
+      if (ret.changes.changes === -1)
+      return Promise.reject(new Error("ImportFromJson 'full' dataToImport failed"));
+  
+      this.showAlert("Success", "completely imported");
+    }
+    catch(err){
+      //error message
+      this.showAlert("Failed", err.message);
+      return Promise.reject(err);
+    }
+  }
+  
 }
+
 
 export class ExportTest {
   TestID: string;
