@@ -17,6 +17,9 @@
         <ion-button (click)="login()" color="danger" expand="block"
           >Login with Okta</ion-button
         >
+        <div *ngIf="!desktop">
+        <ion-button routerLink="/selection" color="success" expand="block">Login for Mobile</ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
   </div>

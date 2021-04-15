@@ -27,6 +27,9 @@ export class RepairFormPage implements OnInit {
 	//platform
 	desktop: boolean = true;
 
+	//confirmation
+	confirm: boolean = false;
+
 	createRepairForm = this.formBuilder.group({
 		AssetId: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
 		EngineerID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}') ] ],
@@ -34,6 +37,7 @@ export class RepairFormPage implements OnInit {
 		CompletedDate: [ '' ],
 		comments: [ '' ]
 	});
+
 	ngOnInit() {
 		console.log(this.route.snapshot.params.assetid);
 		let date = new Date(this.route.snapshot.params.createddate);
@@ -65,6 +69,12 @@ export class RepairFormPage implements OnInit {
 	async onSave() {
 		let date = this.route.snapshot.params.createddate;
 		this.opost = this.createRepairForm.value;
+
+		if(this.opost.CompletedDate == "" || this.confirm === false){
+			this.showAlert(false, "Please confirm repair date", true);
+			return;
+		}
+		
 		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'utc').toString();
 		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-dd HH:mm:ss');
 		console.log(this.opost.CompletedDate);
@@ -78,10 +88,9 @@ export class RepairFormPage implements OnInit {
 				"no-encryption",
 				1
 			  	);
-			  	this.log += "\ndb connected " + db;
+
 			  	//open
 			  	await db.open();
-			  	this.log += "\ndb opened.\n";
 
 			  	//insert
 				  let sqlcmd: string =
@@ -109,7 +118,7 @@ export class RepairFormPage implements OnInit {
 				await this._sqlite.closeConnection("martis");
 				this.log += "\n> closeConnection 'martis' successful\n";
 				//error message
-				return await this.showAlert(false);
+				return await this.showAlert(false, err.message);
 			}
 			return;
 		}
@@ -126,21 +135,27 @@ export class RepairFormPage implements OnInit {
 		});
 	}
 
-	async showAlert(val) {
+	async showAlert(val, msg?, reset?: boolean) {
 		await this.alertCtrl
 			.create({
-				header: 'Result',
-				message: val ? 'Repair added Successfully' : 'Error',
+				header: val? 'Successful': 'Unsuccessful',
+				message: val ? 'Repair added Successfully' : 'Error: '+ msg,
 				buttons: [
 					{
 						text: 'OK',
 						handler: () => {
-							this.createRepairForm.reset();
+							if(!reset){
+								this.createRepairForm.reset();
+							}
 						}
 					}
 				]
 			})
 			.then((res) => res.present());
+	}
+
+	confirmez(){
+		this.confirm = !this.confirm;
 	}
 }
 export class Posts {

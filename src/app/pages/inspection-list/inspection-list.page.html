@@ -27,61 +27,9 @@
         </ion-segment>
       </ion-col>
     </ion-row>
-
-    <div [ngSwitch]="desktop">
-      <div *ngSwitchCase="false">
+    <!--switch removed-->
         <ion-row>
-          <p>MOBILE</p>
-          <p>{{log}}</p>
-        </ion-row>
-        <ion-row>
-          <ion-col *ngFor="let item of lest">
-            <ion-card>
-              <ion-card-header class="cardhead">
-                <ion-card-title> TestId:{{item.TestID}} </ion-card-title>
-                <ion-card-subtitle>
-                  AssetId:{{item.AssetID}}
-                </ion-card-subtitle>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-list>
-                  <ion-item>
-                    <ion-label>IssuedDate:{{item.DateIssued}}</ion-label>
-                  </ion-item>
-                  <ion-item>
-                    <ion-label>InspectorID:{{item.InspectorID}}</ion-label>
-                  </ion-item>
-                  <ion-item>
-                    <ion-label
-                      >Test Type: {{item.TestModID =="TM101" ?"Grounds Test"
-                      :"Signals Test"}}</ion-label
-                    >
-                  </ion-item>
-                  <ion-item>
-                    <ng-container *ngIf="item.TestModID=='TM101'">
-                      <ion-button
-                        [routerLink]="['/','grounds-test',item.AssetID,item.TestID]"
-                      >
-                        Inspect
-                      </ion-button>
-                    </ng-container>
-                    <ng-container *ngIf="item.TestModID=='TM102'">
-                      <ion-button
-                        [routerLink]="['/','signal-test',item.AssetID,item.TestID]"
-                      >
-                        Inspect
-                      </ion-button>
-                    </ng-container>
-                  </ion-item>
-                </ion-list>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </div>
-      <div *ngSwitchCase="true">
-        <ion-row>
-          <ion-col *ngFor="let item of lst[0]">
+          <ion-col *ngFor="let item of (desktop ? lst[0] : lest )">
             <ion-card>
               <ion-card-header class="cardhead">
                 <ion-card-title> TestId:{{item.TestID}} </ion-card-title>
@@ -103,7 +51,7 @@
                     >
                   </ion-item>
                   <ion-item *ngIf="item.distance">
-                    <ion-label>Distance: {{ item.distance }}</ion-label>
+                    <ion-label>Distance: {{ item.distance }}m</ion-label>
                   </ion-item>
                   <ion-item>
                     <ng-container *ngIf="item.TestModID=='TM101'">
@@ -126,7 +74,7 @@
             </ion-card>
           </ion-col>
         </ion-row>
-      </div>
-    </div>
+      <!-- </div> -->
+    <!-- </div> -->
   </ion-grid>
 </ion-content>
