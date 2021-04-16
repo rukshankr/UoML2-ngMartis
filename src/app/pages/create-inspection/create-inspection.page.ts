@@ -59,7 +59,6 @@ export class CreateInspectionPage implements OnInit {
     Frequency: [""],
     TestModID: ["", [Validators.required, Validators.pattern("^TM[0-9]{3}")]],
     Priority: [""],
-    Value: ["", [Validators.required, Validators.pattern("^[0-9]{10}")]],
   });
 
   constructor(
@@ -137,10 +136,9 @@ export class CreateInspectionPage implements OnInit {
           "no-encryption",
           1
         );
-        this.log += "\ndb connected " + db;
+
         //open
         await db.open();
-        this.log += "\ndb opened.\n";
 
         //insert
         let sqlcmd: string =
@@ -149,7 +147,6 @@ export class CreateInspectionPage implements OnInit {
 
         //put today
         let date = new Date();
-        //let today = this.datePipe.transform(date, 'yyyy-MM-dd hh:mm:ss').toString();
 
         var p = this.opost;
         let postableChanges = [
@@ -168,18 +165,17 @@ export class CreateInspectionPage implements OnInit {
         if (ret.changes.changes !== 1) {
           return Promise.reject(new Error("Execution failed"));
         }
-        this.log += "\ninsertion successful\n";
+
         //disconnect
         // Close Connection MyDB
         await this._sqlite.closeConnection("martis");
-        this.log += "\n> closeConnection 'myDb' successful\n";
 
         await this.showAlert("Success", "asset added.");
         return Promise.resolve();
       } catch (err) {
         // Close Connection MyDB
         await this._sqlite.closeConnection("martis");
-        this.log += "\n> closeConnection 'myDb' successful\n";
+
         //error message
         return await this.showAlert("Error", err.message);
       }
@@ -201,7 +197,6 @@ export class CreateInspectionPage implements OnInit {
         this.showAlert("Error", "Inspection not added.");
       }
     });
-    this.createInspectionForm.reset();
   }
 }
 

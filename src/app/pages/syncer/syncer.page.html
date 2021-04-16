@@ -10,77 +10,15 @@
 <ion-content>
   <ion-grid>
     <ion-row>
-      <p>{{log}}</p>
+      <h2>{{log}}</h2>
+      <p>{{logs}}</p>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-button expand="block" (click)= "importFromMain()">Import From Main</ion-button>
+        <ion-button expand="block" (click)="exportJson()">SYNC</ion-button>
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col>
-        <ion-button expand="block" (click)="exportToMain()">Export To Main</ion-button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-button expand="block" (click)="exportJson()">Export JSON</ion-button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <p>{{exportedJson}}</p>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col><p>Main DB:</p></ion-col>
-      <ion-col>
-        <ion-button (click)="getMainTable()">Get Table</ion-button>
-      </ion-col>
-      
-    </ion-row>
-    <ion-row>
-      <ion-col  *ngFor="let item of mainTests[0]">
-        <ion-card>
-          <ion-card-header class="cardhead" >
-            <ion-card-title >
-              TestId:{{item.TestID}}
-            </ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list>
-              <ion-item>
-                <ion-label>IssuedDate:{{item.DateIssued}}</ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col><p>Local DB:</p></ion-col>
-      <ion-col>
-        <ion-button (click)="getLocalTable()">Get Table</ion-button>
-      </ion-col>
-      
-    </ion-row>
-    <ion-row>
-      <ion-col  *ngFor="let item of localTests">
-        <ion-card>
-          <ion-card-header class="cardhead" >
-            <ion-card-title >
-              TestId:{{item.TestID}}
-            </ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list>
-              <ion-item>
-                <ion-label>IssuedDate:{{item.DateIssued}}</ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
     </ion-row>
   </ion-grid>  
 </ion-content>

@@ -36,7 +36,7 @@
           </ion-grid>
         </ion-item>
         <ion-menu-toggle>
-          <ion-item routerLink="/create-asset" *ngIf="userRole == 'Manager'">
+          <ion-item routerLink="/create-asset" *ngIf="userRole == 'Manager' || !desktop" >
             <ion-icon name="add" slot="start"></ion-icon>
             Create Asset</ion-item
           >
@@ -46,28 +46,28 @@
           </ion-item>
           <ion-item
             routerLink="/create-inspection"
-            *ngIf="userRole == 'Manager' || userRole == 'Inspector'"
+            *ngIf="userRole == 'Manager' || userRole == 'Inspector' || !desktop"
           >
             <ion-icon name="add" slot="start"></ion-icon>
             Create Inspection
           </ion-item>
           <ion-item
             routerLink="/grounds-test"
-            *ngIf="userRole == 'Manager' || userRole == 'Engineer'"
+            *ngIf="userRole == 'Manager' || userRole == 'Engineer' || !desktop"
           >
             <ion-icon name="close-circle" slot="start"></ion-icon>
             Grounds Tests
           </ion-item>
           <ion-item
             routerLink="/signal-test"
-            *ngIf="userRole == 'Manager' || userRole == 'Engineer'"
+            *ngIf="userRole == 'Manager' || userRole == 'Engineer' || !desktop"
           >
             <ion-icon name="megaphone" slot="start"></ion-icon>
             Signal Tests
           </ion-item>
           <ion-item
             routerLink="/inspection-list"
-            *ngIf="userRole == 'Manager' || userRole == 'Inspector'"
+            *ngIf="userRole == 'Manager' || userRole == 'Inspector' || !desktop"
           >
             <!-- <ion-item routerLink="/inspection-list"> -->
             <ion-icon name="list" slot="start"></ion-icon>
@@ -75,23 +75,23 @@
           </ion-item>
           <ion-item
             routerLink="/repair-list"
-            *ngIf="userRole == 'Manager' || userRole == 'Engineer'"
+            *ngIf="userRole == 'Manager' || userRole == 'Engineer' || !desktop"
           >
             <ion-icon name="list" slot="start"></ion-icon>
             Repairs List</ion-item
           >
           <ion-item
             routerLink="/repair-form"
-            *ngIf="userRole == 'Manager' || userRole == 'Inspector'"
+            *ngIf="userRole == 'Manager' || userRole == 'Inspector' || !desktop"
           >
             <ion-icon name="add" slot="start"></ion-icon>
             Create Repair</ion-item
           >
-          <ion-item *ngIf="userRole == 'Manager'">
+          <ion-item routerLink="/report-generation" *ngIf="userRole == 'Manager' || !desktop">
             <ion-icon name="text" slot="start"></ion-icon>
             Generate Report
           </ion-item>
-          <ion-item routerLink="/syncer">
+          <ion-item routerLink="/syncer" *ngIf="!desktop">
             <ion-icon name="sync" slot="start"></ion-icon>
             Sync
           </ion-item>

@@ -1,17 +1,17 @@
-import { Component, OnInit } from "@angular/core";
-import { AlertController, LoadingController, Platform } from "@ionic/angular";
-import { SegmentChangeEventDetail } from "@ionic/core";
-import { Observable, Subscription } from "rxjs";
-import { DatabaseService, Test } from "src/app/services/database.service";
-import { inspectionListService } from "src/app/services/inspection-list.service";
-import { SqliteService } from "src/app/services/sqlite.service";
+import { Component, OnInit } from '@angular/core';
+import { AlertController, LoadingController, Platform } from '@ionic/angular';
+import { SegmentChangeEventDetail } from '@ionic/core';
+import { Observable, Subscription } from 'rxjs';
+import { DatabaseService, Test } from 'src/app/services/database.service';
+import { inspectionListService } from 'src/app/services/inspection-list.service';
+import { SqliteService } from 'src/app/services/sqlite.service';
 
-import { Geolocation } from "@ionic-native/geolocation/ngx";
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
-  selector: "app-inspection-list",
-  templateUrl: "./inspection-list.page.html",
-  styleUrls: ["./inspection-list.page.scss"],
+	selector: 'app-inspection-list',
+	templateUrl: './inspection-list.page.html',
+	styleUrls: [ './inspection-list.page.scss' ]
 })
 export class InspectionListPage implements OnInit {
   constructor(
@@ -25,6 +25,8 @@ export class InspectionListPage implements OnInit {
   lst: any = [];
   lest = [];
   desktop: boolean = true;
+  empLocation : Coords;
+  
   ////
   log: string;
   ////
@@ -43,8 +45,8 @@ export class InspectionListPage implements OnInit {
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
       try {
-        await this.runTest();
-        this.log += "\n$$$ runTest was successful\n";
+        await this.fetchTest(true);
+        
       } catch (err) {
         this.log += "\n " + err.message;
         await showAlert(err.message);
@@ -70,8 +72,24 @@ export class InspectionListPage implements OnInit {
     }
   }
 
-  onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
+  async getCurrentPosition() {
+    const coordinates = await Geolocation.getCurrentPosition();
+    this.empLocation = new Coords(coordinates.coords.latitude, coordinates.coords.longitude);
+  }
+
+  async onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
     this.filterOption = event.detail.value;
+
+    if(!this.desktop){
+      if(this.filterOption === "priority"){
+        await this.fetchTest(true);
+      }
+      else{
+        await this.getCurrentPosition();
+        await this.fetchTest(false);
+      }
+      return;
+    }
 
     if (this.filterOption === "priority") {
       this.loadingctrl
@@ -115,70 +133,71 @@ export class InspectionListPage implements OnInit {
     }
   }
 
-  async checkPlatform() {
-    let alert = this.alertCtrl.create({
-      header: "Platform",
-      message: "You are running on: " + this.plt.platforms(),
-      buttons: ["OK"],
-    });
-    (await alert).present();
-  }
-
-  async runTest(): Promise<void> {
+  async fetchTest(priority: boolean): Promise<void> {
     try {
-      let result: any = await this._sqlite.echo("Hello World");
-      this.log += " from Echo " + result.value;
+      let nearByAssets = [];
       // initialize the connection
-      const db = await this._sqlite.createConnection(
-        "martis",
-        false,
-        "no-encryption",
-        1
-      );
-      this.log += "\ndb connected " + db;
+      const db = await this._sqlite.createConnection("martis", false, "no-encryption", 1);
 
-      // check if the databases exist
-      // and delete it for multiple successive tests
-      //await deleteDatabase(db);
-
-      // open db testNew
+      // open db martis
       await db.open();
-      this.log += "\ndb opened";
-      // create tables in db
-      // let ret: any = await db.execute(createSchema);
-      // if (ret.changes.changes < 0) {
-      //   return Promise.reject(new Error("Execute createSchema failed"));
-      // }
 
-      // create synchronization table
-      let ret: any = await db.createSyncTable();
-      console.log(
-        "$$$ createSyncTable ret.changes.changes in db " + ret.changes.changes
-      );
-
-      // set the synchronization date
-      const syncDate: string = "2020-11-25T08:30:25.000Z";
-      await db.setSyncDate(syncDate);
-
-      // select all assets in db
-      ret = await db.query("SELECT * FROM test;");
+      // select tests from db
+      let ret = priority? 
+      await db.query(`SELECT * from test where DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" ORDER by Priority ASC`)
+      : await db.query(`SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
+      from test t, asset a
+      where t.AssetID = a.id
+      AND t.InspectorID = 'EMP101'`);
+      
       this.lest = ret.values;
-      if (ret.values.length === 0) {
+
+      //sorting by distance
+      if(!priority){
+        this.lest.forEach((e) => {
+          let assetLoc = new Coords(e.GPSLatitude,e.GPSLongitude);
+          this.log += "\n assetloc: "+ assetLoc.latitude+ ", emploc: "+ this.empLocation.latitude;
+          const distance = Math.round(
+            this._sqlite.haversine(assetLoc, this.empLocation)
+          );
+          if (distance) {
+            nearByAssets.push({
+              distance: distance,
+              AssetID: e.AssetID,
+              InspectorID: e.InspectorID,
+              id: e.id,
+              TestModID: e.TestModID,
+            });
+          }
+        });
+
+        this.lest = nearByAssets.sort((a,b)=> a.distance-b.distance);
+      }
+
+      if(ret.values.length === 0) {
         return Promise.reject(new Error("getTests query failed"));
       }
-      this.log += "\nquery done.";
-      // Close Connection MyDB
-      await this._sqlite.closeConnection("martis");
-      this.log += "\n> closeConnection 'myDb' successful\n";
+
+      // Close Connection MyDB        
+      await this._sqlite.closeConnection("martis"); 
 
       return Promise.resolve();
     } catch (err) {
-      // Close Connection MyDB
-      await this._sqlite.closeConnection("martis");
-      this.log += "\n> closed Connection: 'martis'\n";
+      // Close Connection MyDB        
+      await this._sqlite.closeConnection("martis"); 
+      
       //error message
-      this.log += "\nrejected";
       return Promise.reject(err);
     }
   }
+}
+
+export class Coords {
+	latitude: number;
+	longitude: number;
+
+	constructor(lat?: number, long?: number) {
+		this.latitude = lat;
+		this.longitude = long;
+	}
 }

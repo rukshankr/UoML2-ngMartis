@@ -133,9 +133,17 @@
             </ion-row>
             <ion-row>
               <ion-col>
-                <ion-label position="fixed">Test Module ID:</ion-label>
+                <ion-label position="fixed">Test Module:</ion-label>
                 <ion-item>
-                  <ion-input formControlName="TestModID"></ion-input>
+                  <!-- <ion-input formControlName="TestModID"></ion-input> -->
+                  <ion-select
+                    value="TestModID"
+                    interface="popover"
+                    formControlName="TestModID"
+                  >
+                    <ion-select-option value="TM101">Grounds Test</ion-select-option>
+                    <ion-select-option value="TM102">Signal Test</ion-select-option>
+                  </ion-select>
                 </ion-item>
               </ion-col>
             </ion-row>
@@ -176,8 +184,8 @@
         >
       </ion-col>
     </ion-row>
-    <ion-row>
+    <!-- <ion-row>
       <p>{{log}}</p>
-    </ion-row>
+    </ion-row> -->
   </form>
 </ion-content>

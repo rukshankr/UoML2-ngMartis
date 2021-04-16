@@ -21,7 +21,15 @@
               <ion-col>
                 <ion-item>
                   <ion-label position="floating">Employee ID: </ion-label>
-                  <ion-input formControlName="inspectorID" type="text"></ion-input>
+                  <!-- <ion-input formControlName="inspectorID" type="text"></ion-input> -->
+                  <ion-select
+                    value="inspectorID"
+                    interface="popover"
+                    formControlName="inspectorID"
+                  >
+                    <ion-select-option *ngFor="let e of (desktop ? users[0] : users)"
+                    value={{e.UserID}}>{{e.UserID}} : {{e.Name}}</ion-select-option>
+                  </ion-select>
                 </ion-item>
               </ion-col>
             </ion-row>
@@ -128,7 +136,7 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-button color="danger" size="large" expand="block" >
+        <ion-button color="danger" size="large" expand="block">
           Download as PDF
         </ion-button>
       </ion-col>

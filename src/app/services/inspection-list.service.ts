@@ -18,7 +18,6 @@ export class inspectionListService {
     //return this.httpclient.get('https://martisapiversion1.herokuapp.com/test/getTests');
     return this.http.get(
       "https://martisapiversion1.herokuapp.com/test/getTests"
-      //"https://localhost:3000/test/getTests"
     );
   }
 
@@ -35,7 +34,6 @@ export class inspectionListService {
     this.getCoords();
     return this.http.post(
       "https://martisapiversion1.herokuapp.com/test/orderByLocationAndInspector",
-      // "http://localhost:3000/test/orderByLocationAndInspector",
       {
         empLatitude: this.latitude,
         empLongitude: this.longitude,
@@ -47,7 +45,6 @@ export class inspectionListService {
   sortInspectionsByPriority(): Observable<any> {
     return this.http.get(
       "https://martisapiversion1.herokuapp.com/test/orderByPriority"
-      //"https://localhost:3000/test/orderByPriority"
     );
   }
 }

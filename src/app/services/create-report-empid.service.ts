@@ -14,4 +14,12 @@ export class CreateReportEmpidService {
 	post(opost: Posts): Observable<any> {
 		return this.http.post('https://martisapiversion1.herokuapp.com/report/getReports', opost);
 	}
+
+	getEmps(): Observable<any> {
+		return this.http.get('https://martisapiversion1.herokuapp.com/user/getEmps');
+	}
+
+	getAssets(): Observable<any> {
+		return this.http.get('https://martisapiversion1.herokuapp.com/asset/getAssets');
+	}
 }
