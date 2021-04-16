@@ -133,15 +133,15 @@ export class SyncerPage implements OnInit {
     }
   }
 
-  // getMainTable() {
-  //   this._inspectionListService.getinspections().subscribe((data) => {
-  //     this.mainTests = data;
-  //     this.mainTests = Array.of(this.mainTests.data);
-  //     console.log(this.mainTests);
-  //     this.log = this.mainTests[0];
-  //   });
-  //   this.showAlert("Success", "tests fetched from main");
-  // }
+  getMainTable() {
+    this._inspectionListService.getinspections().subscribe((data) => {
+      this.mainTests = data;
+      this.mainTests = Array.of(this.mainTests.data);
+      console.log(this.mainTests);
+      this.log = this.mainTests[0];
+    });
+    this.showAlert("Success", "tests fetched from main");
+  }
 
   async getLocalTable(): Promise<void> {
     try {
@@ -198,7 +198,7 @@ export class SyncerPage implements OnInit {
       let jsonObj: any = await db.exportToJson("full");
 
       this.exportedJson += JSON.stringify(jsonObj.export);
-      
+
       // test Json object validity
       let result = await this._sqlite.isJsonValid(
         JSON.stringify(jsonObj.export)
@@ -213,9 +213,9 @@ export class SyncerPage implements OnInit {
 
       //export to Main DB
       this._dbService.fullExportAll(jsonObj.export).subscribe((data) => {
-        console.log('Export post method success?: ', data);
+        console.log("Export post method success?: ", data);
         if (data) {
-          this.showAlert("Success","Completely Exported");
+          this.showAlert("Success", "Completely Exported");
         } else {
           this.showAlert("Error", "Export not added.");
         }

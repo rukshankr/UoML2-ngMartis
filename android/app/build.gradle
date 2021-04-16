@@ -23,6 +23,10 @@ android {
     }
 }
 
+// android.defaultConfig.manifestPlaceholders = [
+//     "appAuthRedirectScheme": "com.okta.dev-44560058:/callback"
+// ]
+
 repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'

@@ -105,23 +105,23 @@ export class SelectionPage implements OnInit {
       })
       .catch((err) => console.log(err));
 
-    const headers = {
-      Authorization: "SSWS " + "008vkJ56YbuVZFNQ9bk0GWFCVam0Oyrkb3dX7jLhSF",
-    };
-    this.http
-      .get("https://dev-44560058.okta.com/api/v1/users/me", {
-        headers,
-      })
-      .subscribe(
-        (data: any) => {
-          // Use the data returned by the API
-          console.log(data);
-        },
-        (err) => {
-          console.log("Therer was an error");
-          console.log(err);
-        }
-      );
+    // const headers = {
+    //   Authorization: "SSWS " + "008vkJ56YbuVZFNQ9bk0GWFCVam0Oyrkb3dX7jLhSF",
+    // };
+    // this.http
+    //   .get("https://dev-44560058.okta.com/api/v1/users/me", {
+    //     headers,
+    //   })
+    //   .subscribe(
+    //     (data: any) => {
+    //       // Use the data returned by the API
+    //       console.log(data);
+    //     },
+    //     (err) => {
+    //       console.log("Therer was an error");
+    //       console.log(err);
+    //     }
+    //   );
 
     // console.log(userClaims);
 
