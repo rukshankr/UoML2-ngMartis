@@ -67,7 +67,7 @@ export class RepairListPage implements OnInit {
 			await db.open();
 
 			// select all assets in db
-			let ret = await db.query('SELECT * FROM repair;');
+			let ret = await db.query('SELECT * FROM repair WHERE CompletedDate IS null;');
 			this.repairs = ret.values;
 			if (ret.values.length === 0) {
 				return Promise.reject(new Error('Query 2 repair failed'));

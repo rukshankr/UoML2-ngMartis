@@ -92,7 +92,7 @@ export class CreateAssetPage implements OnInit {
         this.log += "\ndb opened.\n";
         //insert
         let sqlcmd: string =
-          "INSERT INTO asset (AssetID, AssetType, Satus, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate) VALUES (?,?,?,?,?,?,?,?,?,?)";
+          "INSERT INTO asset (id, AssetType, Status, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate) VALUES (?,?,?,?,?,?,?,?,?,?)";
         this.opost = this.createAssetForm.value;
         var p = this.opost;
         let postableChanges = [

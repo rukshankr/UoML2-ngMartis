@@ -97,12 +97,12 @@ export class CreateInspectionPage implements OnInit {
         this.log += "\ndb opened";
 
         // select all assets in db
-        let ret = await db.query("SELECT * FROM asset;");
+        let ret = await db.query("SELECT id as 'AssetID' FROM asset;");
         this.assets = ret.values;
         if (ret.values.length === 0) {
           return Promise.reject(new Error("Query 2 asset failed"));
         }
-        this.log += "\nquery done.";
+        this.log += "\n asset query done."+this.assets[0].id+" ";
         // Close Connection MyDB
         await this._sqlite.closeConnection("martis");
         this.log += "\n> closeConnection 'myDb' successful\n";
@@ -142,7 +142,7 @@ export class CreateInspectionPage implements OnInit {
   
         //insert
         let sqlcmd: string =
-          "INSERT INTO test (TestID, DateIssued, AssetID, InspectorID, SupervisorID, Frequency, TestModID, Priority) VALUES (?,?,?,?,?,?,?,?)";
+          "INSERT INTO test (id, DateIssued, AssetID, InspectorID, SupervisorID, Frequency, TestModID, Priority) VALUES (?,?,?,?,?,?,?,?)";
         this.opost = this.createInspectionForm.value;
   
         //put today
@@ -171,7 +171,7 @@ export class CreateInspectionPage implements OnInit {
         // Close Connection MyDB
         await this._sqlite.closeConnection("martis");
   
-        await this.showAlert("Success","asset added.");
+        await this.showAlert("Success","Inspection added.");
         return Promise.resolve();
       } catch (err) {
         // Close Connection MyDB

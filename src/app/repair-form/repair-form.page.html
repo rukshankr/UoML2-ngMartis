@@ -8,9 +8,6 @@
 </ion-header>
 
 <ion-content>
-    <ion-row>
-        <p>{{log}}</p>
-    </ion-row>
     <form [formGroup]="createRepairForm" (ngSubmit)="onSave()">
         <ion-row>
             <ion-col>
@@ -131,5 +128,8 @@
                 <ion-button type="submit" color="danger" size="large" expand="block">Save</ion-button>
             </ion-col>
         </ion-row>
+        <!-- <ion-row>
+            <p>{{log}}</p>
+        </ion-row> -->
     </form>
 </ion-content>

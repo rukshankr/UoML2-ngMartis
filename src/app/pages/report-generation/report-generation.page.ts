@@ -83,29 +83,35 @@ export class ReportGenerationPage implements OnInit {
 
         //search
         const sqlcmd: string = 
-		`SELECT t.TestID, t.InspectorID, t.DateCompleted, a.Division, a.SubDivision, a.NearestMilePost, u.Region, u.Email, u.Name, t.comments
-        	from asset a, user u, testmodule tm, test t
-        	WHERE a.AssetID = t.AssetID
-        	AND u.UserID = t.InspectorID
-        	AND t.TestModID = tm.TestModID
+		`SELECT t.id as 'TestID', t.InspectorID, t.DateCompleted, a.Division, a.SubDivision, a.NearestMilePost, u.Region, u.Email, u.Name, t.comments, t.Result
+        	FROM asset a, user u, testmodule tm, test t
+        	WHERE a.id = t.AssetID
+        	AND u.id = t.InspectorID
+        	AND t.TestModID = tm.id
         	AND t.InspectorID = ?
         	AND t.DateIssued BETWEEN ?
-        	AND ?`;
+        	AND ?
+          AND 
+          (t.DateCompleted != '0000-00-00 00:00:00'
+          AND t.DateCompleted IS NOT NULL)`;
 
         var p = this.opost;
-        let postableChanges = [p.inspectorID, p.initialDate, p.finalDate];
-        let ret: any = await db.run(sqlcmd, postableChanges);
+        let postableChanges = [
+          p.inspectorID, 
+          p.initialDate, 
+          p.finalDate
+        ];
+        let ret: any = await db.query(sqlcmd, postableChanges);
+
+        //fetch the results
+        this.lst = ret.values;
 
         //check search
-        if (ret.changes.changes !== 1) {
+        if (ret.values.length == 0) {
           return Promise.reject(new Error("Execution failed"));
         }
 
-        //fetch the results
-        this.lst = ret.changes;
-
         //disconnect
-        // Close Connection MyDB
         await this._sqlite.closeConnection("martis");
 
         await this.showAlert("Success", "report fetched.");
@@ -124,7 +130,7 @@ export class ReportGenerationPage implements OnInit {
       .create({
         header: "Result",
         message: val
-          ? "Report retrieved   Successfully" + val
+          ? "Report retrieved   Successfully"
           : "Error: " + Message,
         buttons: [
           {
@@ -194,7 +200,7 @@ export class ReportGenerationPage implements OnInit {
       this.log += "\ndb opened";
 
       // select all assets in db
-      let ret = await db.query("SELECT UserID, Name FROM user;");
+      let ret = await db.query("SELECT id as 'UserID', Name FROM user;");
       this.users = ret.values;
 
       if (ret.values.length === 0) {
@@ -207,7 +213,8 @@ export class ReportGenerationPage implements OnInit {
 
       return Promise.resolve();
     } catch (err) {
-      this.log += "\nrejected";
+      // Close Connection martis
+      await this._sqlite.closeConnection("martis");
       //error message
       await this.showAlert(false, err.message);
       return Promise.reject(err);
