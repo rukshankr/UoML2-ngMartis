@@ -22,7 +22,7 @@ export class RepairFormPage implements OnInit {
 	createddate = String;
 
 	opost = new Posts();
-	log: string = "";
+	log: string = '';
 
 	//platform
 	desktop: boolean = true;
@@ -49,9 +49,9 @@ export class RepairFormPage implements OnInit {
 		this.comments = this.route.snapshot.params.comments;
 		this.createddate = this.route.snapshot.params.createddate;
 
-		if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
-			this.desktop =false;
-		} else if (this.plt.is("desktop")) {
+		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
+			this.desktop = false;
+		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
 		}
 	}
@@ -70,52 +70,50 @@ export class RepairFormPage implements OnInit {
 		let date = this.route.snapshot.params.createddate;
 		this.opost = this.createRepairForm.value;
 
-		if(this.opost.CompletedDate == "" || this.confirm === false){
-			this.showAlert(false, "Please confirm repair date", true);
+		if (this.opost.CompletedDate == '' || this.confirm === false) {
+			this.showAlert(false, 'Please confirm repair date', true);
 			return;
 		}
-		
+
 		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'utc').toString();
 		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-dd HH:mm:ss');
 		console.log(this.opost.CompletedDate);
 
-		if(!this.desktop){
-			try{
+		if (!this.desktop) {
+			try {
 				//connect
-				const db = await this._sqlite.createConnection(
-				"martis",
-				false,
-				"no-encryption",
-				1
-			  	);
+				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
 
-			  	//open
-			  	await db.open();
+				//open
+				await db.open();
 
-			  	//insert
-				  let sqlcmd: string =
-				  "UPDATE repair SET CompletedDate = ? , comments = ? WHERE AssetID = ? AND CreatedDate = ?";
-				
-				  let postableChanges = [this.opost.CompletedDate,this.opost.comments,this.opost.AssetId, this.opost.CreatedDate];
-				  let ret: any = await db.run(sqlcmd, postableChanges);
-			
-				  //check insert
-				  if (ret.changes.changes !== 1) {
-					return Promise.reject(new Error("Execution failed"));
-				  }
-				  this.log += "\nupdate successful\n";
-				  //disconnect
-				  // Close Connection MyDB
-				  await this._sqlite.closeConnection("martis");
-				  this.log += "\n> closeConnection 'martis' successful\n";
-			
-				  await this.showAlert(true);
-				  return Promise.resolve();
+				//insert
+				let sqlcmd: string =
+					'UPDATE repair SET CompletedDate = ? , comments = ? WHERE AssetID = ? AND CreatedDate = ?';
 
-			}
-			catch(err){
+				let postableChanges = [
+					this.opost.CompletedDate,
+					this.opost.comments,
+					this.opost.AssetId,
+					this.opost.CreatedDate
+				];
+				let ret: any = await db.run(sqlcmd, postableChanges);
+
+				//check insert
+				if (ret.changes.changes !== 1) {
+					return Promise.reject(new Error('Execution failed'));
+				}
+				this.log += '\nupdate successful\n';
+				//disconnect
 				// Close Connection MyDB
-				await this._sqlite.closeConnection("martis");
+				await this._sqlite.closeConnection('martis');
+				this.log += "\n> closeConnection 'martis' successful\n";
+
+				await this.showAlert(true);
+				return Promise.resolve();
+			} catch (err) {
+				// Close Connection MyDB
+				await this._sqlite.closeConnection('martis');
 				this.log += "\n> closeConnection 'martis' successful\n";
 				//error message
 				return await this.showAlert(false, err.message);
@@ -138,13 +136,13 @@ export class RepairFormPage implements OnInit {
 	async showAlert(val, msg?, reset?: boolean) {
 		await this.alertCtrl
 			.create({
-				header: val? 'Successful': 'Unsuccessful',
-				message: val ? 'Repair added Successfully' : 'Error: '+ msg,
+				header: val ? 'Successful' : 'Unsuccessful',
+				message: val ? 'Repair added Successfully' : 'Error: ' + msg,
 				buttons: [
 					{
 						text: 'OK',
 						handler: () => {
-							if(!reset){
+							if (!reset) {
 								this.createRepairForm.reset();
 							}
 						}
@@ -154,12 +152,13 @@ export class RepairFormPage implements OnInit {
 			.then((res) => res.present());
 	}
 
-	confirmez(){
+	confirmez() {
 		this.confirm = !this.confirm;
 	}
 }
 export class Posts {
 	AssetId: string;
+	EngineerID: string;
 	CreatedDate: string;
 	CompletedDate: string;
 	comments: string;
