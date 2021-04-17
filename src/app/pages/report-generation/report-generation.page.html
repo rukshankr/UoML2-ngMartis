@@ -68,7 +68,7 @@
               Inspector Details
             </ion-card-title>
           </ion-card-header>
-          <ion-card-content *ngFor="let item of lst[0]; let i = index">
+          <ion-card-content *ngFor="let item of (desktop ? lst[0]: lst); let i = index">
             <ion-row *ngIf="i== 0">
               <ion-col>
                 <ion-label  position="fixed">
@@ -117,10 +117,10 @@
               </ion-col>
             </ion-row>
           </ion-card-header>
-          <ion-card-content *ngFor="let item of lst[0]">
+          <ion-card-content *ngFor="let item of (desktop ? lst[0] : lst)">
             <ion-row>
               <ion-col>
-                <ion-label>{{item.testID}}</ion-label> 
+                <ion-label>{{item.TestID}}</ion-label> 
               </ion-col>
               <ion-col>
                 <ion-label>{{item.comments}}</ion-label> 

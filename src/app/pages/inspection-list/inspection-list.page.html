@@ -32,7 +32,7 @@
           <ion-col *ngFor="let item of (desktop ? lst[0] : lest )">
             <ion-card>
               <ion-card-header class="cardhead">
-                <ion-card-title> TestId:{{item.id}} </ion-card-title>
+                <ion-card-title> TestId:{{desktop ? item.TestID : item.id}} </ion-card-title>
                 <ion-card-subtitle>
                   AssetId:{{item.AssetID}}
                 </ion-card-subtitle>
@@ -56,14 +56,14 @@
                   <ion-item>
                     <ng-container *ngIf="item.TestModID=='TM101'">
                       <ion-button
-                        [routerLink]="['/','grounds-test',item.AssetID,item.id]"
+                        [routerLink]="['/','grounds-test',item.AssetID,desktop? item.TestID : item.id]"
                       >
                         Inspect
                       </ion-button>
                     </ng-container>
                     <ng-container *ngIf="item.TestModID=='TM102'">
                       <ion-button
-                        [routerLink]="['/','signal-test',item.AssetID,item.id]"
+                        [routerLink]="['/','signal-test',item.AssetID,desktop? item.TestID : item.id]"
                       >
                         Inspect
                       </ion-button>

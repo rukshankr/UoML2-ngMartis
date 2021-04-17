@@ -38,6 +38,14 @@ export class RepairFormPage implements OnInit {
 		comments: [ '' ]
 	});
 
+	get createdDate() {
+		return this.createRepairForm.get('CreatedDate');
+	}
+
+	get completedDate() {
+		return this.createRepairForm.get('CompletedDate');
+	}
+
 	ngOnInit() {
 		console.log(this.route.snapshot.params.assetid);
 		let date = new Date(this.route.snapshot.params.createddate);
@@ -75,39 +83,48 @@ export class RepairFormPage implements OnInit {
 			return;
 		}
 
-		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'utc').toString();
-		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-dd HH:mm:ss');
-		console.log(this.opost.CompletedDate);
-
 		if (!this.desktop) {
+			this.opost.CreatedDate = date;
 			try {
 				//connect
 				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
 
 				//open
 				await db.open();
-
+				this.log +=
+					' // db opened // ComD8:' +
+					this.opost.CreatedDate +
+					', comments:' +
+					this.opost.comments +
+					', id:' +
+					this.opost.AssetId +
+					', completedD8:' +
+					this.completedDate;
 				//insert
 				let sqlcmd: string =
-					'UPDATE repair SET CompletedDate = ? , comments = ? WHERE AssetID = ? AND CreatedDate = ?';
+					'UPDATE repair SET CompletedDate = ?, comments = ? WHERE id = ? AND CreatedDate = ?';
 
 				let postableChanges = [
-					this.opost.CompletedDate,
+					this.completedDate.value,
 					this.opost.comments,
 					this.opost.AssetId,
 					this.opost.CreatedDate
 				];
 				let ret: any = await db.run(sqlcmd, postableChanges);
 
+				this.log += ' // query run //' + ret.changes.changes;
 				//check insert
-				if (ret.changes.changes !== 1) {
+				if (ret.changes.changes == 0) {
 					return Promise.reject(new Error('Execution failed'));
 				}
-				this.log += '\nupdate successful\n';
+				this.log += '\n update successful: changes: ';
 				//disconnect
 				// Close Connection MyDB
 				await this._sqlite.closeConnection('martis');
 				this.log += "\n> closeConnection 'martis' successful\n";
+
+				await this.showAlert(true);
+				return Promise.resolve();
 
 				await this.showAlert(true);
 				return Promise.resolve();
@@ -116,10 +133,14 @@ export class RepairFormPage implements OnInit {
 				await this._sqlite.closeConnection('martis');
 				this.log += "\n> closeConnection 'martis' successful\n";
 				//error message
-				return await this.showAlert(false, err.message);
+				return await this.showAlert(false, err.message, true);
 			}
 			return;
 		}
+
+		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'utc').toString();
+		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-dd HH:mm:ss');
+		console.log(this.opost.CompletedDate);
 
 		console.log('Page Saved', this.opost);
 
