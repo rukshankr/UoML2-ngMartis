@@ -9,24 +9,19 @@ import { DatePipe } from '@angular/common';
 import { SqliteService } from 'src/app/services/sqlite.service';
 
 @Component({
-	selector: 'app-report-generation',
-	templateUrl: './report-generation.page.html',
-	styleUrls: [ './report-generation.page.scss' ]
+	selector: 'app-report-generation-asset',
+	templateUrl: './report-generation-asset.page.html',
+	styleUrls: [ './report-generation-asset.page.scss' ]
 })
-export class ReportGenerationPage implements OnInit {
-	opost = new Posts();
+export class ReportGenerationAssetPage implements OnInit {
+	opost = new Aposts();
 	desktop: boolean = true;
 	log: string = '';
 
 	createReportForm = this.formBuilder.group({
-		inspectorID: [
+		assetID: [
 			'',
-			[
-				Validators.required,
-				Validators.pattern('^EMP[0-9]{3}'),
-				Validators.maxLength(6),
-				Validators.minLength(6)
-			]
+			[ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(6), Validators.minLength(6) ]
 		],
 		initialDate: [ '' ],
 		finalDate: [ '' ]
@@ -41,6 +36,7 @@ export class ReportGenerationPage implements OnInit {
 		private http: HttpClient,
 		private plt: Platform
 	) {}
+
 	lst: any = [];
 	assets = [];
 	users: any = [];
@@ -57,7 +53,7 @@ export class ReportGenerationPage implements OnInit {
 
 			console.log('Page Saved', this.opost);
 
-			this.createReport.post(this.opost).subscribe((data) => {
+			this.createReport.getAssetReport(this.opost).subscribe((data) => {
 				console.log('Post method success?: ', data);
 				if (data) {
 					this.lst = data;
@@ -67,51 +63,6 @@ export class ReportGenerationPage implements OnInit {
 					this.showAlert(false);
 				}
 			});
-		} else {
-			try {
-				//connect
-				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
-
-				//open
-				await db.open();
-
-				//search
-				const sqlcmd: string = `SELECT t.id as 'TestID', t.InspectorID, t.DateCompleted, a.Division, a.SubDivision, a.NearestMilePost, u.Region, u.Email, u.Name, t.comments, t.Result
-        	FROM asset a, user u, testmodule tm, test t
-        	WHERE a.id = t.AssetID
-        	AND u.id = t.InspectorID
-        	AND t.TestModID = tm.id
-        	AND t.InspectorID = ?
-        	AND t.DateIssued BETWEEN ?
-        	AND ?
-          AND 
-          (t.DateCompleted != '0000-00-00 00:00:00'
-          AND t.DateCompleted IS NOT NULL)`;
-
-				var p = this.opost;
-				let postableChanges = [ p.inspectorID, p.initialDate, p.finalDate ];
-				let ret: any = await db.query(sqlcmd, postableChanges);
-
-				//fetch the results
-				this.lst = ret.values;
-
-				//check search
-				if (ret.values.length == 0) {
-					return Promise.reject(new Error('Execution failed'));
-				}
-
-				//disconnect
-				await this._sqlite.closeConnection('martis');
-
-				await this.showAlert('Success', 'report fetched.');
-				return Promise.resolve();
-			} catch (err) {
-				// Close Connection MyDB
-				await this._sqlite.closeConnection('martis');
-
-				//error message
-				return await this.showAlert('Error', err.message);
-			}
 		}
 	}
 	async showAlert(val, Message?) {
@@ -130,40 +81,14 @@ export class ReportGenerationPage implements OnInit {
 			})
 			.then((res) => res.present());
 	}
-
-	async sendToEmail() {
-		console.log('started');
-		this.http.get('./assets/ar.pdf', { responseType: 'blob' }).subscribe((res) => {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				const result = reader.result as string;
-				const base64Data = result.split(',')[1];
-
-				FileSharer.share({
-					filename: 'test.pdf',
-					base64Data,
-					contentType: 'application/pdf'
-				})
-					.then(() => {
-						console.log('file sharing success!');
-						// do sth
-					})
-					.catch((error) => {
-						console.error('File sharing failed', error.message);
-					});
-			};
-			reader.readAsDataURL(res);
-		});
-	}
-
 	async ngOnInit() {
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
 			await this.getEmpsAssets();
 		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
-			this.createReport.getEmps().subscribe((data) => {
-				this.users = Array.of(data.data);
+			this.createReport.getAssets().subscribe((data) => {
+				this.assets = Array.of(data.data);
 			});
 		}
 	}
@@ -200,8 +125,8 @@ export class ReportGenerationPage implements OnInit {
 		}
 	}
 }
-export class Posts {
+export class Aposts {
 	initialDate: string;
 	finalDate: string;
-	inspectorID: string;
+	assetID: string;
 }

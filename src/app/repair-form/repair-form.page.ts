@@ -22,7 +22,7 @@ export class RepairFormPage implements OnInit {
 	createddate = String;
 
 	opost = new Posts();
-	log: string = "";
+	log: string = '';
 
 	//platform
 	desktop: boolean = true;
@@ -39,11 +39,11 @@ export class RepairFormPage implements OnInit {
 	});
 
 	get createdDate() {
-		return this.createRepairForm.get("CreatedDate");
+		return this.createRepairForm.get('CreatedDate');
 	}
 
 	get completedDate() {
-		return this.createRepairForm.get("CompletedDate");
+		return this.createRepairForm.get('CompletedDate');
 	}
 
 	ngOnInit() {
@@ -57,9 +57,9 @@ export class RepairFormPage implements OnInit {
 		this.comments = this.route.snapshot.params.comments;
 		this.createddate = this.route.snapshot.params.createddate;
 
-		if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
-			this.desktop =false;
-		} else if (this.plt.is("desktop")) {
+		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
+			this.desktop = false;
+		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
 		}
 	}
@@ -78,50 +78,59 @@ export class RepairFormPage implements OnInit {
 		let date = this.route.snapshot.params.createddate;
 		this.opost = this.createRepairForm.value;
 
-		if(this.opost.CompletedDate == "" || this.confirm === false){
-			this.showAlert(false, "Please confirm repair date", true);
+		if (this.opost.CompletedDate == '' || this.confirm === false) {
+			this.showAlert(false, 'Please confirm repair date', true);
 			return;
 		}
 
-		if(!this.desktop){
+		if (!this.desktop) {
 			this.opost.CreatedDate = date;
-			try{
+			try {
 				//connect
-				const db = await this._sqlite.createConnection("martis",false,"no-encryption",1);
+				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
 
-			  	//open
-			  	await db.open();
-				  this.log += " // db opened // ComD8:"+this.opost.CreatedDate+", comments:"+this.opost.comments+", id:"+this.opost.AssetId+", completedD8:"+this.completedDate;
-			  	//insert
-				  let sqlcmd: string =
-				  "UPDATE repair SET CompletedDate = ?, comments = ? WHERE id = ? AND CreatedDate = ?";
-				
-				  let postableChanges = [
-					  this.completedDate.value,
-					  this.opost.comments,
-					  this.opost.AssetId, 
-					  this.opost.CreatedDate
-					];
-				  let ret: any = await db.run(sqlcmd, postableChanges);
+				//open
+				await db.open();
+				this.log +=
+					' // db opened // ComD8:' +
+					this.opost.CreatedDate +
+					', comments:' +
+					this.opost.comments +
+					', id:' +
+					this.opost.AssetId +
+					', completedD8:' +
+					this.completedDate;
+				//insert
+				let sqlcmd: string =
+					'UPDATE repair SET CompletedDate = ?, comments = ? WHERE id = ? AND CreatedDate = ?';
 
-				  this.log += " // query run //"+ret.changes.changes;
-				  //check insert
-				  if (ret.changes.changes == 0) {
-					return Promise.reject(new Error("Execution failed"));
-				  }
-				  this.log += "\n update successful: changes: ";
-				  //disconnect
-				  // Close Connection MyDB
-				  await this._sqlite.closeConnection("martis");
-				  this.log += "\n> closeConnection 'martis' successful\n";
-			
-				  await this.showAlert(true);
-				  return Promise.resolve();
+				let postableChanges = [
+					this.completedDate.value,
+					this.opost.comments,
+					this.opost.AssetId,
+					this.opost.CreatedDate
+				];
+				let ret: any = await db.run(sqlcmd, postableChanges);
 
-			}
-			catch(err){
+				this.log += ' // query run //' + ret.changes.changes;
+				//check insert
+				if (ret.changes.changes == 0) {
+					return Promise.reject(new Error('Execution failed'));
+				}
+				this.log += '\n update successful: changes: ';
+				//disconnect
 				// Close Connection MyDB
-				await this._sqlite.closeConnection("martis");
+				await this._sqlite.closeConnection('martis');
+				this.log += "\n> closeConnection 'martis' successful\n";
+
+				await this.showAlert(true);
+				return Promise.resolve();
+
+				await this.showAlert(true);
+				return Promise.resolve();
+			} catch (err) {
+				// Close Connection MyDB
+				await this._sqlite.closeConnection('martis');
 				this.log += "\n> closeConnection 'martis' successful\n";
 				//error message
 				return await this.showAlert(false, err.message, true);
@@ -148,13 +157,13 @@ export class RepairFormPage implements OnInit {
 	async showAlert(val, msg?, reset?: boolean) {
 		await this.alertCtrl
 			.create({
-				header: val? 'Successful': 'Unsuccessful',
-				message: val ? 'Repair added Successfully' : 'Error: '+ msg,
+				header: val ? 'Successful' : 'Unsuccessful',
+				message: val ? 'Repair added Successfully' : 'Error: ' + msg,
 				buttons: [
 					{
 						text: 'OK',
 						handler: () => {
-							if(!reset){
+							if (!reset) {
 								this.createRepairForm.reset();
 							}
 						}
@@ -164,12 +173,13 @@ export class RepairFormPage implements OnInit {
 			.then((res) => res.present());
 	}
 
-	confirmez(){
+	confirmez() {
 		this.confirm = !this.confirm;
 	}
 }
 export class Posts {
 	AssetId: string;
+	EngineerID: string;
 	CreatedDate: string;
 	CompletedDate: string;
 	comments: string;
