@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="danger">
-    <ion-title>Inspector Report Generation</ion-title>
+    <ion-title>Asset Report Generation</ion-title>
     <ion-buttons slot="start">
       <ion-menu-button menu="first" aria-disabled="false" aria-hidden="false"></ion-menu-button>
     </ion-buttons>
@@ -13,13 +13,14 @@
       <ion-col>
         <ion-segment 
           color="danger"
-          value="inspector">
-          <ion-segment-button value="inspector">Inspector</ion-segment-button>
-          <ion-segment-button value="asset" [routerLink]="['/','report-generation-asset']">Asset</ion-segment-button>
+          value="asset">
+          <ion-segment-button  [routerLink]="['/','report-generation']" value="inspector">Inspector</ion-segment-button>
+          <ion-segment-button value="asset" >Asset</ion-segment-button>
         </ion-segment>
       </ion-col>
     </ion-row>
   </div>
+
   <ion-grid className="ion-text-center ion-margin">
     <form [formGroup]="createReportForm" (ngSubmit)="onSave()">
     <ion-row>
@@ -32,14 +33,14 @@
             <ion-row>
               <ion-col>
                 <ion-item>
-                  <ion-label position="floating">Employee ID: </ion-label>
+                  <ion-label position="floating">Asset ID: </ion-label>
                   <ion-select
-                    value="inspectorID"
+                    value="assetID"
                     interface="popover"
-                    formControlName="inspectorID"
+                    formControlName="assetID"
                   >
-                    <ion-select-option *ngFor="let e of (desktop ? users[0] : users)"
-                    value={{e.UserID}}>{{e.UserID}} : {{e.Name}}</ion-select-option>
+                    <ion-select-option *ngFor="let e of (desktop ? assets[0] : assets)"
+                    value={{e.AssetID}}>{{e.AssetID}} : {{e.Region}}</ion-select-option>
                   </ion-select>
                 </ion-item>
               </ion-col>
@@ -76,33 +77,38 @@
         <ion-card>
           <ion-card-header mode="ios" className="cardhead">
             <ion-card-title>
-              Inspector Details
+              Asset Details
             </ion-card-title>
           </ion-card-header>
           <ion-card-content *ngFor="let item of (desktop ? lst[0]: lst); let i = index">
             <ion-row *ngIf="i== 0">
               <ion-col>
                 <ion-label  position="fixed">
-                  Employee's Name: {{item.Name}}
+                  Asset's Region: {{item.Region}}
                 </ion-label>
-                <br />
-                <br />
               </ion-col>
             </ion-row>
             <ion-row *ngIf="i== 0">
               <ion-col>
                 <ion-label position="fixed">
-                  Region: {{item.Region}}
+                  GPS Latitude: {{item.GPSLatitude}}
                 </ion-label>
               </ion-col>
             </ion-row> 
             <ion-row *ngIf="i== 0">
               <ion-col>
                 <ion-label position="fixed">
-                  Email: {{item.Email}}
+                  GPS Longitude: {{item.GPSLongitude}}
                 </ion-label>
               </ion-col>
-            </ion-row>                        
+            </ion-row>   
+            <ion-row *ngIf="i== 0">
+              <ion-col>
+                <ion-label position="fixed">
+                 Asset Status: {{item.Status}}
+                </ion-label>
+              </ion-col>
+            </ion-row>                      
           </ion-card-content>
         </ion-card>
       </ion-col>
