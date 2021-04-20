@@ -28,53 +28,47 @@
       </ion-col>
     </ion-row>
     <!--switch removed-->
-        <ion-row>
-          <ion-col *ngFor="let item of (desktop ? lst[0] : lest )">
-            <ion-card>
-              <ion-card-header class="cardhead">
-                <ion-card-title> TestId:{{item.id}} </ion-card-title>
-                <ion-card-subtitle>
-                  AssetId:{{item.AssetID}}
-                </ion-card-subtitle>
-              </ion-card-header>
-              <ion-card-content
-                [ngClass]="{priority1: item.Priority==1, priority2: item.Priority==2, priority3: item.Priority==3,priority4: item.Priority==4,priority5: item.Priority==5}"
-              >
-                <ion-list>
-                  <ion-item>
-                    <ion-label>InspectorID:{{item.InspectorID}}</ion-label>
-                  </ion-item>
-                  <ion-item>
-                    <ion-label
-                      >Test Type: {{item.TestModID =="TM101" ?"Grounds Test"
-                      :"Signals Test"}}</ion-label
-                    >
-                  </ion-item>
-                  <ion-item *ngIf="item.distance">
-                    <ion-label>Distance: {{ item.distance }}m</ion-label>
-                  </ion-item>
-                  <ion-item>
-                    <ng-container *ngIf="item.TestModID=='TM101'">
-                      <ion-button
-                        [routerLink]="['/','grounds-test',item.AssetID,item.id]"
-                      >
-                        Inspect
-                      </ion-button>
-                    </ng-container>
-                    <ng-container *ngIf="item.TestModID=='TM102'">
-                      <ion-button
-                        [routerLink]="['/','signal-test',item.AssetID,item.id]"
-                      >
-                        Inspect
-                      </ion-button>
-                    </ng-container>
-                  </ion-item>
-                </ion-list>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      <!-- </div> -->
-    <!-- </div> -->
+    <ion-row>
+      <ion-col *ngFor="let item of (desktop ? lst[0] : lest )">
+        <ion-card>
+          <ion-card-header class="cardhead">
+            <ion-card-title> TestId:{{desktop ? item.TestID : item.id}} </ion-card-title>
+            <ion-card-subtitle>
+              AssetId:{{item.AssetID}}
+            </ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content
+            [ngClass]="{priority1: item.Priority==1, priority2: item.Priority==2, priority3: item.Priority==3,priority4: item.Priority==4,priority5: item.Priority==5}">
+            <ion-list>
+              <ion-item>
+                <ion-label>InspectorID:{{item.InspectorID}}</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>Test Type: {{item.TestModID =="TM101"? "Grounds Test":"Signals Test"}}
+                </ion-label>
+              </ion-item>
+              <ion-item *ngIf="item.distance">
+                <ion-label>Distance: {{ item.distance }}m</ion-label>
+              </ion-item>
+              <ion-item>
+                <ng-container *ngIf="item.TestModID=='TM101'">
+                  <ion-button [routerLink]="['/','grounds-test',item.AssetID,desktop? item.TestID : item.id]">
+                  Inspect
+                  </ion-button>
+                </ng-container>
+                <ng-container *ngIf="item.TestModID=='TM102'">
+                  <ion-button
+                    [routerLink]="['/','signal-test',item.AssetID,desktop? item.TestID : item.id]"
+                  >
+                    Inspect
+                  </ion-button>
+                </ng-container>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+      
   </ion-grid>
 </ion-content>

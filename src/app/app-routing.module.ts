@@ -148,7 +148,11 @@ const routes: Routes = [
   {
     path: "login/callback",
     component: OktaCallbackComponent,
+  },  {
+    path: 'report-generation-asset',
+    loadChildren: () => import('./report-generation-asset/report-generation-asset.module').then( m => m.ReportGenerationAssetPageModule)
   },
+
 ];
 
 @NgModule({

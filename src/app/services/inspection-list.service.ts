@@ -15,7 +15,6 @@ export class inspectionListService {
   }
 
   getinspections(): Observable<any> {
-    //return this.httpclient.get('https://martisapiversion1.herokuapp.com/test/getTests');
     return this.http.get(
       "https://martisapiversion1.herokuapp.com/test/getTests"
     );
@@ -29,8 +28,6 @@ export class inspectionListService {
   }
 
   sortInspectionsByDistance(): Observable<any> {
-    // console.log(this.longitude);
-    // console.log(this.latitude);
     this.getCoords();
     return this.http.post(
       "https://martisapiversion1.herokuapp.com/test/orderByLocationAndInspector",
