@@ -132,7 +132,11 @@ export class SelectionPage implements OnInit {
         (await msg).present();
       };
       try {
-        //await this.runDB();
+        let isMartis = await this._sqlite.sqlite.isDatabase("martis");
+
+        if(!isMartis.result){
+          await this.firstSync();
+        }
         
       } catch (err) {
         await showAlert(err.message);
@@ -140,13 +144,13 @@ export class SelectionPage implements OnInit {
     }
   }
 
-  async runDB(): Promise<void> {
+  async firstSync(): Promise<void> {
     //loading spinner
     const loading = await this.loadingCtrl.create({
-      message: 'Syncing...'
+      message: 'Syncing... please wait'
     });
     await loading.present();
-    //const synced = await loading.onDidDismiss();
+
 
     try {
         //import fully from mysql
@@ -178,13 +182,13 @@ export class SelectionPage implements OnInit {
       
       //dismiss loader 
       await loading.dismiss();
-      this.log += "Successfully Synced!";
+      this.log = "Successfully Synced!";
 
       return Promise.resolve();
     } catch (err) {
       //dismiss loader 
       await loading.dismiss();
-      this.log += "\nCannot Sync right now. Try again later";
+      this.log = "\nCannot Sync right now. Try again later";
       this.showError(err.message);
       return Promise.reject(err);
     }

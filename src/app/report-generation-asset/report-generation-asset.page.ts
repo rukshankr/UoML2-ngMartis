@@ -94,7 +94,7 @@ export class ReportGenerationAssetPage implements OnInit {
 				await this._sqlite.closeConnection('martis');
 
 				//check search
-				if (ret.values.length == 0) {
+				if (this.lst.length == 0) {
 					await this.showAlert("No results", "no matches within given period");
 					return Promise.resolve();
 				}
