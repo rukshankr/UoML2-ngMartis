@@ -26,10 +26,14 @@ export class LoginComponent implements OnInit {
     },
     clientId: "0oag5ujmllTDi2zrM5d6",
     redirectUri: "http://localhost:8100/login/callback",
-    postLogoutRedirectUri: "http://localhost:4200/login",
+    postLogoutRedirectUri: "http://localhost:8100/login",
   });
 
-  constructor(private oktaAuth: OktaAuthService, router: Router, private plt: Platform) {
+  constructor(
+    private oktaAuth: OktaAuthService,
+    router: Router,
+    private plt: Platform
+  ) {
     this.authService = oktaAuth;
     //Show the widget when prompted, otherwise remove it from the DOM.
     router.events.forEach((event) => {
@@ -49,7 +53,10 @@ export class LoginComponent implements OnInit {
 
   isAuthenticated: boolean;
   async ngOnInit() {
-    this.desktop = (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) ? false : true;
+    this.desktop =
+      this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")
+        ? false
+        : true;
     this.isAuthenticated = await this.oktaAuth.isAuthenticated();
   }
   //   this.widget.showSignInAndRedirect().catch((err) => {
