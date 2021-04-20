@@ -39,7 +39,6 @@ export class ReportGenerationAssetPage implements OnInit {
 
 	lst: any = [];
 	assets = [];
-	users: any = [];
 
 	async onSave() {
 		this.opost = this.createReportForm.value;
@@ -63,6 +62,52 @@ export class ReportGenerationAssetPage implements OnInit {
 					this.showAlert(false);
 				}
 			});
+		}
+		else{
+			try {
+				//connect
+				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
+
+				//open
+				await db.open();
+
+				this.log += "martis opened // ";
+				//search
+				const sqlcmd: string = `SELECT a.Status,a.Region, t.Result,a.GPSLatitude, a.GPSLongitude, 
+				t.id as 'TestID', t.InspectorID, t.DateCompleted, a.Division, a.SubDivision, a.NearestMilePost, 
+				t.comments 
+				FROM asset a, test t 
+				WHERE a.id = t.AssetID AND t.AssetID = ? 
+				AND t.DateIssued BETWEEN ? AND ? 
+				AND (t.DateCompleted != '0000-00-00 00:00:00' AND t.DateCompleted IS NOT NULL)`;
+				
+		
+				var p = this.opost;
+				let postableChanges = [ p.assetID, p.initialDate, p.finalDate ];
+				let ret: any = await db.query(sqlcmd, postableChanges);
+
+				//fetch the results
+				this.lst = ret.values;
+				this.log += this.lst[0].TestID + " // "
+
+				//disconnect
+				await this._sqlite.closeConnection('martis');
+
+				//check search
+				if (ret.values.length == 0) {
+					await this.showAlert("No results", "no matches within given period");
+					return Promise.resolve();
+				}
+
+				await this.showAlert('Success', 'report fetched.');
+				return Promise.resolve();
+			} catch (err) {
+				// Close Connection MyDB
+				await this._sqlite.closeConnection('martis');
+
+				//error message
+				return await this.showAlert('Error', err.message);
+			}
 		}
 	}
 	async showAlert(val, Message?) {
@@ -104,8 +149,8 @@ export class ReportGenerationAssetPage implements OnInit {
 			this.log += '\ndb opened';
 
 			// select all assets in db
-			let ret = await db.query("SELECT id as 'UserID', Name FROM user;");
-			this.users = ret.values;
+			let ret = await db.query("SELECT id as 'AssetID', Region FROM asset;");
+			this.assets = ret.values;
 
 			if (ret.values.length === 0) {
 				return Promise.reject(new Error('Query 2 emps failed'));
