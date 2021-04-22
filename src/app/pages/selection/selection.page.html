@@ -14,24 +14,67 @@
         <p>{{log}}</p>
       </ion-col>
     </ion-row>
-      
-          <ion-row>
-            <ion-col>
-            <ion-button href="/create-inspection" fill="solid" color="danger" expand="block">
-                <ion-icon name="add" slot="icon-only" size="large"></ion-icon>
-                Create Tests</ion-button>
-            </ion-col>
-          </ion-row>
+    <ion-row className="ion-text-center ion-align-items-center">
+      <ion-col>
+        <ion-card>
+          <ion-card-header mode="ios" className="cardhead">
+            <ion-row>
+              <ion-col>
+                <ion-card-title>Current Assets</ion-card-title>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="3">
+                <ion-card-subtitle>Asset ID</ion-card-subtitle>
+              </ion-col>
+              <ion-col size="3">
+                <ion-card-subtitle>Status</ion-card-subtitle>
+              </ion-col>
+              <ion-col size="3">
+                <ion-card-subtitle>No. of Tests Assigned</ion-card-subtitle>
+              </ion-col>
+              <ion-col size="3">
+                <ion-card-subtitle>Action</ion-card-subtitle>
+              </ion-col>
+            </ion-row>
+          </ion-card-header>
+          <ion-card-content *ngFor="let item of (desktop ? table[0] : table)">
+            <ion-row>
+              <ion-col>
+                <ion-label>{{item.id}}</ion-label> 
+              </ion-col>
+              <ion-col>
+                <ion-label>{{item.Status}}</ion-label> 
+              </ion-col>
+              <ion-col>
+                <ion-label>{{item.noOfTests}}</ion-label> 
+              </ion-col>
+              <ion-col>
+                <ion-button color="success" [routerLink]="['/','create-inspection',item.id]">
+                  Assign
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
       <ion-row>
         <ion-col>
-            <ion-button className="alltest" href="/create-asset" expand="block"  >
-                <ion-icon name="globe" slot="icon-only"></ion-icon>
+            <ion-button className="alltest" href="/create-asset" color="danger" expand="block"  >
+                <ion-icon name="add" slot="icon-only"></ion-icon>
                 Create Asset
             </ion-button>
         </ion-col>
       </ion-row>
-      <!-- the 9x9 -->
-      
+      <ion-row>
+        <ion-col>
+        <ion-button href="/create-inspection" fill="solid" color="danger" expand="block">
+            <ion-icon name="globe" slot="icon-only" size="large"></ion-icon>
+            Create Tests</ion-button>
+        </ion-col>
+      </ion-row>
       <!---->
       <ion-row class="text-class-center">
         <ion-col class="text-class-center" size="6">

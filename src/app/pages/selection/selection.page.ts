@@ -6,6 +6,7 @@ import { SqliteService } from "src/app/services/sqlite.service";
 import { OktaAuthService } from "@okta/okta-angular";
 import { HttpClient } from "@angular/common/http";
 import { ThrowStmt } from "@angular/compiler";
+import { AssetService } from "src/app/services/asset-service.service";
 
 // import { TIMEOUT } from 'dns';
 // import { type } from 'os';
@@ -22,11 +23,14 @@ export class SelectionPage implements OnInit {
   userPin: number;
   pinValidated: boolean = false;
   importJson;
+  desktop: boolean = true;
+  table = [];
 
   constructor(
     public atrCtrl: AlertController,
     public loadingCtrl: LoadingController,
     private _sqlite: SqliteService,
+    private assetService : AssetService,
     private plt: Platform,
     private oktaAuth: OktaAuthService,
     private http: HttpClient,
@@ -123,6 +127,7 @@ export class SelectionPage implements OnInit {
     // console.log(userClaims);
 
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
+      this.desktop = false;
       const showAlert = async (message: string) => {
         let msg = this.atrCtrl.create({
           header: "Error",
@@ -137,10 +142,17 @@ export class SelectionPage implements OnInit {
         if(!isMartis.result){
           await this.firstSync();
         }
-        
+        //get table
       } catch (err) {
         await showAlert(err.message);
       }
+    }
+    else{
+      this.assetService.getTestNoForAssets().subscribe((data) => {
+        this.table = Array.of(data.data);
+
+        console.log(this.table);
+      });
     }
   }
 

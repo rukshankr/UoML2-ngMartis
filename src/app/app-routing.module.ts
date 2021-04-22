@@ -114,6 +114,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: "create-inspection/:id",
+    loadChildren: () =>
+      import("./pages/create-inspection/create-inspection.module").then(
+        (m) => m.CreateInspectionPageModule
+      ),
+  },
+  {
     path: "create-inspection",
     loadChildren: () =>
       import("./pages/create-inspection/create-inspection.module").then(
@@ -148,7 +155,8 @@ const routes: Routes = [
   {
     path: "login/callback",
     component: OktaCallbackComponent,
-  },  {
+  },
+  {
     path: 'report-generation-asset',
     loadChildren: () => import('./report-generation-asset/report-generation-asset.module').then( m => m.ReportGenerationAssetPageModule)
   },

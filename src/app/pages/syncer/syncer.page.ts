@@ -63,7 +63,7 @@ export class SyncerPage implements OnInit {
 
       this.exportedJson += JSON.stringify(jsonObj.export);
       
-      this.logs = this.exportedJson;
+      //this.logs = this.exportedJson;
 
       // test Json object validity
       let result = await this._sqlite.isJsonValid(

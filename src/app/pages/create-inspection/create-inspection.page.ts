@@ -5,6 +5,7 @@ import { AlertController, Platform } from '@ionic/angular';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { AssetService } from 'src/app/services/asset-service.service';
 import { DatePipe } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-create-inspection',
@@ -12,6 +13,7 @@ import { DatePipe } from '@angular/common';
 	styleUrls: [ './create-inspection.page.scss' ]
 })
 export class CreateInspectionPage implements OnInit {
+  assetid : string;
   results: object[];
   assets: any = [];
   log: string = "";
@@ -71,7 +73,8 @@ export class CreateInspectionPage implements OnInit {
     private alertCtrl: AlertController,
     private plt: Platform,
     private _assetService: AssetService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private route: ActivatedRoute,
   ) {}
 
   showAlert = async (heading: string, message: string) => {
@@ -84,6 +87,9 @@ export class CreateInspectionPage implements OnInit {
   };
 
   async ngOnInit() {
+    console.log(this.route.snapshot.params.id);
+		this.assetid = this.route.snapshot.params.id;
+
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
       try {

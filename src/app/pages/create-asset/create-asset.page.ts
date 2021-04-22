@@ -131,7 +131,7 @@ export class CreateAssetPage implements OnInit {
 
       this.assetService.post(this.opost).subscribe((data) => {
         console.log("Post method success?: ", data);
-        if (data) {
+        if (data !== "Error") {
           this.showAlert(true);
         } else {
           this.showAlert(false);

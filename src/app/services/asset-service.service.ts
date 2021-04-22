@@ -30,5 +30,9 @@ export class AssetService {
   getAssets(): Observable<any> {
 		return this.http.get('https://martisapiversion1.herokuapp.com/asset/getAssets');
 	}
+
+  getTestNoForAssets(): Observable<any>{
+    return this.http.get('https://martisapiversion1.herokuapp.com/asset/getAssetsTests');
+  }
 }
 
