@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { SegmentChangeEventDetail } from '@ionic/core';
-import { Observable, Subscription } from 'rxjs';
-import { DatabaseService, Test } from 'src/app/services/database.service';
 import { inspectionListService } from 'src/app/services/inspection-list.service';
 import { SqliteService } from 'src/app/services/sqlite.service';
-
 import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
@@ -63,7 +60,6 @@ export class InspectionListPage implements OnInit {
 					this._inspectionListService.sortInspectionsByPriority().subscribe((inspections) => {
 						loadingEl.dismiss();
 						this.lst = Array.of(inspections.data);
-						//console.log(this.lst);
 					});
 				});
 		}

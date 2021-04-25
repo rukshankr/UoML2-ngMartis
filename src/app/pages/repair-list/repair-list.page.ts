@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, Platform } from '@ionic/angular';
 import { SqliteService } from 'src/app/services/sqlite.service';
-import { deleteDatabase } from 'src/assets/db-utils';
-import { createSchema } from 'src/assets/martis-utils';
-
 import { Repair } from 'src/app/services/database.service';
 import { RepairListService } from 'src/app/services/repair-list.service';
-
+import { Geolocation } from '@capacitor/geolocation';
 @Component({
 	selector: 'app-repair-list',
 	templateUrl: './repair-list.page.html',
@@ -29,6 +26,7 @@ export class RepairListPage implements OnInit {
 	lst: any = [];
 	lest: Repair[] = [];
 	desktop: boolean = true;
+	empLocation: Coords;
 
 	async ngOnInit() {
 		const showAlert = async (message: string) => {
@@ -40,6 +38,9 @@ export class RepairListPage implements OnInit {
 			(await msg).present();
 		};
 
+		const coordinates = await Geolocation.getCurrentPosition();
+		this.empLocation = new Coords(coordinates.coords.latitude, coordinates.coords.longitude);
+
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
 			try {
@@ -49,12 +50,13 @@ export class RepairListPage implements OnInit {
 				await showAlert(err.message);
 			}
 		} else if (this.plt.is('desktop')) {
-			this._RepairListService.getrepairs().subscribe((data) => {
-				this.lst = data;
-				this.lst = Array.of(this.lst.data);
-
-				console.log(this.lst);
-			});
+			this._RepairListService
+				.sortRepairsByDistance(this.empLocation.latitude, this.empLocation.longitude)
+				.subscribe((data) => {
+					this.lst = data;
+					this.lst = Array.of(this.lst.data);
+					console.log(this.lst);
+				});
 		}
 	}
 	async runTest(): Promise<void> {
@@ -83,5 +85,14 @@ export class RepairListPage implements OnInit {
 
 			return Promise.reject(err);
 		}
+	}
+}
+export class Coords {
+	latitude: number;
+	longitude: number;
+
+	constructor(lat?: number, long?: number) {
+		this.latitude = lat;
+		this.longitude = long;
 	}
 }

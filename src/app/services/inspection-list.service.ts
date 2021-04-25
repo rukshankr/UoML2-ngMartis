@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-
 @Injectable()
 export class inspectionListService {
 	latitude;
@@ -27,6 +26,7 @@ export class inspectionListService {
 
 	sortInspectionsByDistance(): Observable<any> {
 		this.getCoords();
+
 		return this.http.post('https://martisapiversion1.herokuapp.com/test/orderByLocationAndInspector', {
 			empLatitude: this.latitude,
 			empLongitude: this.longitude,
