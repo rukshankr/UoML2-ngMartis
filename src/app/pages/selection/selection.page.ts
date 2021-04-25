@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AlertController, LoadingController, Platform } from "@ionic/angular";
+import { AlertController, IonSlides, LoadingController, Platform } from "@ionic/angular";
 import { DatabaseService } from "src/app/services/database.service";
 import { SqliteService } from "src/app/services/sqlite.service";
 
@@ -24,7 +24,6 @@ export class SelectionPage implements OnInit {
   pinValidated: boolean = false;
   importJson;
   desktop: boolean = true;
-  table = [];
 
   constructor(
     public atrCtrl: AlertController,
@@ -35,8 +34,52 @@ export class SelectionPage implements OnInit {
     private oktaAuth: OktaAuthService,
     private http: HttpClient,
     private _mainService: DatabaseService
-  ) {}
+  ) {
+    if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
+      this.desktop = false;
+    }
+    else{
+      this.desktop = true;
+      this.loadTable();
+    }
+  }
+  //for the table
+  table = [];
+  prevpg: number;
+  page = 1;
+  nextpg: number;
+  maxpg: number;
 
+  //slider functions 
+  slideOpts = {
+    initialSlide: 0,
+    speed: 400,
+    slidesPerView: 4
+  };
+
+  loadMore (event: Event){
+    if(this.nextpg){
+      this.page = this.nextpg;
+      console.log("next page:"+ this.page);
+      this.loadTable(event);
+    }
+  }
+
+  loadTable(event?: Event){
+    this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
+      //this.maxpg = data.noOfPages;
+      this.nextpg = data.next? data.next.page : null;
+
+      this.table = this.table.concat((data.results));
+      console.log(this.table);
+
+      if(event){
+        event.target.removeEventListener;
+      }
+    });
+  }
+
+  //errror alert
   async showError(data: any) {
     let alert = this.atrCtrl.create({
       message: data,
@@ -126,8 +169,7 @@ export class SelectionPage implements OnInit {
 
     // console.log(userClaims);
 
-    if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
-      this.desktop = false;
+    if (!this.desktop) {
       const showAlert = async (message: string) => {
         let msg = this.atrCtrl.create({
           header: "Error",
@@ -148,11 +190,7 @@ export class SelectionPage implements OnInit {
       }
     }
     else{
-      this.assetService.getTestNoForAssets().subscribe((data) => {
-        this.table = Array.of(data.data);
-
-        console.log(this.table);
-      });
+      
     }
   }
 
