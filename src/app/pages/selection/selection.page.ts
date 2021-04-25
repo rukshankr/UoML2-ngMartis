@@ -61,7 +61,9 @@ export class SelectionPage implements OnInit {
     if(this.nextpg){
       this.page = this.nextpg;
       console.log("next page:"+ this.page);
-      this.loadTable(event);
+      if(this.desktop){
+        this.loadTable(event);
+      }
     }
   }
 
