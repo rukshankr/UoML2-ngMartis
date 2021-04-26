@@ -34,7 +34,8 @@ export class RepairFormPage implements OnInit {
 		EngineerID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}') ] ],
 		CreatedDate: [ '' ],
 		CompletedDate: [ '' ],
-		comments: [ '' ]
+		comments: [ '' ],
+		Result: [ '' ]
 	});
 
 	get createdDate() {
@@ -180,4 +181,5 @@ export class Posts {
 	CreatedDate: string;
 	CompletedDate: string;
 	comments: string;
+	Result: string;
 }
