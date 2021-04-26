@@ -44,7 +44,7 @@ export class RepairListPage implements OnInit {
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
 			try {
-				await this.runTest();
+				await this.getList();
 			} catch (err) {
 				this.log += '\n ' + err.message;
 				await showAlert(err.message);
@@ -59,8 +59,9 @@ export class RepairListPage implements OnInit {
 				});
 		}
 	}
-	async runTest(): Promise<void> {
+	async getList(): Promise<void> {
 		try {
+			let nearByAssets = [];
 			// initialize the connection
 			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
 			this.log += '\ndb connected ' + db;
@@ -69,18 +70,41 @@ export class RepairListPage implements OnInit {
 			await db.open();
 
 			// select all assets in db
-			let ret = await db.query('SELECT * FROM repair WHERE CompletedDate IS null;');
-			this.repairs = ret.values;
+			let ret = await db.query(
+			`SELECT repair.id, repair.CreatedDate, repair.CompletedDate, repair.comments, repair.EngineerID, asset.GPSLatitude, asset.GPSLongitude 
+			FROM repair, asset 
+			WHERE repair.id = asset.id 
+			AND (repair.CompletedDate is NULL OR  repair.CompletedDate = "0000-00-00 00:00:00")`);
+			
 			if (ret.values.length === 0) {
 				return Promise.reject(new Error('Query 2 repair failed'));
 			}
 
-			// Close Connection MyDB
+			this.repairs = ret.values;
+			
+			// Close Connection MartisDB
 			await this._sqlite.closeConnection('martis');
+
+			this.repairs.forEach((e)=> {
+				let assetLoc = new Coords(e.GPSLatitude, e.GPSLongitude);
+				const distance = Math.round(this._sqlite.haversine(this.empLocation,assetLoc));
+				if(distance){
+					nearByAssets.push({
+						distance: distance,
+						AssetID: e.id,
+						CreatedDate: e.CreatedDate,
+						CompletedDate: e.CompletedDate,
+						comments: e.comments,
+						EngineerID: e.EngineerID
+					});
+				}
+			});
+
+			this.repairs = nearByAssets.sort((a, b) => a.distance - b.distance)
 
 			return Promise.resolve();
 		} catch (err) {
-			// Close Connection MyDB
+			// Close Connection MartisDB
 			await this._sqlite.closeConnection('martis');
 
 			return Promise.reject(err);
