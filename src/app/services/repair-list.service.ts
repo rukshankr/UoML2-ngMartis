@@ -4,9 +4,15 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class RepairListService {
-	constructor(private httpclient: HttpClient) {}
-
+	constructor(private http: HttpClient) {}
 	getrepairs(): Observable<any> {
-		return this.httpclient.get('https://martisapiversion1.herokuapp.com/repair/getRepairs');
+		return this.http.get('https://martisapiversion1.herokuapp.com/repair/getRepairs');
+	}
+
+	sortRepairsByDistance(latitude, longitude): Observable<any> {
+		return this.http.post('http://localhost:3000/repair/orderRepairsByLocation', {
+			empLatitude: latitude,
+			empLongitude: longitude
+		});
 	}
 }
