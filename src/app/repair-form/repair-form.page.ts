@@ -3,7 +3,6 @@ import { AlertController, Platform } from '@ionic/angular';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
-
 import { CreateRepairService } from 'src/app/services/create-repair.service';
 import { SqliteService } from '../services/sqlite.service';
 
@@ -50,8 +49,6 @@ export class RepairFormPage implements OnInit {
 		console.log(this.route.snapshot.params.assetid);
 		let date = new Date(this.route.snapshot.params.createddate);
 		console.log(date);
-
-		console.log(this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss'));
 		this.assetid = this.route.snapshot.params.assetid;
 		this.engineerid = this.route.snapshot.params.engineerid;
 		this.comments = this.route.snapshot.params.comments;
