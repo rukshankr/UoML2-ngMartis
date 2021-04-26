@@ -24,7 +24,7 @@
               </ion-col>
             </ion-row>
           </ion-card-header>
-          <ion-slides pager="false" mode="ios" [options]="slideOpts" (ionSlideReachEnd)="loadMore($event)">
+          <ion-slides pager="false" mode="ios" [options]="(desktop)? slideOpts: mobSlideOpts" (ionSlideReachEnd)="loadMore($event)">
             <ion-slide *ngFor="let item of table">
           <ion-card className="slidecard">
             <ion-card-header className="cardhead">

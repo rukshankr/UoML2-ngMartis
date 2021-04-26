@@ -37,6 +37,7 @@ export class SelectionPage implements OnInit {
   ) {
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
+      this.loadMobiTable()
     }
     else{
       this.desktop = true;
@@ -49,12 +50,19 @@ export class SelectionPage implements OnInit {
   page = 1;
   nextpg: number;
   maxpg: number;
+  
 
   //slider functions 
   slideOpts = {
     initialSlide: 0,
     speed: 400,
     slidesPerView: 4
+  };
+  //for mobile
+  mobSlideOpts = {
+    initialSlide: 0,
+    speed: 400,
+    slidesPerView: 2
   };
 
   loadMore (event: Event){
@@ -68,8 +76,9 @@ export class SelectionPage implements OnInit {
   }
 
   loadTable(event?: Event){
+    if(this.desktop){
     this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
-      //this.maxpg = data.noOfPages;
+      
       this.nextpg = data.next? data.next.page : null;
 
       this.table = this.table.concat((data.results));
@@ -80,8 +89,38 @@ export class SelectionPage implements OnInit {
       }
     });
   }
+  }
 
-  //errror alert
+  async loadMobiTable(): Promise<void> {
+		try {
+			// initialize the connection
+			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
+
+			// open db testNew
+			await db.open();
+
+			// select all assets in db
+			let ret = await db.query("select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = '0000-00-00 00:00:00') GROUP BY a.id");
+
+			this.table = ret.values;
+			if (ret.values.length === 0) {
+				return Promise.reject(new Error('Query for assets failed'));
+			}
+
+			// Close Connection MyDB
+			await this._sqlite.closeConnection('martis');
+
+			return Promise.resolve();
+		} catch (err) {
+			// Close Connection MyDB
+			await this._sqlite.closeConnection('martis');
+
+      this.showError("Error");
+			return Promise.reject(err);
+		}
+	}
+
+  //PIN errror alert
   async showError(data: any) {
     let alert = this.atrCtrl.create({
       message: data,
