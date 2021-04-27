@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { capSQLiteSet, JsonSQLite } from "@capacitor-community/sqlite";
 import { AlertController, LoadingController } from "@ionic/angular";
+import { VirtualTimeScheduler } from "rxjs";
 import { InspectionService } from "src/app/services/create-inspection.service";
 import { DatabaseService } from "src/app/services/database.service";
 import { inspectionListService } from "src/app/services/inspection-list.service";
@@ -21,6 +22,10 @@ export class SyncerPage implements OnInit {
   ///
   oExportTest = new ExportTest();
 
+  //progress bar
+  progBar: number = 0;
+  syncstatus: boolean = false;
+
   showAlert = async (heading: string, message: string) => {
     let msg = this.alertCtrl.create({
       header: heading,
@@ -39,7 +44,10 @@ export class SyncerPage implements OnInit {
 
   ngOnInit() {}
 
-  async exportJson() {
+  async fullSync() {
+    //view progress bar
+    this.syncstatus = true;
+
     //loading spinner
     const loading = await this.loadingCtrl.create({
       message: 'Syncing...'
@@ -74,6 +82,7 @@ export class SyncerPage implements OnInit {
         return Promise.reject(new Error("IsJsonValid export 'full' failed"));
       }
       //this.log = "Json export valid";
+      this.progBar = 0.25;
       
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");
@@ -81,6 +90,8 @@ export class SyncerPage implements OnInit {
       //export to Main DB
       this._dbService.fullExportAll(jsonObj.export).subscribe(async (data) => {
         console.log('Export post method success?: ', data);
+
+        this.progBar = 0.5;
 
         if (data) {
           //this.showAlert("Success","Completely Exported");
@@ -92,6 +103,9 @@ export class SyncerPage implements OnInit {
           if (!result.result) {
             return Promise.reject(new Error("IsJsonValid failed"));
           }
+          //progress bar
+          this.progBar = 0.75;
+
           // full import
           let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
           
@@ -103,6 +117,7 @@ export class SyncerPage implements OnInit {
           //dismiss loader 
           await loading.dismiss();
           this.log = "Successfully Synced!";
+          this.progBar = 1;
         } else {
           //dismiss loader 
           await loading.dismiss();
@@ -149,7 +164,7 @@ export class SyncerPage implements OnInit {
       return Promise.reject(err);
     }
   }
-  
+
 }
 
 
