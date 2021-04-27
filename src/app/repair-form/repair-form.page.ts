@@ -100,7 +100,7 @@ export class RepairFormPage implements OnInit {
 					this.completedDate;
 				//insert
 				let sqlcmd: string =
-					'UPDATE repair SET CompletedDate = ?, comments = ? WHERE id = ? AND CreatedDate = ?';
+					"UPDATE repair SET CompletedDate = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ? AND CreatedDate = ?";
 
 				let postableChanges = [
 					this.completedDate.value,

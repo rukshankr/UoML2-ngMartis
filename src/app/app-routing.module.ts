@@ -79,13 +79,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: "manage-repairs",
-    loadChildren: () =>
-      import("./pages/manage-repairs/manage-repairs.module").then(
-        (m) => m.ManageRepairsPageModule
-      ),
-  },
-  {
     path: "repair-list",
     loadChildren: () =>
       import("./pages/repair-list/repair-list.module").then(

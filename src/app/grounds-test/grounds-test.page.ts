@@ -95,7 +95,7 @@ export class GroundsTestPage implements OnInit {
 				this.log += 'connected // '; //+ JSON.stringify(this.opost);
 				//open
 				await db.open();
-						  
+
 			  //insert
 			  let sqlcmd: string = `UPDATE test SET Result = ?, DateCompleted = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ?`;
 			  var p = this.opost;
@@ -144,7 +144,7 @@ export class GroundsTestPage implements OnInit {
 			.then((res) => res.present());
 	}
 
-	confirmez() {
+	confirmer() {
 		this.confirm = !this.confirm;
 	}
 }

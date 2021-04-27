@@ -98,7 +98,7 @@ export class SignalTestPage implements OnInit {
 				//open
 				await db.open();
 				//insert
-				let sqlcmd: string = 'UPDATE test SET Result = ?, DateCompleted = ?, comments = ? WHERE id = ?';
+				let sqlcmd: string = `UPDATE test SET Result = ?, DateCompleted = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ?`;
 				var p = this.opost;
 				this.log += ' // dC: ' + this.date.value + ' ';
 				let postableChanges = [ p.Result, this.date.value, p.comments, p.TestID ];

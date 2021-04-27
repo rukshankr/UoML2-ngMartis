@@ -148,7 +148,7 @@ export class CreateInspectionPage implements OnInit {
   
         //insert
         let sqlcmd: string =
-          "INSERT INTO test (id, DateIssued, AssetID, InspectorID, SupervisorID, Frequency, TestModID, Priority) VALUES (?,?,?,?,?,?,?,?)";
+          "INSERT INTO test (id, DateIssued, AssetID, InspectorID, SupervisorID, Frequency, TestModID, Priority, last_modified) VALUES (?,?,?,?,?,?,?,?, (strftime('%s', 'now')))";
         this.opost = this.createInspectionForm.value;
   
         //put today
@@ -174,7 +174,6 @@ export class CreateInspectionPage implements OnInit {
         }
         
         //disconnect
-        // Close Connection MyDB
         await this._sqlite.closeConnection("martis");
   
         await this.showAlert("Success","Inspection added.");

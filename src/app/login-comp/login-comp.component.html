@@ -14,7 +14,7 @@
         ></ion-img>
       </ion-card-header>
       <ion-card-content>
-        <ion-button (click)="login()" color="danger" expand="block"
+        <ion-button *ngIf="desktop" (click)="login()" color="danger" expand="block"
           >Login with Okta</ion-button
         >
         <div *ngIf="!desktop">
