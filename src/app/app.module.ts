@@ -18,8 +18,8 @@ import { OktaAuthModule, OKTA_CONFIG } from "@okta/okta-angular";
 
 const config = {
   issuer: "https://dev-44560058.okta.com/oauth2/default",
-  redirectUri: "http://localhost:8100/login/callback",
-  postLogoutRedirectUri: "http://localhost:8100/login",
+  redirectUri: "https://martiswabtec.web.app/login/callback",
+  postLogoutRedirectUri: "https://martiswabtec.web.app/login",
   clientId: "0oag5ujmllTDi2zrM5d6",
   pkce: true,
 };

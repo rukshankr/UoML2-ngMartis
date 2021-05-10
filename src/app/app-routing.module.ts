@@ -158,7 +158,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
+    RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules }),
     // OktaAuthModule,
   ],
   //providers: [{ provide: OKTA_CONFIG, useValue: config }, OktaAuthGuard],

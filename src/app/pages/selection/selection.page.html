@@ -65,7 +65,7 @@
     </ion-row>
       <ion-row>
         <ion-col>
-            <ion-button className="alltest" href="/create-asset" color="danger" expand="block"  >
+            <ion-button className="alltest" [routerLink]="['/','create-asset']" color="danger" expand="block"  >
                 <ion-icon name="add" slot="icon-only"></ion-icon>
                 Create Asset
             </ion-button>
@@ -73,7 +73,7 @@
       </ion-row>
       <ion-row>
         <ion-col>
-        <ion-button href="/create-inspection" fill="solid" color="danger" expand="block">
+        <ion-button [routerLink]="['/','create-inspection']" fill="solid" color="danger" expand="block">
             <ion-icon name="globe" slot="icon-only" size="large"></ion-icon>
             Create Tests</ion-button>
         </ion-col>
@@ -81,7 +81,7 @@
       <!---->
       <ion-row class="text-class-center">
         <ion-col class="text-class-center" size="6">
-          <ion-button fill="clear" class="squarebutton">
+          <ion-button fill="clear" class="squarebutton" [routerLink]="['/','grounds-test']">
             <div class="divclass">
           <ion-icon name="flash-off" size="large"></ion-icon>
           <br/>
@@ -92,7 +92,7 @@
 
         
         <ion-col class="text-class-center" size="6">
-          <ion-button fill="clear" class="squarebutton">
+          <ion-button fill="clear" class="squarebutton" [routerLink]="['/','signal-test']">
             <div class="divclass">
           <ion-icon name="megaphone" size="large"></ion-icon>
           <br/>
