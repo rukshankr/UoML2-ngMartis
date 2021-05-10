@@ -39,8 +39,4 @@ jobs:
         run: npm run build --prod --release
 
       - name: Deploy to Firebase Hosting
-        uses: w9jds/firebase-action@v1.5.0
-        with:
-          args: deploy
-        env:
-          FIREBASE_TOKEN: 1//0gtboueYgW_X5CgYIARAAGBASNwF-L9Ir8nRJZF7D3co0d4a9vvbPzN-weYramcVBq_IUOeWYAFsABV9JK1xU-uAmzLco6tsA0mw
+        run: firebase deploy --token "1//0gtboueYgW_X5CgYIARAAGBASNwF-L9Ir8nRJZF7D3co0d4a9vvbPzN-weYramcVBq_IUOeWYAFsABV9JK1xU-uAmzLco6tsA0mw"
