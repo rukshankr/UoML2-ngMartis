@@ -26,17 +26,17 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Install Ionic
-        run: sudo npm install -g @ionic/cli
+      - name: Update NPM
+        run: sudo npm install -g npm
         
       - name: Install Dependencies
         run: npm install
         
       - name: Auditing
-        run: npm audit fix
+        run: npm audit fix --force
       
       - name: Build
-        run: npm run build --prod --release
+        run: npm run build --prod
 
       - name: Deploy to Firebase Hosting
         run: firebase deploy --token "1//0gtboueYgW_X5CgYIARAAGBASNwF-L9Ir8nRJZF7D3co0d4a9vvbPzN-weYramcVBq_IUOeWYAFsABV9JK1xU-uAmzLco6tsA0mw"
