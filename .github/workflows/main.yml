@@ -27,7 +27,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Install Ionic
-        run: npm install -g ionic
+        run: npm install -g @ionic/cli
         
       - name: Install Dependencies
         run: npm install
