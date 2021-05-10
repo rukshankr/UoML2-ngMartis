@@ -26,11 +26,11 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Update NPM
-        run: sudo npm install -g npm
+      - name: Install Ionic
+        run: npm install -g ionic
         
       - name: Install Dependencies
-        run: npm install #-g ionic
+        run: npm install
         
       - name: Auditing
         run: npm audit fix
