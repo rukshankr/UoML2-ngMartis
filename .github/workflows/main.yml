@@ -30,15 +30,15 @@ jobs:
         run: sudo npm install -g npm
         
       - name: Install Dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
         
-      - name: Auditing forcefully 
-        run: | 
-              npm audit fix --force
-              npm run build --prod
+      #- name: Auditing forcefully 
+      #  run: | 
+      #        npm audit fix --force
+      #        npm run build --prod
         
-      #- name: Build
-      #  run: npm run build --prod
+      - name: Build
+        run: npm run build --prod
 
       - name: Deploy to Firebase Hosting
         run: firebase deploy --token "1//0gtboueYgW_X5CgYIARAAGBASNwF-L9Ir8nRJZF7D3co0d4a9vvbPzN-weYramcVBq_IUOeWYAFsABV9JK1xU-uAmzLco6tsA0mw"
