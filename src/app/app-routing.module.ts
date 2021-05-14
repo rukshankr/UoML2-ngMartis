@@ -80,13 +80,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: "manage-repairs",
-    loadChildren: () =>
-      import("./pages/manage-repairs/manage-repairs.module").then(
-        (m) => m.ManageRepairsPageModule
-      ),
-  },
-  {
     path: "repair-list",
     loadChildren: () =>
       import("./pages/repair-list/repair-list.module").then(
@@ -112,6 +105,13 @@ const routes: Routes = [
     loadChildren: () =>
       import("./pages/create-asset/create-asset.module").then(
         (m) => m.CreateAssetPageModule
+      ),
+  },
+  {
+    path: "create-inspection/:id",
+    loadChildren: () =>
+      import("./pages/create-inspection/create-inspection.module").then(
+        (m) => m.CreateInspectionPageModule
       ),
   },
   {

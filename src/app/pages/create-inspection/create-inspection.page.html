@@ -48,12 +48,13 @@
           <ion-card-content>
             <ion-row>
               <ion-col>
-                <ion-label position="fixed">Asset ID:</ion-label>
-                <ion-item>
+                <ion-label position="fixed">Asset ID: {{assetid? assetid : ""}}</ion-label>
+                <ion-item [disabled]="assetid">
                   <ion-select
                     value="AssetID"
                     interface="popover"
                     formControlName="AssetID"
+                    [ngModel] = "assetid"
                   >
                     <ion-select-option
                       *ngFor="let a of (desktop ? assets[0] : assets)"
@@ -184,8 +185,8 @@
         >
       </ion-col>
     </ion-row>
-    <!-- <ion-row>
+    <ion-row>
       <p>{{log}}</p>
-    </ion-row> -->
+    </ion-row>
   </form>
 </ion-content>

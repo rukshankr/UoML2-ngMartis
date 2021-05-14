@@ -12,10 +12,11 @@
     <ion-row>
       <h2>{{log}}</h2>
       <p>{{logs}}</p>
+      <ion-progress-bar mode="ios" color="danger" value="progBar"></ion-progress-bar>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-button expand="block" (click)="exportJson()">SYNC</ion-button>
+        <ion-button expand="block" (click)="fullSync()">SYNC</ion-button>
       </ion-col>
     </ion-row>
     <ion-row>

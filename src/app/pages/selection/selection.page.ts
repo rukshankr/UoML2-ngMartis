@@ -1,11 +1,12 @@
 import { Component, OnInit } from "@angular/core";
-import { AlertController, LoadingController, Platform } from "@ionic/angular";
+import { AlertController, IonSlides, LoadingController, Platform } from "@ionic/angular";
 import { DatabaseService } from "src/app/services/database.service";
 import { SqliteService } from "src/app/services/sqlite.service";
 
 import { OktaAuthService } from "@okta/okta-angular";
 import { HttpClient } from "@angular/common/http";
 import { ThrowStmt } from "@angular/compiler";
+import { AssetService } from "src/app/services/asset-service.service";
 
 // import { TIMEOUT } from 'dns';
 // import { type } from 'os';
@@ -22,17 +23,104 @@ export class SelectionPage implements OnInit {
   userPin: number;
   pinValidated: boolean = false;
   importJson;
+  desktop: boolean = true;
 
   constructor(
     public atrCtrl: AlertController,
     public loadingCtrl: LoadingController,
     private _sqlite: SqliteService,
+    private assetService : AssetService,
     private plt: Platform,
     private oktaAuth: OktaAuthService,
     private http: HttpClient,
     private _mainService: DatabaseService
-  ) {}
+  ) {
+    if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
+      this.desktop = false;
+      this.loadMobiTable()
+    }
+    else{
+      this.desktop = true;
+      this.loadTable();
+    }
+  }
+  //for the table
+  table = [];
+  prevpg: number;
+  page = 1;
+  nextpg: number;
+  maxpg: number;
+  
 
+  //slider functions 
+  slideOpts = {
+    initialSlide: 0,
+    speed: 400,
+    slidesPerView: 4
+  };
+  //for mobile
+  mobSlideOpts = {
+    initialSlide: 0,
+    speed: 400,
+    slidesPerView: 2
+  };
+
+  loadMore (event: Event){
+    if(this.nextpg){
+      this.page = this.nextpg;
+      console.log("next page:"+ this.page);
+      if(this.desktop){
+        this.loadTable(event);
+      }
+    }
+  }
+
+  loadTable(event?: Event){
+    if(this.desktop){
+    this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
+      
+      this.nextpg = data.next? data.next.page : null;
+
+      this.table = this.table.concat((data.results));
+      console.log(this.table);
+
+      if(event){
+        event.target.removeEventListener;
+      }
+    });
+  }
+  }
+
+  async loadMobiTable(): Promise<void> {
+		try {
+			// initialize the connection
+			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
+
+			// open db testNew
+			await db.open();
+
+			// select all assets in db
+			let ret = await db.query("select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = '0000-00-00 00:00:00') GROUP BY a.id");
+
+			this.table = ret.values;
+			if (ret.values.length === 0) {
+				return Promise.reject(new Error('Query for assets failed'));
+			}
+
+			// Close Connection MyDB
+			await this._sqlite.closeConnection('martis');
+
+			return Promise.resolve();
+		} catch (err) {
+			// Close Connection MyDB
+			await this._sqlite.closeConnection('martis');
+
+      this.showError("Error");
+			return Promise.reject(err);
+		}
+	}
+
+  //PIN errror alert
   async showError(data: any) {
     let alert = this.atrCtrl.create({
       message: data,
@@ -122,7 +210,7 @@ export class SelectionPage implements OnInit {
 
     // console.log(userClaims);
 
-    if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
+    if (!this.desktop) {
       const showAlert = async (message: string) => {
         let msg = this.atrCtrl.create({
           header: "Error",
@@ -137,10 +225,13 @@ export class SelectionPage implements OnInit {
         if(!isMartis.result){
           await this.firstSync();
         }
-        
+        //get table
       } catch (err) {
         await showAlert(err.message);
       }
+    }
+    else{
+      
     }
   }
 

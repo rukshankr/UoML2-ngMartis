@@ -31,8 +31,8 @@ export class LoginComponent implements OnInit {
       pkce: true,
     },
     clientId: "0oag5ujmllTDi2zrM5d6",
-    redirectUri: "http://localhost:8100/login/callback",
-    postLogoutRedirectUri: "http://localhost:8100/login",
+    redirectUri: "https://martiswabtec.web.app/login/callback",
+    postLogoutRedirectUri: "https://martiswabtec.web.app/login",
   });
 
   constructor(

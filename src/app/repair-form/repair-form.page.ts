@@ -3,7 +3,6 @@ import { AlertController, Platform } from '@ionic/angular';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
-
 import { CreateRepairService } from 'src/app/services/create-repair.service';
 import { SqliteService } from '../services/sqlite.service';
 
@@ -35,7 +34,8 @@ export class RepairFormPage implements OnInit {
 		EngineerID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}') ] ],
 		CreatedDate: [ '' ],
 		CompletedDate: [ '' ],
-		comments: [ '' ]
+		comments: [ '' ],
+		Result: [ '' ]
 	});
 
 	get createdDate() {
@@ -50,8 +50,6 @@ export class RepairFormPage implements OnInit {
 		console.log(this.route.snapshot.params.assetid);
 		let date = new Date(this.route.snapshot.params.createddate);
 		console.log(date);
-
-		console.log(this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss'));
 		this.assetid = this.route.snapshot.params.assetid;
 		this.engineerid = this.route.snapshot.params.engineerid;
 		this.comments = this.route.snapshot.params.comments;
@@ -102,7 +100,7 @@ export class RepairFormPage implements OnInit {
 					this.completedDate;
 				//insert
 				let sqlcmd: string =
-					'UPDATE repair SET CompletedDate = ?, comments = ? WHERE id = ? AND CreatedDate = ?';
+					"UPDATE repair SET CompletedDate = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ? AND CreatedDate = ?";
 
 				let postableChanges = [
 					this.completedDate.value,
@@ -183,4 +181,5 @@ export class Posts {
 	CreatedDate: string;
 	CompletedDate: string;
 	comments: string;
+	Result: string;
 }

@@ -4,6 +4,7 @@ import { AssetService } from "src/app/services/asset-service.service";
 import { AlertController, Platform } from "@ionic/angular";
 import { Geolocation } from "@capacitor/geolocation";
 import { SqliteService } from "src/app/services/sqlite.service";
+import { CapacitorException } from "@capacitor/core";
 
 @Component({
   selector: "app-create-asset",
@@ -92,7 +93,7 @@ export class CreateAssetPage implements OnInit {
         this.log += "\ndb opened.\n";
         //insert
         let sqlcmd: string =
-          "INSERT INTO asset (id, AssetType, Status, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate) VALUES (?,?,?,?,?,?,?,?,?,?)";
+          "INSERT INTO asset (id, AssetType, Status, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate, last_modified) VALUES (?,?,?,?,?,?,?,?,?,?, (strftime('%s', 'now')))";
         this.opost = this.createAssetForm.value;
         var p = this.opost;
         let postableChanges = [
@@ -105,13 +106,15 @@ export class CreateAssetPage implements OnInit {
           p.Division,
           p.SubDivision,
           p.NearestMilePost,
-          p.LastTestedDate,
+          `CURRENT_TIMESTAMP`
+          //p.LastTestedDate,
         ];
         let ret: any = await db.run(sqlcmd, postableChanges);
 
+        this.log += " // changes: "+ret.changes.changes;
         //check insert
-        if (ret.changes.changes !== 1) {
-          return Promise.reject(new Error("Execution failed"));
+        if (ret.changes.changes === 0) {
+          return Promise.reject(new CapacitorException("Execution failed"));
         }
         
         //disconnect
@@ -120,6 +123,9 @@ export class CreateAssetPage implements OnInit {
         await this.showAlert("asset added.");
         return Promise.resolve();
       } catch (err) {
+        //disconnect
+        await this._sqlite.closeConnection("martis");
+
         await this.showAlert(err.message);
       }
     } else {
@@ -131,7 +137,7 @@ export class CreateAssetPage implements OnInit {
 
       this.assetService.post(this.opost).subscribe((data) => {
         console.log("Post method success?: ", data);
-        if (data) {
+        if (data !== "Error") {
           this.showAlert(true);
         } else {
           this.showAlert(false);

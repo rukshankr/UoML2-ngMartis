@@ -14,28 +14,74 @@
         <p>{{log}}</p>
       </ion-col>
     </ion-row>
-      
-          <ion-row>
-            <ion-col>
-            <ion-button href="/create-inspection" fill="solid" color="danger" expand="block">
-                <ion-icon name="add" slot="icon-only" size="large"></ion-icon>
-                Create Tests</ion-button>
-            </ion-col>
-          </ion-row>
+    <ion-row className="ion-text-center ion-align-items-center">
+      <ion-col>
+        <ion-card>
+          <ion-card-header mode="ios" className="cardhead">
+            <ion-row>
+              <ion-col>
+                <ion-card-title>Current Assets</ion-card-title>
+              </ion-col>
+            </ion-row>
+          </ion-card-header>
+          <ion-slides pager="false" mode="ios" [options]="(desktop)? slideOpts: mobSlideOpts" (ionSlideReachEnd)="loadMore($event)">
+            <ion-slide *ngFor="let item of table">
+          <ion-card className="slidecard">
+            <ion-card-header className="cardhead">
+              <ion-col>
+                <ion-card-title>
+                  {{item.id}}
+                  <!-- <ion-badge color="dark" size="large">{{item.id}}</ion-badge>  -->
+                </ion-card-title>
+              </ion-col>
+              <ion-col >
+                <div className="slidestatus">
+                  <ion-label >{{item.Status}}</ion-label> 
+                </div>
+              </ion-col>
+            </ion-card-header>
+            
+            <ion-card-content>
+              <ion-row>
+                <ion-col className="ion-align-items-center">
+                  <ion-label>Assigned tests: </ion-label>
+                  <ion-badge [ngClass]="{zero: item.noOfTests == 0, one: item.noOfTests >=1}">{{item.noOfTests}}</ion-badge> 
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-button color="danger" [routerLink]="['/','create-inspection',item.id]">
+                    Assign
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-slide>
+        <ion-slide *ngIf="nextpg"></ion-slide>
+        </ion-slides>
+        </ion-card>
+      </ion-col>
+    </ion-row>
       <ion-row>
         <ion-col>
-            <ion-button className="alltest" href="/create-asset" expand="block"  >
-                <ion-icon name="globe" slot="icon-only"></ion-icon>
+            <ion-button className="alltest" [routerLink]="['/','create-asset']" color="danger" expand="block"  >
+                <ion-icon name="add" slot="icon-only"></ion-icon>
                 Create Asset
             </ion-button>
         </ion-col>
       </ion-row>
-      <!-- the 9x9 -->
-      
+      <ion-row>
+        <ion-col>
+        <ion-button [routerLink]="['/','create-inspection']" fill="solid" color="danger" expand="block">
+            <ion-icon name="globe" slot="icon-only" size="large"></ion-icon>
+            Create Tests</ion-button>
+        </ion-col>
+      </ion-row>
       <!---->
       <ion-row class="text-class-center">
         <ion-col class="text-class-center" size="6">
-          <ion-button fill="clear" class="squarebutton">
+          <ion-button fill="clear" class="squarebutton" [routerLink]="['/','grounds-test']">
             <div class="divclass">
           <ion-icon name="flash-off" size="large"></ion-icon>
           <br/>
@@ -46,7 +92,7 @@
 
         
         <ion-col class="text-class-center" size="6">
-          <ion-button fill="clear" class="squarebutton">
+          <ion-button fill="clear" class="squarebutton" [routerLink]="['/','signal-test']">
             <div class="divclass">
           <ion-icon name="megaphone" size="large"></ion-icon>
           <br/>
