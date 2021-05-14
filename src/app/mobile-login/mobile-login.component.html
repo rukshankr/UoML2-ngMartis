@@ -1,0 +1,61 @@
+<ion-content>
+  <div
+    style="
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    "
+  >
+    <ion-card>
+      <ion-card-header>
+        <ion-img
+          src="https://upload.wikimedia.org/wikipedia/en/thumb/d/d6/Wabtec_Logo.svg/1200px-Wabtec_Logo.svg.png"
+        ></ion-img>
+      </ion-card-header>
+      <ion-card-content>
+        <div style="text-align: center">
+          <ion-card-title> First Time Login </ion-card-title>
+          <form [formGroup]="newPinForm" (ngSubmit)="onSave()">
+            <ion-row>
+              <ion-col>
+                <ion-label position="floating"
+                  >Please Enter a New PIN:</ion-label
+                >
+                <ion-item>
+                  <ion-input
+                    formControlName="Pin"
+                    autofocus="true"
+                    enterkeyhint="next"
+                  ></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label position="floating"
+                  >Please Enter your EMPID:</ion-label
+                >
+                <ion-item>
+                  <ion-input
+                    formControlName="EMPID"
+                    autofocus="true"
+                    enterkeyhint="next"
+                  ></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-button
+              type="submit"
+              color="danger"
+              expand="block"
+              [disabled]="!newPinForm.valid"
+              >Save</ion-button
+            >
+          </form>
+        </div>
+        {{ availableDevice }}
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

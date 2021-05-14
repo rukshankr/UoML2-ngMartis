@@ -14,11 +14,22 @@
         ></ion-img>
       </ion-card-header>
       <ion-card-content>
-        <ion-button (click)="login()" color="danger" expand="block"
+        <ion-button
+          (click)="login()"
+          color="danger"
+          expand="block"
+          *ngIf="desktop"
           >Login with Okta</ion-button
         >
-        <div *ngIf="!desktop">
-        <ion-button routerLink="/selection" color="success" expand="block">Login for Mobile</ion-button>
+        <div *ngIf="!desktop && firstTimeLogin">
+          <ion-button routerLink="/mobile-login" color="success" expand="block"
+            >Login for Mobile</ion-button
+          >
+        </div>
+        <div *ngIf="!desktop && !firstTimeLogin">
+          <ion-button routerLink="/selection" color="success" expand="block"
+            >Continue to App</ion-button
+          >
         </div>
       </ion-card-content>
     </ion-card>

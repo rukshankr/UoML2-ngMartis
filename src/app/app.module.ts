@@ -11,10 +11,17 @@ import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
 
 import { HttpClientModule } from "@angular/common/http"; //added for API calls
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { SqliteService } from "./services/sqlite.service";
 import { LoginComponent } from "./login-comp/login-comp.component";
 import { OktaAuthModule, OKTA_CONFIG } from "@okta/okta-angular";
+
+import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
+import { Uid } from "@ionic-native/uid/ngx";
+import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
+import { MobileLoginComponent } from "./mobile-login/mobile-login.component";
+import { inspectionListService } from "./services/inspection-list.service";
+import { DeviceAuthService } from "./services/device-auth.service";
 
 const config = {
   issuer: "https://dev-44560058.okta.com/oauth2/default",
@@ -25,7 +32,7 @@ const config = {
 };
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent],
+  declarations: [AppComponent, LoginComponent, MobileLoginComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
@@ -34,14 +41,19 @@ const config = {
     HttpClientModule,
     FormsModule,
     OktaAuthModule,
+    ReactiveFormsModule,
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    UniqueDeviceID,
+    Uid,
+    AndroidPermissions,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: OKTA_CONFIG, useValue: config },
     SqliteService,
     Geolocation,
+    DeviceAuthService,
   ],
   bootstrap: [AppComponent],
 })

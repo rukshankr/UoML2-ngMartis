@@ -15,6 +15,7 @@ import {
 } from "@okta/okta-angular";
 import { LoginComponent } from "./login-comp/login-comp.component";
 import { AppComponent } from "./app.component";
+import { MobileLoginComponent } from "./mobile-login/mobile-login.component";
 
 export function onAuthRequired(oktaAuth, injector) {
   const router = injector.get(Router);
@@ -148,11 +149,18 @@ const routes: Routes = [
   {
     path: "login/callback",
     component: OktaCallbackComponent,
-  },  {
-    path: 'report-generation-asset',
-    loadChildren: () => import('./report-generation-asset/report-generation-asset.module').then( m => m.ReportGenerationAssetPageModule)
   },
-
+  {
+    path: "report-generation-asset",
+    loadChildren: () =>
+      import("./report-generation-asset/report-generation-asset.module").then(
+        (m) => m.ReportGenerationAssetPageModule
+      ),
+  },
+  {
+    path: "mobile-login",
+    component: MobileLoginComponent,
+  },
 ];
 
 @NgModule({

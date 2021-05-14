@@ -5,6 +5,9 @@ import { Platform } from "@ionic/angular";
 import { OktaAuthService } from "@okta/okta-angular";
 import * as OktaSignIn from "@okta/okta-signin-widget";
 
+import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
+import { DeviceAuthService } from "../services/device-auth.service";
+
 @Component({
   selector: "app-secure",
   // template: `
@@ -16,6 +19,9 @@ import * as OktaSignIn from "@okta/okta-signin-widget";
 })
 export class LoginComponent implements OnInit {
   desktop: boolean = true;
+  Deviceid;
+  availableDevice;
+  firstTimeLogin;
 
   authService;
   widget = new OktaSignIn({
@@ -32,7 +38,9 @@ export class LoginComponent implements OnInit {
   constructor(
     private oktaAuth: OktaAuthService,
     router: Router,
-    private plt: Platform
+    private plt: Platform,
+    private uniqueDeviceID: UniqueDeviceID,
+    private deviceAuth: DeviceAuthService
   ) {
     this.authService = oktaAuth;
     //Show the widget when prompted, otherwise remove it from the DOM.
@@ -58,6 +66,10 @@ export class LoginComponent implements OnInit {
         ? false
         : true;
     this.isAuthenticated = await this.oktaAuth.isAuthenticated();
+
+    if (this.desktop == false) {
+      this.getUniqueDeviceID();
+    }
   }
   //   this.widget.showSignInAndRedirect().catch((err) => {
   //     throw err;
@@ -68,5 +80,27 @@ export class LoginComponent implements OnInit {
     this.oktaAuth.signInWithRedirect({
       originalUri: "/selection",
     });
+  }
+
+  getUniqueDeviceID() {
+    this.uniqueDeviceID
+      .get()
+      .then((uuid: any) => {
+        console.log(uuid);
+        this.Deviceid = uuid;
+
+        this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
+          this.availableDevice = device.data[0].PIN;
+          if (device == null) {
+            this.firstTimeLogin = true;
+          } else {
+            this.firstTimeLogin = false;
+          }
+        });
+      })
+      .catch((error: any) => {
+        console.log(error);
+        this.Deviceid = error;
+      });
   }
 }

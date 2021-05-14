@@ -8,8 +8,6 @@ import { SqliteService } from "./services/sqlite.service";
 import { Router } from "@angular/router";
 import { OktaAuthService } from "@okta/okta-angular";
 
-
-
 @Component({
   selector: "app-root",
   templateUrl: "app.component.html",
@@ -37,7 +35,12 @@ export class AppComponent implements OnInit {
     });
   }
   async ngOnInit() {
-    this.desktop = (this.platform.is("mobile") || this.platform.is("android") || this.platform.is("ios")) ? false : true;
+    this.desktop =
+      this.platform.is("mobile") ||
+      this.platform.is("android") ||
+      this.platform.is("ios")
+        ? false
+        : true;
     this.isAuthenticated = await this.oktaAuth.isAuthenticated();
     console.log(this.isAuthenticated);
     const userClaims = await this.oktaAuth
@@ -61,7 +64,7 @@ export class AppComponent implements OnInit {
     this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      this._sqlite.initializePlugin().then(ret => {
+      this._sqlite.initializePlugin().then((ret) => {
         this.initPlugin = ret;
         console.log(">>>> in App  this.initPlugin " + this.initPlugin);
       });

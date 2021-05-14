@@ -36,7 +36,10 @@
           </ion-grid>
         </ion-item>
         <ion-menu-toggle>
-          <ion-item routerLink="/create-asset" *ngIf="userRole == 'Manager' || !desktop" >
+          <ion-item
+            routerLink="/create-asset"
+            *ngIf="userRole == 'Manager' || !desktop"
+          >
             <ion-icon name="add" slot="start"></ion-icon>
             Create Asset</ion-item
           >
@@ -87,7 +90,10 @@
             <ion-icon name="add" slot="start"></ion-icon>
             Create Repair</ion-item
           >
-          <ion-item routerLink="/report-generation" *ngIf="userRole == 'Manager' || !desktop">
+          <ion-item
+            routerLink="/report-generation"
+            *ngIf="userRole == 'Manager' || !desktop"
+          >
             <ion-icon name="text" slot="start"></ion-icon>
             Generate Report
           </ion-item>
@@ -95,7 +101,7 @@
             <ion-icon name="sync" slot="start"></ion-icon>
             Sync
           </ion-item>
-          <ion-item (click)="logout()" button>
+          <ion-item (click)="logout()" button *ngIf="desktop">
             <ion-icon name="log-out" slot="start"></ion-icon>
             Log Out
           </ion-item>
