@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Router, NavigationStart } from "@angular/router";
-import { Platform } from "@ionic/angular";
+import { LoadingController, Platform } from "@ionic/angular";
 
 import { OktaAuthService } from "@okta/okta-angular";
 import * as OktaSignIn from "@okta/okta-signin-widget";
@@ -21,42 +21,26 @@ export class LoginComponent implements OnInit {
   desktop: boolean = true;
   Deviceid;
   availableDevice;
-  firstTimeLogin;
-
-  authService;
-  widget = new OktaSignIn({
-    el: "#okta-signin-container",
-    baseUrl: "https://dev-44560058.okta.com",
-    authParams: {
-      pkce: true,
-    },
-    clientId: "0oag5ujmllTDi2zrM5d6",
-    redirectUri: "https://martiswabtec.web.app/login/callback",
-    postLogoutRedirectUri: "https://martiswabtec.web.app/login",
-  });
+  firstTimeLogin = true;
 
   constructor(
     private oktaAuth: OktaAuthService,
     router: Router,
     private plt: Platform,
     private uniqueDeviceID: UniqueDeviceID,
-    private deviceAuth: DeviceAuthService
-  ) {
-    this.authService = oktaAuth;
-    //Show the widget when prompted, otherwise remove it from the DOM.
-    router.events.forEach((event) => {
-      if (event instanceof NavigationStart) {
-        switch (event.url) {
-          case "/login":
-            break;
-          case "/test":
-            break;
-          default:
-            this.widget.remove();
-            break;
-        }
-      }
+    private deviceAuth: DeviceAuthService,
+    private loadingController: LoadingController
+  ) {}
+
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      message: "Please wait...",
+      duration: 2000,
     });
+    await loading.present();
+
+    await loading.onDidDismiss();
+    console.log("Loading dismissed!");
   }
 
   isAuthenticated: boolean;
@@ -68,6 +52,7 @@ export class LoginComponent implements OnInit {
     this.isAuthenticated = await this.oktaAuth.isAuthenticated();
 
     if (this.desktop == false) {
+      this.presentLoading();
       this.getUniqueDeviceID();
     }
   }

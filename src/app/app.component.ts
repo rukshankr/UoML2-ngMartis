@@ -7,6 +7,8 @@ import { SqliteService } from "./services/sqlite.service";
 
 import { Router } from "@angular/router";
 import { OktaAuthService } from "@okta/okta-angular";
+import { DeviceAuthService } from "./services/device-auth.service";
+import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 
 @Component({
   selector: "app-root",
@@ -19,6 +21,8 @@ export class AppComponent implements OnInit {
   private initPlugin: boolean;
   public isAuthenticated: boolean;
   public desktop: boolean = true;
+  public Deviceid;
+  public EmpId;
 
   constructor(
     private platform: Platform,
@@ -26,7 +30,9 @@ export class AppComponent implements OnInit {
     private statusBar: StatusBar,
     private _sqlite: SqliteService,
     public oktaAuth: OktaAuthService,
-    private router: Router
+    private deviceAuth: DeviceAuthService,
+    private router: Router,
+    private uniqueDeviceID: UniqueDeviceID
   ) {
     this.initializeApp();
     this.isAuthenticated = false;
@@ -41,23 +47,46 @@ export class AppComponent implements OnInit {
       this.platform.is("ios")
         ? false
         : true;
-    this.isAuthenticated = await this.oktaAuth.isAuthenticated();
-    console.log(this.isAuthenticated);
-    const userClaims = await this.oktaAuth
-      .getUser()
-      .then((data) => {
-        console.log(data);
-        this.userRole = data.family_name.split(" ")[0];
-        this.userName = data.given_name;
-        console.log(this.userRole);
-        console.log(this.userName);
-      })
-      .catch((err) => console.log(err));
+    if (this.desktop) {
+      this.isAuthenticated = await this.oktaAuth.isAuthenticated();
+      console.log(this.isAuthenticated);
+      const userClaims = await this.oktaAuth
+        .getUser()
+        .then((data) => {
+          console.log(data);
+          this.userRole = data.family_name.split(" ")[0];
+          this.userName = data.given_name;
+        })
+        .catch((err) => console.log(err));
+    } else {
+      this.getUniqueDeviceID();
+    }
   }
-
   async logout() {
     await this.oktaAuth.signOut();
     this.router.navigateByUrl("/login");
+  }
+
+  getUniqueDeviceID() {
+    this.uniqueDeviceID
+      .get()
+      .then((uuid: any) => {
+        console.log(uuid);
+        this.Deviceid = uuid;
+
+        this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
+          this.EmpId = device.data[0].UserID;
+
+          this.deviceAuth.getUserNameAndRole(this.EmpId).subscribe((user) => {
+            this.userName = user.data[0].Name;
+            this.userRole = user.data[0].Title;
+          });
+        });
+      })
+      .catch((error: any) => {
+        console.log(error);
+        this.Deviceid = error;
+      });
   }
 
   initializeApp() {

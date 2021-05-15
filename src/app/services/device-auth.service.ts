@@ -29,4 +29,13 @@ export class DeviceAuthService {
       }
     );
   }
+
+  getUserNameAndRole(EmpID): Observable<any> {
+    return this.http.post(
+      "https://martiswabtec.herokuapp.com/user/getUserNameAndRole",
+      {
+        EmpId: EmpID,
+      }
+    );
+  }
 }
