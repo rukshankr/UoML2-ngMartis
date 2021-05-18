@@ -25,12 +25,16 @@ export class SignalTestPage implements OnInit {
 	//confirm date
 	confirm: boolean = false;
 
+	//scheduled or out of schedule
+	nonScheduleTest: boolean = false;
+
 	createTestForm = this.formBuilder.group({
 		AssetID: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
 		TestID: [ '', [ Validators.required, Validators.pattern('^T[0-9]{3}'), Validators.maxLength(4) ] ],
 		comments: [ '' ],
 		Result: [ '' ],
-		DateCompleted: [ '' ]
+		DateCompleted: [ '' ],
+		InspectorID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}'), Validators.maxLength(6) ] ]
 	});
 
 	constructor(
@@ -73,23 +77,40 @@ export class SignalTestPage implements OnInit {
 	async onSave() {
 		this.opost = this.createTestForm.value;
 		this.opost.DateCompleted = this.datePipe.transform(this.opost.DateCompleted, 'yyyy-MM-dd HH:mm:ss');
-
+		this.opost.TestModID = 'TM102';
 		if (this.date.value == '' || this.confirm == false) {
 			this.showAlert(false, 'Please confirm inspection date.', true);
 			return;
 		}
 
 		console.log('Page Saved', this.opost);
-
 		if (this.desktop) {
-			this.setresult.patch(this.opost).subscribe((data) => {
-				console.log('Post method success?: ', data);
-				if (data) {
-					this.showAlert(true);
-				} else {
-					this.showAlert(false);
-				}
-			});
+			if (this.nonScheduleTest == false) {
+				this.setresult.patch(this.opost).subscribe((data) => {
+					console.log('Post method success?: ', data);
+					if (data) {
+						this.showAlert(true);
+					} else {
+						this.showAlert(false);
+					}
+				});
+			} else if (this.nonScheduleTest == true) {
+				this.opost.DateIssued = this.opost.DateCompleted;
+				this.opost.SupervisorID = this.opost.InspectorID;
+				console.log('Page Saved', this.opost);
+				this.setresult.post(this.opost).subscribe((data) => {
+					console.log('Post method 1 success?: ', data);
+				});
+
+				this.setresult.patch(this.opost).subscribe((data) => {
+					console.log('Post method 2 success?: ', data);
+					if (data) {
+						this.showAlert(true);
+					} else {
+						this.showAlert(false);
+					}
+				});
+			}
 		} else {
 			try {
 				//connect
@@ -143,11 +164,22 @@ export class SignalTestPage implements OnInit {
 	confirmez() {
 		this.confirm = !this.confirm;
 	}
+
+	unschedule() {
+		this.nonScheduleTest = true;
+	}
+	schedule() {
+		this.nonScheduleTest = false;
+	}
 }
 
 export class Posts {
 	AssetID: string;
+	DateIssued: string;
 	TestID: string;
+	InspectorID: string;
+	TestModID: string;
+	SupervisorID: string;
 	DateCompleted: string;
 	comments: string;
 	Result: string;

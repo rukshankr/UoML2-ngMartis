@@ -5,6 +5,7 @@ import { SetresultGroundsService } from '../services/setresult-grounds.service';
 import { ActivatedRoute } from '@angular/router';
 import { SqliteService } from '../services/sqlite.service';
 import { DatePipe } from '@angular/common';
+import { delay } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-grounds-test',
@@ -21,6 +22,9 @@ export class GroundsTestPage implements OnInit {
 	//confirm date
 	confirm: boolean = false;
 
+	//scheduled or out of schedule
+	nonScheduleTest: boolean = false;
+
 	//logging
 	log: string = '';
 
@@ -29,7 +33,8 @@ export class GroundsTestPage implements OnInit {
 		TestID: [ '', [ Validators.required, Validators.pattern('^T[0-9]{3}'), Validators.maxLength(4) ] ],
 		comments: [ '' ],
 		Result: [ '' ],
-		DateCompleted: [ '' ]
+		DateCompleted: [ '' ],
+		InspectorID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}'), Validators.maxLength(6) ] ]
 	});
 
 	constructor(
@@ -72,22 +77,41 @@ export class GroundsTestPage implements OnInit {
 	async onSave() {
 		this.opost = this.createTestForm.value;
 		this.opost.DateCompleted = this.datePipe.transform(this.opost.DateCompleted, 'yyyy-MM-dd HH:mm:ss');
-
+		this.opost.TestModID = 'TM101';
 		if (this.date.value == '' || this.confirm == false) {
-			this.showAlert(false, 'Please confirm the Inspection Date.', true);
+			this.showAlert(false, 'Please confirm inspection date.', true);
 			return;
 		}
-		if (this.desktop) {
-			console.log('Page Saved', this.opost);
 
-			this.setresult.patch(this.opost).subscribe((data) => {
-				console.log('Post method success?: ', data);
-				if (data) {
-					this.showAlert(true);
-				} else {
-					this.showAlert(false);
-				}
-			});
+		console.log('Page Saved', this.opost);
+		if (this.desktop) {
+			if (this.nonScheduleTest == false) {
+				this.setresult.patch(this.opost).subscribe((data) => {
+					console.log('Post method success?: ', data);
+					if (data) {
+						this.showAlert(true);
+					} else {
+						this.showAlert(false);
+					}
+				});
+			} else if (this.nonScheduleTest == true) {
+				this.opost.DateIssued = this.opost.DateCompleted;
+				this.opost.SupervisorID = this.opost.InspectorID;
+				console.log('Page Saved', this.opost);
+
+				this.setresult.post(this.opost).subscribe((data) => {
+					console.log('Post method 1 success?: ', data);
+				});
+				delay(3000);
+				this.setresult.patch(this.opost).subscribe((data) => {
+					console.log('Post method 2 success?: ', data);
+					if (data) {
+						this.showAlert(true);
+					} else {
+						this.showAlert(false);
+					}
+				});
+			}
 		} else {
 			try {
 				//connect
@@ -96,28 +120,23 @@ export class GroundsTestPage implements OnInit {
 				//open
 				await db.open();
 
-			  //insert
-			  let sqlcmd: string = `UPDATE test SET Result = ?, DateCompleted = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ?`;
-			  var p = this.opost;
-			  this.log += " // dC: "+this.date.value+" ";
-			  let postableChanges = [
-				p.Result,
-				this.date.value,
-				p.comments,
-				p.TestID
-			  ];
-			  let ret: any = await db.run(sqlcmd, postableChanges);
-			  this.log += "query run // "+ ret.changes.changes;
-			  //check update
-			  if (ret.changes.changes === 0) {
-				return Promise.reject(new Error("Execution failed"));
-			  }
-			  this.log += " // query updates //";
-			  // Close Connection Martis
-			  await this._sqlite.closeConnection("martis");
-	  
-			  await this.showAlert(true);
-			  return Promise.resolve();
+				//insert
+				let sqlcmd: string = `UPDATE test SET Result = ?, DateCompleted = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ?`;
+				var p = this.opost;
+				this.log += ' // dC: ' + this.date.value + ' ';
+				let postableChanges = [ p.Result, this.date.value, p.comments, p.TestID ];
+				let ret: any = await db.run(sqlcmd, postableChanges);
+				this.log += 'query run // ' + ret.changes.changes;
+				//check update
+				if (ret.changes.changes === 0) {
+					return Promise.reject(new Error('Execution failed'));
+				}
+				this.log += ' // query updates //';
+				// Close Connection Martis
+				await this._sqlite.closeConnection('martis');
+
+				await this.showAlert(true);
+				return Promise.resolve();
 			} catch (err) {
 				// Close Connection Martis
 				await this._sqlite.closeConnection('martis');
@@ -147,11 +166,21 @@ export class GroundsTestPage implements OnInit {
 	confirmer() {
 		this.confirm = !this.confirm;
 	}
+	unschedule() {
+		this.nonScheduleTest = true;
+	}
+	schedule() {
+		this.nonScheduleTest = false;
+	}
 }
 
 export class Posts {
 	AssetID: string;
+	DateIssued: string;
 	TestID: string;
+	InspectorID: string;
+	TestModID: string;
+	SupervisorID: string;
 	DateCompleted: string;
 	comments: string;
 	Result: string;

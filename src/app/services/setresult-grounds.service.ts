@@ -13,4 +13,7 @@ export class SetresultGroundsService {
 	patch(opost: Posts): Observable<any> {
 		return this.http.patch('https://martisapiversion1.herokuapp.com/test/setresult', opost);
 	}
+	post(opost: Posts): Observable<any> {
+		return this.http.post('https://martisapiversion1.herokuapp.com/test/createNewTest', opost);
+	}
 }
