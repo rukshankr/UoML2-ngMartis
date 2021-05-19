@@ -120,6 +120,7 @@ export class SelectionPage implements OnInit {
       if (ret.values.length === 0) {
         return Promise.reject(new Error("Query for assets failed"));
       }
+      console.log("#### Assets loaded")
 
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");

@@ -1,0 +1,39 @@
+.column{
+    justify-content: center;
+    align-items: center;
+}
+.circle{
+    align-items: center;
+    height: 100px;
+    width: 100px;
+    background-color: #eb445a;
+    color: white;
+    border-radius: 50%;
+    display:flex;
+    flex-direction: column;
+    font-weight:600;
+    //font-size: 50px;
+    box-shadow: 0.5px 0.5px 2px 0.5px grey;
+
+    &:hover{
+      background-color: #fd576b;
+      animation: glowing 5000ms;
+      animation-duration: 4s;
+    }
+
+    
+}
+
+@keyframes glowing {
+    0% { box-shadow: 0 0 -10px #ff576f;}
+    40% { box-shadow: 0 0 20px #ff576f;}
+    60% { box-shadow: 0 0 20px #ff576f;}
+    100% { box-shadow: 0 0 -10px #ff576f;}
+  }
+
+.icon {
+    position: relative;
+    font-size: 256px;
+    padding-top: 25%;
+    padding-bottom: 5%;
+}

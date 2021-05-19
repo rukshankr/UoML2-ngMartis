@@ -12,7 +12,14 @@
     <ion-row>
       <h2>{{log}}</h2>
       <p>{{logs}}</p>
-      <ion-progress-bar mode="ios" color="danger" value="progBar"></ion-progress-bar>
+    </ion-row>
+    <ion-row class="column">
+      <ion-col class="text-class-center" size=4 >
+        <div class="circle fancy-button" (click)="fullSync()">
+          <ion-icon class="icon" name="sync" size="large"></ion-icon>
+          SYNC
+        </div>
+      </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>

@@ -121,6 +121,48 @@ export class GroundsTestPage implements OnInit {
 				await db.open();
 
 				//insert
+				//	>>Out of Schedule testing
+				console.log(">>>OSS value: " + this.nonScheduleTest);
+
+				if (this.nonScheduleTest) {
+				  //this.opost.DateIssued = this.opost.DateCompleted;
+				  //this.opost.SupervisorID = this.opost.InspectorID;
+				  console.log("Page Saved", this.opost);
+		
+				  try {
+					//create a new test in DB
+					let sqlcmd: string = `INSERT INTO test (id, DateIssued, AssetID, InspectorID, SupervisorID, Frequency, TestModID, Priority, last_modified) VALUES (?,?,?,?,?,?,?,?, (strftime('%s', 'now')))`;
+					var p = this.opost;
+					let postableChanges = [
+					  p.TestID,
+					  this.date.value,
+					  p.AssetID,
+					  p.InspectorID,
+					  p.InspectorID,
+					  0,
+					  p.TestModID,
+					  0,
+					];
+		
+					let ret: any = await db.run(sqlcmd, postableChanges);
+		
+					this.log += "insertion run for OSS: " + ret.changes.changes;
+		
+					//check insertion
+					if (ret.changes.changes === 0) {
+					  return Promise.reject(new Error("Execution failed"));
+					}
+		
+					console.log("OSS insertion complete.");
+				  } catch (e) {
+					// Close Connection Martis
+					await this._sqlite.closeConnection("martis");
+		
+					await this.showAlert(false);
+					return;
+				  }
+				}
+
 				let sqlcmd: string = `UPDATE test SET Result = ?, DateCompleted = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ?`;
 				var p = this.opost;
 				this.log += ' // dC: ' + this.date.value + ' ';
