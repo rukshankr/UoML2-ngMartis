@@ -64,13 +64,22 @@ export class GroundsTestPage implements OnInit {
 	}
 
 	ngOnInit() {
-		console.log(this.route.snapshot.params.assetid);
-		this.assetid = this.route.snapshot.params.assetid;
-		this.testid = this.route.snapshot.params.testid;
+		if (this.route.snapshot.params.testid) {
+			this.testid = this.route.snapshot.params.testid;
+			this.assetid = this.route.snapshot.params.assetid;
+		}
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
 		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
+			if (this.testid == null) {
+				this.setresult.getLatestTest().subscribe((data) => {
+					this.testid = data.data[0].TestID;
+					let num = parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
+					this.testid = this.testid[0] + num.toString();
+					console.log(this.testid);
+				});
+			}
 		}
 	}
 
@@ -122,45 +131,45 @@ export class GroundsTestPage implements OnInit {
 
 				//insert
 				//	>>Out of Schedule testing
-				console.log(">>>OSS value: " + this.nonScheduleTest);
+				console.log('>>>OSS value: ' + this.nonScheduleTest);
 
 				if (this.nonScheduleTest) {
-				  //this.opost.DateIssued = this.opost.DateCompleted;
-				  //this.opost.SupervisorID = this.opost.InspectorID;
-				  console.log("Page Saved", this.opost);
-		
-				  try {
-					//create a new test in DB
-					let sqlcmd: string = `INSERT INTO test (id, DateIssued, AssetID, InspectorID, SupervisorID, Frequency, TestModID, Priority, last_modified) VALUES (?,?,?,?,?,?,?,?, (strftime('%s', 'now')))`;
-					var p = this.opost;
-					let postableChanges = [
-					  p.TestID,
-					  this.date.value,
-					  p.AssetID,
-					  p.InspectorID,
-					  p.InspectorID,
-					  0,
-					  p.TestModID,
-					  0,
-					];
-		
-					let ret: any = await db.run(sqlcmd, postableChanges);
-		
-					this.log += "insertion run for OSS: " + ret.changes.changes;
-		
-					//check insertion
-					if (ret.changes.changes === 0) {
-					  return Promise.reject(new Error("Execution failed"));
+					//this.opost.DateIssued = this.opost.DateCompleted;
+					//this.opost.SupervisorID = this.opost.InspectorID;
+					console.log('Page Saved', this.opost);
+
+					try {
+						//create a new test in DB
+						let sqlcmd: string = `INSERT INTO test (id, DateIssued, AssetID, InspectorID, SupervisorID, Frequency, TestModID, Priority, last_modified) VALUES (?,?,?,?,?,?,?,?, (strftime('%s', 'now')))`;
+						var p = this.opost;
+						let postableChanges = [
+							p.TestID,
+							this.date.value,
+							p.AssetID,
+							p.InspectorID,
+							p.InspectorID,
+							0,
+							p.TestModID,
+							0
+						];
+
+						let ret: any = await db.run(sqlcmd, postableChanges);
+
+						this.log += 'insertion run for OSS: ' + ret.changes.changes;
+
+						//check insertion
+						if (ret.changes.changes === 0) {
+							return Promise.reject(new Error('Execution failed'));
+						}
+
+						console.log('OSS insertion complete.');
+					} catch (e) {
+						// Close Connection Martis
+						await this._sqlite.closeConnection('martis');
+
+						await this.showAlert(false);
+						return;
 					}
-		
-					console.log("OSS insertion complete.");
-				  } catch (e) {
-					// Close Connection Martis
-					await this._sqlite.closeConnection("martis");
-		
-					await this.showAlert(false);
-					return;
-				  }
 				}
 
 				let sqlcmd: string = `UPDATE test SET Result = ?, DateCompleted = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ?`;
