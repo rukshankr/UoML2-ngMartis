@@ -24,7 +24,7 @@
                   <ion-input
                     formControlName="AssetID"
                     autofocus="true"
-                    enterkeyhint="next"
+                    enterkeyhint="next" [ngModel]="assetid"
                   ></ion-input>
                 </ion-item>
                 <div *ngFor="let error of errorMessage.assetID">

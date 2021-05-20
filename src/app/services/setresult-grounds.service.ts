@@ -16,4 +16,9 @@ export class SetresultGroundsService {
 	post(opost: Posts): Observable<any> {
 		return this.http.post('https://martisapiversion1.herokuapp.com/test/createNewTest', opost);
 	}
+
+	getLatestTest(): Observable<any> {
+		// return this.http.get('http://localhost:3000/test/getLatestTest');
+		return this.http.get('https://martisapiversion1.herokuapp.com/test/getLatestTest');
+	}
 }
