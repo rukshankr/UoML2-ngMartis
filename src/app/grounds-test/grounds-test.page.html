@@ -109,13 +109,15 @@
                             </ion-radio-group>
                         </ion-col>
                         <ion-col>
-                            <ion-item *ngIf="nonScheduleTest==true">
+                            <div *ngIf="nonScheduleTest==true">
                                 <ion-label position="fixed">Inspector ID:</ion-label>
+                            <ion-item>
                                 <ion-input  formControlName="InspectorID"
                                     autofocus="true"
                                     enterkeyhint="next" 
                                     type="text"></ion-input>
                             </ion-item>
+                        </div>
                         </ion-col>
                     </ion-row>
                    </ion-card-content>
