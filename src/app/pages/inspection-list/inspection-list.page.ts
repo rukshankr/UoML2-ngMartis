@@ -18,7 +18,6 @@ export class InspectionListPage implements OnInit {
 		private alertCtrl: AlertController,
 		private loadingctrl: LoadingController
 	) {}
-
 	lst: any = [];
 	lest = [];
 	desktop: boolean = true;
@@ -29,7 +28,6 @@ export class InspectionListPage implements OnInit {
 	////
 
 	filterOption = 'priority';
-
 	async ngOnInit() {
 		const showAlert = async (message: string) => {
 			let msg = this.alertCtrl.create({
@@ -72,7 +70,6 @@ export class InspectionListPage implements OnInit {
 
 	async onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
 		this.filterOption = event.detail.value;
-
 		if (!this.desktop) {
 			if (this.filterOption === 'priority') {
 				await this.fetchTest(true);
@@ -82,7 +79,6 @@ export class InspectionListPage implements OnInit {
 			}
 			return;
 		}
-
 		if (this.filterOption === 'priority') {
 			this.loadingctrl
 				.create({
@@ -123,6 +119,7 @@ export class InspectionListPage implements OnInit {
 	async fetchTest(priority: boolean): Promise<void> {
 		try {
 			let nearByAssets = [];
+
 			// initialize the connection
 			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
 
@@ -138,7 +135,6 @@ export class InspectionListPage implements OnInit {
       from test t, asset a
       where t.AssetID = a.id
       AND t.InspectorID = 'EMP101'`);
-
 			this.lest = ret.values;
 
 			//sorting by distance
@@ -157,7 +153,6 @@ export class InspectionListPage implements OnInit {
 						});
 					}
 				});
-
 				this.lest = nearByAssets.sort((a, b) => a.distance - b.distance);
 			}
 
@@ -167,7 +162,6 @@ export class InspectionListPage implements OnInit {
 
 			// Close Connection MyDB
 			await this._sqlite.closeConnection('martis');
-
 			return Promise.resolve();
 		} catch (err) {
 			// Close Connection MyDB
@@ -182,7 +176,6 @@ export class InspectionListPage implements OnInit {
 export class Coords {
 	latitude: number;
 	longitude: number;
-
 	constructor(lat?: number, long?: number) {
 		this.latitude = lat;
 		this.longitude = long;

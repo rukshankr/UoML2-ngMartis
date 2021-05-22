@@ -15,7 +15,6 @@ export class CreateAssetPage implements OnInit {
 	opost = new Posts();
 	sendToMain: boolean = true;
 	log: string = '';
-
 	assetid: string;
 
 	//platform check
@@ -103,7 +102,6 @@ export class CreateAssetPage implements OnInit {
 					//p.LastTestedDate,
 				];
 				let ret: any = await db.run(sqlcmd, postableChanges);
-
 				this.log += ' // changes: ' + ret.changes.changes;
 				//check insert
 				if (ret.changes.changes === 0) {
@@ -112,22 +110,17 @@ export class CreateAssetPage implements OnInit {
 
 				//disconnect
 				await this._sqlite.closeConnection('martis');
-
 				await this.showAlert('asset added.');
 				return Promise.resolve();
 			} catch (err) {
 				//disconnect
 				await this._sqlite.closeConnection('martis');
-
 				await this.showAlert(err.message);
 			}
 		} else {
 			console.log('platform-desktop: ' + this.desktop);
-
 			this.opost = this.createAssetForm.value;
-
 			console.log('Page Saved', this.opost);
-
 			this.assetService.post(this.opost).subscribe((data) => {
 				console.log('Post method success?: ', data);
 				if (data !== 'Error') {

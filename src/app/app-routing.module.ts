@@ -1,10 +1,7 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { PreloadAllModules, Router, RouterModule, Routes } from '@angular/router';
-import { SelectionPageModule } from './pages/selection/selection.module';
-import { OKTA_CONFIG, OktaAuthModule, OktaCallbackComponent, OktaAuthGuard } from '@okta/okta-angular';
+import { OktaCallbackComponent } from '@okta/okta-angular';
 import { LoginComponent } from './login-comp/login-comp.component';
-import { AppComponent } from './app.component';
 import { MobileLoginComponent } from './mobile-login/mobile-login.component';
 
 export function onAuthRequired(oktaAuth, injector) {
@@ -77,8 +74,6 @@ const routes: Routes = [
 	},
 	{
 		path: 'login',
-		// loadChildren: () =>
-		//   import("./pages/login/login.module").then((m) => m.LoginPageModule),
 		component: LoginComponent
 	},
 	{
@@ -112,11 +107,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-	imports: [
-		RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
-		// OktaAuthModule,
-	],
-	//providers: [{ provide: OKTA_CONFIG, useValue: config }, OktaAuthGuard],
+	imports: [ RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }) ],
 	exports: [ RouterModule ]
 })
 export class AppRoutingModule {}

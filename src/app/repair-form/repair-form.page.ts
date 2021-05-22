@@ -19,7 +19,6 @@ export class RepairFormPage implements OnInit {
 	engineerid: String;
 	comments: String;
 	createddate = String;
-
 	opost = new Posts();
 	log: string = '';
 
@@ -54,7 +53,6 @@ export class RepairFormPage implements OnInit {
 		this.engineerid = this.route.snapshot.params.engineerid;
 		this.comments = this.route.snapshot.params.comments;
 		this.createddate = this.route.snapshot.params.createddate;
-
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
 		} else if (this.plt.is('desktop')) {
@@ -75,12 +73,10 @@ export class RepairFormPage implements OnInit {
 	async onSave() {
 		let date = this.route.snapshot.params.createddate;
 		this.opost = this.createRepairForm.value;
-
 		if (this.opost.CompletedDate == '' || this.confirm === false) {
 			this.showAlert(false, 'Please confirm repair date', true);
 			return;
 		}
-
 		if (!this.desktop) {
 			this.opost.CreatedDate = date;
 			try {
@@ -109,7 +105,6 @@ export class RepairFormPage implements OnInit {
 					this.opost.CreatedDate
 				];
 				let ret: any = await db.run(sqlcmd, postableChanges);
-
 				this.log += ' // query run //' + ret.changes.changes;
 				//check insert
 				if (ret.changes.changes == 0) {
@@ -120,7 +115,6 @@ export class RepairFormPage implements OnInit {
 				// Close Connection MyDB
 				await this._sqlite.closeConnection('martis');
 				this.log += "\n> closeConnection 'martis' successful\n";
-
 				await this.showAlert(true);
 				return Promise.resolve();
 
@@ -135,13 +129,10 @@ export class RepairFormPage implements OnInit {
 			}
 			return;
 		}
-
 		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'utc').toString();
 		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-dd HH:mm:ss');
 		console.log(this.opost.CompletedDate);
-
 		console.log('Page Saved', this.opost);
-
 		this.setRepair.put(this.opost).subscribe((data) => {
 			console.log('Post method success?: ', data);
 			if (data) {
