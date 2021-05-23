@@ -3,7 +3,6 @@ import { Router, NavigationStart } from "@angular/router";
 import { LoadingController, Platform } from "@ionic/angular";
 
 import { OktaAuthService } from "@okta/okta-angular";
-import * as OktaSignIn from "@okta/okta-signin-widget";
 
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { DeviceAuthService } from "../services/device-auth.service";

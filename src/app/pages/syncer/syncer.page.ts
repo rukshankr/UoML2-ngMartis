@@ -5,6 +5,7 @@ import { VirtualTimeScheduler } from "rxjs";
 import { InspectionService } from "src/app/services/create-inspection.service";
 import { DatabaseService } from "src/app/services/database.service";
 import { inspectionListService } from "src/app/services/inspection-list.service";
+import { NetworkService } from "src/app/services/network.service";
 import { SqliteService } from "src/app/services/sqlite.service";
 
 @Component({
@@ -18,10 +19,10 @@ export class SyncerPage implements OnInit {
   log: string = "Press the SYNC button to begin syncing.";
   logs: string = "";
   exportedJson: string = "";
+  deleteAllData: boolean = false;
 
   ///
   oExportTest = new ExportTest();
-
 
   showAlert = async (heading: string, message: string) => {
     let msg = this.alertCtrl.create({
@@ -36,12 +37,22 @@ export class SyncerPage implements OnInit {
     private _sqlite: SqliteService,
     private _dbService: DatabaseService,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private network: NetworkService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.network.onNetworkChange().subscribe((data) => {
+      console.log("NetStat:" + this.network.getCurrentNetworkStatus());
+    });
+  }
 
   async fullSync() {
+    if (this.network.getCurrentNetworkStatus() == 1) {
+      this.log =
+        "You are currently not connected. Please connect to a network and try again.";
+      return;
+    }
 
     //loading spinner
     const loading = await this.loadingCtrl.create({
@@ -76,23 +87,21 @@ export class SyncerPage implements OnInit {
       if (!result.result) {
         return Promise.reject(new Error("IsJsonValid export 'full' failed"));
       }
-      //this.log = "Json export valid";
 
-      // Close Connection MyDB
+      // Close Connection to martis
       await this._sqlite.closeConnection("martis");
 
       //export to Main DB
       this._dbService.fullExportAll(jsonObj.export).subscribe(async (data) => {
         console.log("Export post method success?: ", data);
 
-
         if (data) {
-          //this.showAlert("Success","Completely Exported");
-
-          /////////////////////////////import fully from mysql
+          //import fully from mySQL
           let imported = await this._dbService.fullImportAll();
+
           // test Json object validity
           let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
+
           if (!result.result) {
             return Promise.reject(new Error("IsJsonValid failed"));
           }
@@ -100,12 +109,18 @@ export class SyncerPage implements OnInit {
           // full import
           let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
 
-          if (ret.changes.changes === -1)
+          if (ret.changes.changes === -1) {
             return Promise.reject(
               new Error("ImportFromJson 'full' dataToImport failed")
             );
+          }
+          //connect to martis
 
-          //this.showAlert("Success", "completely imported");
+          //search for sync_table and create it
+
+          //set sync date
+
+          //show sync date
 
           //dismiss loader
           await loading.dismiss();
@@ -113,7 +128,7 @@ export class SyncerPage implements OnInit {
         } else {
           //dismiss loader
           await loading.dismiss();
-          this.showAlert("Error", "Export not added.");
+          this.showAlert("Error", "Could not export DB data");
           return Promise.reject(
             new Error("Exporting unsuccessful. Try again later")
           );
@@ -124,7 +139,7 @@ export class SyncerPage implements OnInit {
     } catch (err) {
       //dismiss loader
       await loading.dismiss();
-      // Close Connection MyDB
+      // Close Connection to martis
       await this._sqlite.closeConnection("martis");
       //error message
       this.showAlert("Failed", err.message);
@@ -134,30 +149,100 @@ export class SyncerPage implements OnInit {
 
   //testing function
   async fullImport() {
+    if (this.network.getCurrentNetworkStatus() == 1) {
+      this.log =
+        "You are currently not connected. Please connect to a network and try again.";
+      return;
+    }
+
+    //loading spinner
+    const loading = await this.loadingCtrl.create({
+      message: "Deleting data & Syncing...",
+    });
+    await loading.present();
+
     try {
-      /////////////////////////////import fully from mysql
+      //import fully from mySQL
       let imported = await this._dbService.fullImportAll();
-      this.logs += JSON.stringify(imported);
+
       // test Json object validity
       let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
+
       if (!result.result) {
         return Promise.reject(new Error("IsJsonValid failed"));
       }
-      this.log = "import json valid";
+
       // full import
       let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
 
-      if (ret.changes.changes === -1)
+      if (ret.changes.changes === -1) {
         return Promise.reject(
           new Error("ImportFromJson 'full' dataToImport failed")
         );
+      }
+      //connect to martis
 
-      this.showAlert("Success", "completely imported");
+      //search for sync_table and create it
+
+      //set sync date
+
+      //show sync date
+
+      //dismiss loader
+      await loading.dismiss();
+      this.log = "Successfully Synced!";
     } catch (err) {
+      //dismiss loader
+      await loading.dismiss();
+      // Close Connection to martis
+      await this._sqlite.closeConnection("martis");
       //error message
       this.showAlert("Failed", err.message);
       return Promise.reject(err);
     }
+  }
+
+  //testing function
+  async partialExport() {
+    try {
+      // initialize the connection
+      const db = await this._sqlite.createConnection(
+        "martis",
+        false,
+        "no-encryption",
+        1
+      );
+
+      // open db martis
+      await db.open();
+
+      // export json
+      let jsonObj: any = await db.exportToJson("partial");
+
+      this.exportedJson += JSON.stringify(jsonObj.export);
+
+      //this.logs = this.exportedJson;
+
+      // test Json object validity
+      let result = await this._sqlite.isJsonValid(
+        JSON.stringify(jsonObj.export)
+      );
+
+      if (!result.result) {
+        return Promise.reject(new Error("IsJsonValid export 'full' failed"));
+      }
+      //this.log = "Json export valid";
+
+      // Close Connection to martis
+      await this._sqlite.closeConnection("martis");
+    } catch (err) {
+      // Close Connection to martis
+      await this._sqlite.closeConnection("martis");
+    }
+  }
+
+  wipeout() {
+    this.deleteAllData = !this.deleteAllData;
   }
 }
 

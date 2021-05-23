@@ -14,6 +14,7 @@ import { ThrowStmt } from "@angular/compiler";
 import { AssetService } from "src/app/services/asset-service.service";
 import { DeviceAuthService } from "src/app/services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
+import { NetworkService } from "src/app/services/network.service";
 
 // import { TIMEOUT } from 'dns';
 // import { type } from 'os';
@@ -43,7 +44,8 @@ export class SelectionPage implements OnInit {
     private http: HttpClient,
     private _mainService: DatabaseService,
     private deviceAuth: DeviceAuthService,
-    private uniqueDeviceID: UniqueDeviceID
+    private uniqueDeviceID: UniqueDeviceID,
+    private network: NetworkService
   ) {
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
@@ -210,6 +212,11 @@ export class SelectionPage implements OnInit {
     }
 
     if (!this.desktop) {
+      //check network
+      this.network.onNetworkChange().subscribe((data)=>{
+        console.log("NetStat:"+data);
+      });
+      
       const showAlert = async (message: string) => {
         let msg = this.atrCtrl.create({
           header: "Error",
@@ -228,7 +235,6 @@ export class SelectionPage implements OnInit {
       } catch (err) {
         await showAlert(err.message);
       }
-    } else {
     }
   }
 
@@ -257,6 +263,11 @@ export class SelectionPage implements OnInit {
     await loading.present();
 
     try {
+      //check network
+      if(this.network.getCurrentNetworkStatus() == 1){
+        return Promise.reject(new Error("Not connected to a network. Connect and try again."));
+      }
+
       //import fully from mysql
       let imported = await this._mainService.fullImportAll();
 
@@ -284,6 +295,19 @@ export class SelectionPage implements OnInit {
 
       // open db testNew
       await db.open();
+
+      //check for sync_table and create if not there
+      if(!(await db.isTable("sync_table")).result){
+        await db.createSyncTable();
+      }
+
+      //update the sync date
+      let syncDate = new Date().toISOString();
+      await db.setSyncDate(syncDate);
+
+      //get Sync Date
+      syncDate = await db.getSyncDate()
+      console.log(syncDate);
 
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");

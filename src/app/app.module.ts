@@ -22,6 +22,7 @@ import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { MobileLoginComponent } from "./mobile-login/mobile-login.component";
 import { inspectionListService } from "./services/inspection-list.service";
 import { DeviceAuthService } from "./services/device-auth.service";
+import { Network } from "@ionic-native/network/ngx";
 
 const config = {
   issuer: "https://dev-44560058.okta.com/oauth2/default",
@@ -54,6 +55,7 @@ const config = {
     SqliteService,
     Geolocation,
     DeviceAuthService,
+    Network
   ],
   bootstrap: [AppComponent],
 })
