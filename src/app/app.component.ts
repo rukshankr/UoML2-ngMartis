@@ -21,7 +21,6 @@ export class AppComponent implements OnInit {
 	public desktop: boolean = true;
 	public Deviceid;
 	public EmpId;
-
 	constructor(
 		private platform: Platform,
 		private splashScreen: SplashScreen,

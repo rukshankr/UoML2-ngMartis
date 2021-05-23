@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Posts } from '../grounds-test/grounds-test.page';
 
 @Injectable({
@@ -18,7 +17,6 @@ export class SetresultGroundsService {
 	}
 
 	getLatestTest(): Observable<any> {
-		// return this.http.get('http://localhost:3000/test/getLatestTest');
 		return this.http.get('https://martisapiversion1.herokuapp.com/test/getLatestTest');
 	}
 }

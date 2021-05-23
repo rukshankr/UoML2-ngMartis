@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FileSharer } from '@byteowls/capacitor-filesharer';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AlertController, Platform } from '@ionic/angular';
-
 import { CreateReportEmpidService } from 'src/app/services/create-report-empid.service';
 import { DatePipe } from '@angular/common';
 import { SqliteService } from 'src/app/services/sqlite.service';
@@ -17,7 +16,6 @@ export class ReportGenerationPage implements OnInit {
 	opost = new Posts();
 	desktop: boolean = true;
 	log: string = '';
-
 	createReportForm = this.formBuilder.group({
 		inspectorID: [
 			'',
@@ -54,9 +52,7 @@ export class ReportGenerationPage implements OnInit {
 			this.opost.finalDate = this.datePipe
 				.transform(this.opost.finalDate, 'yyyy-MM-dd HH:mm:ss', 'utc')
 				.toString();
-
 			console.log('Page Saved', this.opost);
-
 			this.createReport.post(this.opost).subscribe((data) => {
 				console.log('Post method success?: ', data);
 				if (data) {
@@ -87,7 +83,6 @@ export class ReportGenerationPage implements OnInit {
           AND 
           (t.DateCompleted != '0000-00-00 00:00:00'
           AND t.DateCompleted IS NOT NULL)`;
-
 				var p = this.opost;
 				let postableChanges = [ p.inspectorID, p.initialDate, p.finalDate ];
 				let ret: any = await db.query(sqlcmd, postableChanges);
@@ -102,7 +97,6 @@ export class ReportGenerationPage implements OnInit {
 
 				//disconnect
 				await this._sqlite.closeConnection('martis');
-
 				await this.showAlert('Success', 'report fetched.');
 				return Promise.resolve();
 			} catch (err) {
@@ -138,7 +132,6 @@ export class ReportGenerationPage implements OnInit {
 			reader.onloadend = () => {
 				const result = reader.result as string;
 				const base64Data = result.split(',')[1];
-
 				FileSharer.share({
 					filename: 'test.pdf',
 					base64Data,
@@ -189,11 +182,11 @@ export class ReportGenerationPage implements OnInit {
 
 			// Close Connection martis
 			await this._sqlite.closeConnection('martis');
-
 			return Promise.resolve();
 		} catch (err) {
 			// Close Connection martis
 			await this._sqlite.closeConnection('martis');
+
 			//error message
 			await this.showAlert(false, err.message);
 			return Promise.reject(err);

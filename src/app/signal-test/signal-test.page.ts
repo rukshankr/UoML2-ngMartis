@@ -106,11 +106,10 @@ export class SignalTestPage implements OnInit {
 			} else if (this.nonScheduleTest == true) {
 				this.opost.DateIssued = this.opost.DateCompleted;
 				this.opost.SupervisorID = this.opost.InspectorID;
+				this.opost.comments = this.opost.comments + ' (OSS)';
 				console.log('Page Saved', this.opost);
-				this.setresult.post(this.opost).subscribe((data) => {
-					console.log('Post method 1 success?: ', data);
-				});
-
+				const data1 = await this.setresult.post(this.opost).toPromise();
+				console.log(data1);
 				this.setresult.patch(this.opost).subscribe((data) => {
 					console.log('Post method 2 success?: ', data);
 					if (data) {
@@ -133,10 +132,7 @@ export class SignalTestPage implements OnInit {
 				console.log('>>>OSS value: ' + this.nonScheduleTest);
 
 				if (this.nonScheduleTest) {
-					//this.opost.DateIssued = this.opost.DateCompleted;
-					//this.opost.SupervisorID = this.opost.InspectorID;
 					console.log('Page Saved', this.opost);
-
 					try {
 						//create a new test in DB
 						let sqlcmd: string = `INSERT INTO test (id, DateIssued, AssetID, InspectorID, SupervisorID, Frequency, TestModID, Priority, last_modified) VALUES (?,?,?,?,?,?,?,?, (strftime('%s', 'now')))`;
@@ -153,48 +149,40 @@ export class SignalTestPage implements OnInit {
 						];
 
 						let ret: any = await db.run(sqlcmd, postableChanges);
-
 						this.log += 'insertion run for OSS: ' + ret.changes.changes;
 
 						//check insertion
 						if (ret.changes.changes === 0) {
 							return Promise.reject(new Error('Execution failed'));
 						}
-
 						console.log('OSS insertion complete.');
 					} catch (e) {
 						// Close Connection Martis
 						await this._sqlite.closeConnection('martis');
-
 						await this.showAlert(false);
 						return;
 					}
 				}
-
 				let sqlcmd: string = `UPDATE test SET Result = ?, DateCompleted = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ?`;
 				var p = this.opost;
 				this.log += ' // dC: ' + this.date.value + ' ';
 				let postableChanges = [ p.Result, this.date.value, p.comments, p.TestID ];
-
 				let ret: any = await db.run(sqlcmd, postableChanges);
-
 				this.log += 'query run // ' + ret.changes.changes;
 
 				//check update
 				if (ret.changes.changes === 0) {
 					return Promise.reject(new Error('Execution failed'));
 				}
-
 				this.log += ' // query updates //';
+
 				// Close Connection Martis
 				await this._sqlite.closeConnection('martis');
-
 				await this.showAlert(true);
 				return Promise.resolve();
 			} catch (err) {
 				// Close Connection Martis
 				await this._sqlite.closeConnection('martis');
-
 				await this.showAlert(false);
 			}
 		}

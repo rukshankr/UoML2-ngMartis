@@ -1,9 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FileSharer } from '@byteowls/capacitor-filesharer';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AlertController, Platform } from '@ionic/angular';
-
 import { CreateReportEmpidService } from 'src/app/services/create-report-empid.service';
 import { DatePipe } from '@angular/common';
 import { SqliteService } from 'src/app/services/sqlite.service';
@@ -17,7 +15,6 @@ export class ReportGenerationAssetPage implements OnInit {
 	opost = new Aposts();
 	desktop: boolean = true;
 	log: string = '';
-
 	createReportForm = this.formBuilder.group({
 		assetID: [
 			'',
@@ -49,9 +46,7 @@ export class ReportGenerationAssetPage implements OnInit {
 			this.opost.finalDate = this.datePipe
 				.transform(this.opost.finalDate, 'yyyy-MM-dd HH:mm:ss', 'utc')
 				.toString();
-
 			console.log('Page Saved', this.opost);
-
 			this.createReport.getAssetReport(this.opost).subscribe((data) => {
 				console.log('Post method success?: ', data);
 				if (data) {
@@ -62,8 +57,7 @@ export class ReportGenerationAssetPage implements OnInit {
 					this.showAlert(false);
 				}
 			});
-		}
-		else{
+		} else {
 			try {
 				//connect
 				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
@@ -71,7 +65,7 @@ export class ReportGenerationAssetPage implements OnInit {
 				//open
 				await db.open();
 
-				this.log += "martis opened // ";
+				this.log += 'martis opened // ';
 				//search
 				const sqlcmd: string = `SELECT a.Status,a.Region, t.Result,a.GPSLatitude, a.GPSLongitude, 
 				t.id as 'TestID', t.InspectorID, t.DateCompleted, a.Division, a.SubDivision, a.NearestMilePost, 
@@ -80,25 +74,22 @@ export class ReportGenerationAssetPage implements OnInit {
 				WHERE a.id = t.AssetID AND t.AssetID = ? 
 				AND t.DateIssued BETWEEN ? AND ? 
 				AND (t.DateCompleted != '0000-00-00 00:00:00' AND t.DateCompleted IS NOT NULL)`;
-				
-		
 				var p = this.opost;
 				let postableChanges = [ p.assetID, p.initialDate, p.finalDate ];
 				let ret: any = await db.query(sqlcmd, postableChanges);
 
 				//fetch the results
 				this.lst = ret.values;
-				this.log += this.lst[0].TestID + " // "
+				this.log += this.lst[0].TestID + ' // ';
 
 				//disconnect
 				await this._sqlite.closeConnection('martis');
 
 				//check search
 				if (this.lst.length == 0) {
-					await this.showAlert("No results", "no matches within given period");
+					await this.showAlert('No results', 'no matches within given period');
 					return Promise.resolve();
 				}
-
 				await this.showAlert('Success', 'report fetched.');
 				return Promise.resolve();
 			} catch (err) {
