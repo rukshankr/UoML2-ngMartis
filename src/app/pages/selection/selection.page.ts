@@ -14,6 +14,7 @@ import { ThrowStmt } from "@angular/compiler";
 import { AssetService } from "src/app/services/asset-service.service";
 import { DeviceAuthService } from "src/app/services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
+import { BehaviorSubject, Observable } from "rxjs";
 
 // import { TIMEOUT } from 'dns';
 // import { type } from 'os';
@@ -32,6 +33,8 @@ export class SelectionPage implements OnInit {
   importJson;
   desktop: boolean = true;
   Deviceid;
+
+  userID = new BehaviorSubject("EMP999");
 
   constructor(
     public atrCtrl: AlertController,
@@ -240,12 +243,17 @@ export class SelectionPage implements OnInit {
 
         this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
           this.userPin = device.data[0].PIN;
+          this.userID = device.data[0].UserID;
         });
       })
       .catch((error: any) => {
         console.log(error);
         this.Deviceid = error;
       });
+  }
+
+  get UserID() {
+    return this.userID.asObservable();
   }
 
   async firstSync(): Promise<void> {

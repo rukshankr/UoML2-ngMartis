@@ -9,6 +9,7 @@ import { Router } from "@angular/router";
 import { OktaAuthService } from "@okta/okta-angular";
 import { DeviceAuthService } from "./services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
+import { SelectionPage } from "./pages/selection/selection.page";
 
 @Component({
   selector: "app-root",
@@ -32,7 +33,8 @@ export class AppComponent implements OnInit {
     public oktaAuth: OktaAuthService,
     private deviceAuth: DeviceAuthService,
     private router: Router,
-    private uniqueDeviceID: UniqueDeviceID
+    private uniqueDeviceID: UniqueDeviceID,
+    private selction: SelectionPage
   ) {
     this.initializeApp();
     this.isAuthenticated = false;
@@ -60,8 +62,12 @@ export class AppComponent implements OnInit {
         .catch((err) => console.log(err));
     } else {
       this.getUniqueDeviceID();
+      this.selction.UserID.subscribe((data) => {
+        this.EmpId = data;
+      });
     }
   }
+
   async logout() {
     await this.oktaAuth.signOut();
     this.router.navigateByUrl("/login");

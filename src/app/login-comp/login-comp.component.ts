@@ -32,17 +32,6 @@ export class LoginComponent implements OnInit {
     private loadingController: LoadingController
   ) {}
 
-  async presentLoading() {
-    const loading = await this.loadingController.create({
-      message: "Please wait...",
-      duration: 2000,
-    });
-    await loading.present();
-
-    await loading.onDidDismiss();
-    console.log("Loading dismissed!");
-  }
-
   isAuthenticated: boolean;
   async ngOnInit() {
     this.desktop =
@@ -52,14 +41,10 @@ export class LoginComponent implements OnInit {
     this.isAuthenticated = await this.oktaAuth.isAuthenticated();
 
     if (this.desktop == false) {
-      this.presentLoading();
+      //this.presentLoading();
       this.getUniqueDeviceID();
     }
   }
-  //   this.widget.showSignInAndRedirect().catch((err) => {
-  //     throw err;
-  //   });
-  // }
 
   login() {
     this.oktaAuth.signInWithRedirect({
@@ -67,7 +52,12 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  getUniqueDeviceID() {
+  async getUniqueDeviceID() {
+    const loading = await this.loadingController.create({
+      message: "Please wait...",
+      duration: 2000,
+    });
+    await loading.present();
     this.uniqueDeviceID
       .get()
       .then((uuid: any) => {
@@ -81,6 +71,7 @@ export class LoginComponent implements OnInit {
           } else {
             this.firstTimeLogin = false;
           }
+          loading.onDidDismiss();
         });
       })
       .catch((error: any) => {
