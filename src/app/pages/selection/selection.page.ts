@@ -68,7 +68,7 @@ export class SelectionPage implements OnInit {
     speed: 400,
     slidesPerView: 4,
   };
-  //for mobile
+  //for mobile slider
   mobSlideOpts = {
     initialSlide: 0,
     speed: 400,
@@ -85,19 +85,24 @@ export class SelectionPage implements OnInit {
     }
   }
 
-  loadTable(event?: Event) {
-    if (this.desktop) {
+  async loadTable(event?: Event) {
+    //loading spinner
+    const loading = await this.loadingCtrl.create();
+    await loading.present();
+
       this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
         this.nextpg = data.next ? data.next.page : null;
 
         this.table = this.table.concat(data.results);
         console.log(this.table);
 
+        //dismiss loader
+        loading.dismiss();
+
         if (event) {
           event.target.removeEventListener;
         }
       });
-    }
   }
 
   async loadMobiTable(): Promise<void> {
@@ -307,7 +312,7 @@ export class SelectionPage implements OnInit {
 
       //get Sync Date
       syncDate = await db.getSyncDate()
-      console.log(syncDate);
+      console.log("synced at: "+syncDate);
 
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");

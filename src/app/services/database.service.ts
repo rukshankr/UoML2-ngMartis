@@ -49,9 +49,9 @@ export class DatabaseService {
 		return this.http.get('https://martisapiversion1.herokuapp.com/sync/export').toPromise();
 	}
 
-	partialImportAll(): Promise<Object>{
+	partialImportAll(last_modified: number): Promise<Object>{
 		
-		return this.http.get('https://martisapiversion1.herokuapp.com/sync/partialexport').toPromise();
+		return this.http.get(`https://martisapiversion1.herokuapp.com/sync/partialexport?last_modified=${last_modified}`).toPromise();
 			
 	}
 
@@ -59,4 +59,9 @@ export class DatabaseService {
 	fullExportAll(exported: Object): Observable <any> {
 		return this.http.post("https://martisapiversion1.herokuapp.com/sync/fullimport",exported);
 	  }
+
+	//delete rows that should be deleted
+	deleteDeletables() : Promise<Object>{
+		return this.http.delete("https://martisapiversion1.herokuapp.com/sync/delete").toPromise();
+	}
 }

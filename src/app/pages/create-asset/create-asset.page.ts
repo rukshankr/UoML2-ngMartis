@@ -63,6 +63,8 @@ export class CreateAssetPage implements OnInit {
 	ngOnInit() {
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
+			this.getLatestAssetIncrement();
+
 		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
 			this.assetService.getLatestAsset().subscribe((data) => {
@@ -102,7 +104,7 @@ export class CreateAssetPage implements OnInit {
 					//p.LastTestedDate,
 				];
 				let ret: any = await db.run(sqlcmd, postableChanges);
-				this.log += ' // changes: ' + ret.changes.changes;
+				
 				//check insert
 				if (ret.changes.changes === 0) {
 					return Promise.reject(new CapacitorException('Execution failed'));
@@ -153,6 +155,43 @@ export class CreateAssetPage implements OnInit {
 		const coordinates = await Geolocation.getCurrentPosition();
 		this.createAssetForm['GPSLatitude'] = coordinates.coords.latitude;
 		this.createAssetForm['GPSLongitude'] = coordinates.coords.longitude;
+	}
+
+	async getLatestAssetIncrement(){
+		try{
+			//connect
+			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
+			this.log += '\ndb connected ' + db;
+			//open
+			await db.open();
+			this.log += '\ndb opened.\n';
+			//query
+			let sqlcmd: string ="SELECT id FROM asset ORDER BY id DESC limit 1;";
+			let ret: any = await db.query(sqlcmd);
+
+			//check insert
+			if (ret.values.length === 0) {
+				return Promise.reject(new CapacitorException('Query failed'));
+			}
+			
+			console.log("last asset: "+ret.values[0].id);
+
+			//disconnect
+			await this._sqlite.closeConnection('martis');
+
+			this.assetid = ret.values[0].id;
+			let num = parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
+			this.assetid = this.assetid[0] + num.toString();
+
+			return Promise.resolve();
+		}
+		catch(err){
+			//disconnect
+			if(this._sqlite.sqlite.isConnection("martis")){
+				await this._sqlite.closeConnection('martis');
+			}
+			return Promise.reject();
+		}
 	}
 }
 

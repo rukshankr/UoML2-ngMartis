@@ -21,7 +21,7 @@ export class SyncerPage implements OnInit {
   exportedJson: string = "";
   deleteAllData: boolean = false;
 
-  ///
+  //Test export JSON
   oExportTest = new ExportTest();
 
   showAlert = async (heading: string, message: string) => {
@@ -75,11 +75,7 @@ export class SyncerPage implements OnInit {
       // export json
       let jsonObj: any = await db.exportToJson("full");
 
-      this.exportedJson += JSON.stringify(jsonObj.export);
-
-      //this.logs = this.exportedJson;
-
-      // test Json object validity
+      // test JSON object validity
       let result = await this._sqlite.isJsonValid(
         JSON.stringify(jsonObj.export)
       );
@@ -96,6 +92,14 @@ export class SyncerPage implements OnInit {
         console.log("Export post method success?: ", data);
 
         if (data) {
+          //delete unwanted rows in mySQL
+          let deleted = await this._dbService.deleteDeletables();
+
+          if(JSON.stringify(deleted) != `{"status":"D"}`){
+            return Promise.reject(new Error("Deletion failed"));
+          }
+          console.log("successfully deleted.");
+
           //import fully from mySQL
           let imported = await this._dbService.fullImportAll();
 
@@ -115,12 +119,23 @@ export class SyncerPage implements OnInit {
             );
           }
           //connect to martis
+          const db = await this._sqlite.createConnection("martis",false,"no-encryption",1);
 
-          //search for sync_table and create it
+          //open martis
+          await db.open();
+
+          //search for sync_table and create if not there
+          if (!(await db.isTable("sync_table")).result) {
+            ret = await db.createSyncTable();
+            console.log("$$$ createSyncTable ret.changes.changes in db " +ret.changes.changes);
+          }
 
           //set sync date
+          let syncDate = new Date().toISOString();
+          await db.setSyncDate(syncDate);
 
-          //show sync date
+          // Close Connection to martis
+          await this._sqlite.closeConnection("martis");
 
           //dismiss loader
           await loading.dismiss();
@@ -147,7 +162,7 @@ export class SyncerPage implements OnInit {
     }
   }
 
-  //testing function
+  //to wipe SQLite data and get full copy of MySQL DB
   async fullImport() {
     if (this.network.getCurrentNetworkStatus() == 1) {
       this.log =
@@ -181,21 +196,43 @@ export class SyncerPage implements OnInit {
         );
       }
       //connect to martis
+      const db = await this._sqlite.createConnection(
+        "martis",
+        false,
+        "no-encryption",
+        1
+      );
 
-      //search for sync_table and create it
+      //open martis
+      await db.open();
+
+      //search for sync_table and create if not there
+      if (!(await db.isTable("sync_table")).result) {
+        ret = await db.createSyncTable();
+        console.log(
+          "$$$ createSyncTable ret.changes.changes in db " + ret.changes.changes
+        );
+      }
 
       //set sync date
+      let syncDate = new Date().toISOString();
+      await db.setSyncDate(syncDate);
 
-      //show sync date
+      // Close Connection to martis
+      await this._sqlite.closeConnection("martis");
 
       //dismiss loader
       await loading.dismiss();
       this.log = "Successfully Synced!";
+
+      return Promise.resolve();
     } catch (err) {
       //dismiss loader
       await loading.dismiss();
       // Close Connection to martis
-      await this._sqlite.closeConnection("martis");
+      if(this._sqlite.sqlite.isConnection("martis")) {
+        await this._sqlite.closeConnection("martis");
+      }
       //error message
       this.showAlert("Failed", err.message);
       return Promise.reject(err);
@@ -221,7 +258,7 @@ export class SyncerPage implements OnInit {
 
       this.exportedJson += JSON.stringify(jsonObj.export);
 
-      //this.logs = this.exportedJson;
+      console.log(this.exportedJson);
 
       // test Json object validity
       let result = await this._sqlite.isJsonValid(
@@ -236,8 +273,12 @@ export class SyncerPage implements OnInit {
       // Close Connection to martis
       await this._sqlite.closeConnection("martis");
     } catch (err) {
+      //error message
+      this.showAlert("Failed", err.message);
       // Close Connection to martis
       await this._sqlite.closeConnection("martis");
+
+      return Promise.reject(err);
     }
   }
 

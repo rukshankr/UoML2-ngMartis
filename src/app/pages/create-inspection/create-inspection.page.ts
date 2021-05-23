@@ -87,29 +87,32 @@ export class CreateInspectionPage implements OnInit {
 			try {
 				// initialize the connection
 				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
-				this.log += '\ndb connected ' + db;
 
 				// open db testNew
 				await db.open();
-				this.log += '\ndb opened';
 
 				// select all assets in db
 				let ret = await db.query("SELECT id as 'AssetID' FROM asset;");
 				this.assets = ret.values;
 				if (ret.values.length === 0) {
-					return Promise.reject(new Error('Query 2 asset failed'));
+					return Promise.reject(new Error('Query for assets failed'));
 				}
-				this.log += '\n asset query done.' + this.assets[0].id + ' ';
+				
 				// Close Connection MyDB
 				await this._sqlite.closeConnection('martis');
-				this.log += "\n> closeConnection 'myDb' successful\n";
 
 				return Promise.resolve();
 			} catch (err) {
-				this.log += '\nrejected';
 				//error message
 				await this.showAlert('Error', err.message);
+				//disconnect martis
+				if(this._sqlite.sqlite.isConnection("martis")){
+					await this._sqlite.closeConnection('martis');
+				}
 				return Promise.reject(err);
+			}
+			finally{
+				this.getLatestTestIncrement();
 			}
 		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
@@ -191,6 +194,43 @@ export class CreateInspectionPage implements OnInit {
 				this.showAlert('Error', 'Inspection not added.');
 			}
 		});
+	}
+
+	async getLatestTestIncrement(){
+		try{
+			//connect
+			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
+			
+			//open
+			await db.open();
+			
+			//query
+			let sqlcmd: string ="SELECT id FROM test ORDER BY id DESC limit 1;";
+			let ret: any = await db.query(sqlcmd);
+
+			//check insert
+			if (ret.values.length === 0) {
+				return Promise.reject(new Error('Query failed'));
+			}
+			
+			console.log("last asset: "+ret.values[0].id);
+
+			//disconnect
+			await this._sqlite.closeConnection('martis');
+
+			this.testid = ret.values[0].id;
+			let num = parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
+			this.testid = this.testid[0] + num.toString();
+
+			return Promise.resolve();
+		}
+		catch(err){
+			//disconnect martis
+			if(this._sqlite.sqlite.isConnection("martis")){
+				await this._sqlite.closeConnection('martis');
+			}
+			return Promise.reject();
+		}
 	}
 }
 
