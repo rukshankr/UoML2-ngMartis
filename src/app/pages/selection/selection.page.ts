@@ -229,11 +229,6 @@ export class SelectionPage implements OnInit {
   }
 
   async ngOnInit() {
-    //get user role
-    this.appcomp.UserRolesub.subscribe((data) => {
-      this.empRole = data;
-      console.log("role:"+this.empRole);
-    });
     if (this.desktop) {
       const userClaims = await this.oktaAuth
         .getUser()
@@ -271,6 +266,11 @@ export class SelectionPage implements OnInit {
         await showAlert(err.message);
       }
     }
+    //get user role
+    this.appcomp.UserRolesub.subscribe((data) => {
+      this.empRole = data;
+      console.log("role:"+this.empRole);
+    });
   }
 
   getUniqueDeviceID() {
