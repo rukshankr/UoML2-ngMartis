@@ -236,7 +236,7 @@ export class SelectionPage implements OnInit {
         .getUser()
         .then((data) => {
           this.userPin = data.family_name.split(" ")[1];
-          console.log(this.userPin);
+          console.log("UserPIN: " + this.userPin);
         })
         .catch((err) => console.log(err));
     } else {
