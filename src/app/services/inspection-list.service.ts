@@ -28,13 +28,23 @@ export class inspectionListService {
 
   sortInspectionsByDistance(): Observable<any> {
     this.getCoords();
-
     return this.http.post(
-      "https://martisapiversion1.herokuapp.com/test/orderByLocationAndInspector",
+      "https://martiswabtec.herokuapp.com/test/orderByLocationAndInspector",
       {
         empLatitude: this.latitude,
         empLongitude: this.longitude,
-        empId: "EMP101",
+      }
+    );
+  }
+
+  sortByLocationAndInspectorAndEmpID(empID): Observable<any> {
+    this.getCoords();
+    return this.http.post(
+      "https://martiswabtec.herokuapp.com/test/orderByLocationAndInspectorAndEmpID",
+      {
+        empLatitude: this.latitude,
+        empLongitude: this.longitude,
+        empId: empID,
       }
     );
   }

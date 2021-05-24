@@ -144,16 +144,29 @@ export class InspectionListPage implements OnInit {
           setTimeout(() => {
             loadingEl.dismiss();
           }, 5000);
-          this._inspectionListService
-            .sortInspectionsByDistance()
-            .subscribe((inspections) => {
-              if (inspections.data.length === 0) {
-                console.log("There was an error");
-              }
-              loadingEl.dismiss();
-              this.lst = Array.of(inspections.data);
-              console.log(this.lst);
-            });
+          if (this.empRole == "Manager") {
+            this._inspectionListService
+              .sortInspectionsByDistance()
+              .subscribe((inspections) => {
+                if (inspections.data.length === 0) {
+                  console.log("There was an error");
+                }
+                loadingEl.dismiss();
+                this.lst = Array.of(inspections.data);
+                console.log(this.lst);
+              });
+          } else {
+            this._inspectionListService
+              .sortByLocationAndInspectorAndEmpID(this.empId)
+              .subscribe((inspections) => {
+                if (inspections.data.length === 0) {
+                  console.log("There was an error");
+                }
+                loadingEl.dismiss();
+                this.lst = Array.of(inspections.data);
+                console.log(this.lst);
+              });
+          }
         });
     }
   }

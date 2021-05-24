@@ -27,8 +27,8 @@ export class AppComponent implements OnInit {
 
   UserID: BehaviorSubject<string> = new BehaviorSubject("");
   UserIDsub = this.UserID.asObservable();
-  UserRole: BehaviorSubject<string> = new BehaviorSubject("");
-  UserRolesub = this.UserRole.asObservable();
+  EmpRole: BehaviorSubject<string> = new BehaviorSubject("Tester");
+  UserRolesub = this.EmpRole.asObservable();
 
   constructor(
     private platform: Platform,
@@ -52,6 +52,9 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+    let words = "This 1321 a sentence";
+    console.log(typeof +words.split(" ")[1]);
+
     this.desktop =
       this.platform.is("mobile") ||
       this.platform.is("android") ||
@@ -66,8 +69,10 @@ export class AppComponent implements OnInit {
         .then((data) => {
           console.log(data);
           this.userRole = data.family_name.split(" ")[0];
-          this.UserRole.next(this.userRole);
+          this.EmpRole.next(this.userRole);
+          console.log("split 0 role :" + this.userRole);
           this.EmpId = data.family_name.split(" ")[2];
+          console.log("split 2 id : " + this.EmpId);
           this.UserID.next(this.EmpId);
           this.userName = data.given_name;
         })
@@ -96,7 +101,7 @@ export class AppComponent implements OnInit {
           this.deviceAuth.getUserNameAndRole(this.EmpId).subscribe((user) => {
             this.userName = user.data[0].Name;
             this.userRole = user.data[0].Title;
-            this.UserRole.next(this.userRole);
+            this.EmpRole.next(this.userRole);
           });
         });
       })
