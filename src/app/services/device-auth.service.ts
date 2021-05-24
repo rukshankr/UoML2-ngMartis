@@ -8,10 +8,8 @@ import { Observable } from "rxjs";
 export class DeviceAuthService {
   constructor(private http: HttpClient) {}
 
-
   getDevice(DeviceId): Observable<any> {
     return this.http.post(
-      //"https://martisapiversion1.herokuapp.com/test/getTests",
       "https://martiswabtec.herokuapp.com/device/getDeviceByID",
       {
         deviceId: DeviceId,
@@ -21,7 +19,6 @@ export class DeviceAuthService {
 
   setPin(DeviceId, DevicePin, UserID): Observable<any> {
     return this.http.post(
-      //"https://martisapiversion1.herokuapp.com/test/getTests",
       "https://martiswabtec.herokuapp.com/device/setDevicePinByID",
       {
         deviceId: DeviceId,

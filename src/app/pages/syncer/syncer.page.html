@@ -7,19 +7,42 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-align-items-center ion-text-wrap">
   <ion-grid>
+    <ion-card>
     <ion-row>
-      <h2>{{log}}</h2>
-      <p>{{logs}}</p>
-      <ion-progress-bar mode="ios" color="danger" value="progBar"></ion-progress-bar>
+      <ion-card-header>
+        <ion-card-title>
+          <h2>{{log}}</h2>
+        </ion-card-title>
+        <ion-card-subtitle>
+          <p>{{logs}}</p>
+        </ion-card-subtitle>
+      </ion-card-header>
     </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-button expand="block" (click)="fullSync()">SYNC</ion-button>
+  </ion-card>
+    <ion-row *ngIf="!deleteAllData" class="column">
+      <ion-col class="text-class-center" size=4>
+        <div class="circle" (click)="fullSync()">
+          <ion-icon class="icon" name="sync" size="large"></ion-icon>
+          SYNC
+        </div>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row *ngIf="deleteAllData">
+      <ion-col>
+          <ion-button size="large" color="danger" expand="block" (click)="fullImport()">reset database</ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row class="wipeout">
+      <ion-col>
+        <ion-card>
+          <ion-item lines="none">
+            <ion-checkbox slot="start" (click)="wipeout()"></ion-checkbox>
+            <ion-label class="ion-text-wrap">Wipe all data from device and Sync again</ion-label>
+          </ion-item>
+        </ion-card>
+      </ion-col>
     </ion-row>
   </ion-grid>  
 </ion-content>

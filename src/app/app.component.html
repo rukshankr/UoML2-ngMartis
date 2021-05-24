@@ -76,7 +76,6 @@
             routerLink="/inspection-list"
             *ngIf="userRole == 'Manager' || userRole == 'Inspector'"
           >
-            <!-- <ion-item routerLink="/inspection-list"> -->
             <ion-icon name="list" slot="start"></ion-icon>
             Inspections List
           </ion-item>
@@ -135,6 +134,5 @@
       </ion-list>
     </ion-content>
   </ion-menu>
-
   <ion-router-outlet id="main"></ion-router-outlet>
 </ion-app>

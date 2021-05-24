@@ -20,7 +20,10 @@
           <ion-card-header mode="ios" className="cardhead">
             <ion-row>
               <ion-col>
-                <ion-card-title>Current Assets</ion-card-title>
+                <ion-card-title>
+                  <ion-icon slot="start" name="sync"></ion-icon>
+                  Current Assets
+                </ion-card-title>
               </ion-col>
             </ion-row>
           </ion-card-header>
@@ -31,7 +34,6 @@
               <ion-col>
                 <ion-card-title>
                   {{item.id}}
-                  <!-- <ion-badge color="dark" size="large">{{item.id}}</ion-badge>  -->
                 </ion-card-title>
               </ion-col>
               <ion-col >
@@ -101,9 +103,6 @@
           </ion-button>
         </ion-col>
       </ion-row>
-      <!---->
-      <!---->
-      <!---->
       
 </ion-grid>
 </ion-content>

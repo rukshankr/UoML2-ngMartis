@@ -24,7 +24,7 @@
               <ion-col>
                 <ion-label position="fixed">Test ID:</ion-label>
                 <ion-item>
-                  <ion-input formControlName="TestID"></ion-input>
+                  <ion-input [ngModel]="testid" formControlName="TestID"></ion-input>
                 </ion-item>
                 <div *ngFor="let error of errorMessage.testID">
                   <ng-container
@@ -163,14 +163,6 @@
                     <ion-select-option value="4">4</ion-select-option>
                     <ion-select-option value="5">5</ion-select-option>
                   </ion-select>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
-                <ion-label position="fixed">Value:</ion-label>
-                <ion-item>
-                  <ion-input formControlName="Value"></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>

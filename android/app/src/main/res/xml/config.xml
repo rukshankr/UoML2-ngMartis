@@ -6,6 +6,10 @@
     <param name="android-package" value="com.android.plugins.Permissions"/>
   </feature>
 
+  <feature name="NetworkStatus">
+    <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager"/>
+  </feature>
+
   <feature name="UID">
     <param name="android-package" value="org.hygieiasoft.cordova.uid.UID"/>
   </feature>

@@ -5,6 +5,7 @@ import { VirtualTimeScheduler } from "rxjs";
 import { InspectionService } from "src/app/services/create-inspection.service";
 import { DatabaseService } from "src/app/services/database.service";
 import { inspectionListService } from "src/app/services/inspection-list.service";
+import { NetworkService } from "src/app/services/network.service";
 import { SqliteService } from "src/app/services/sqlite.service";
 
 @Component({
@@ -18,13 +19,10 @@ export class SyncerPage implements OnInit {
   log: string = "Press the SYNC button to begin syncing.";
   logs: string = "";
   exportedJson: string = "";
+  deleteAllData: boolean = false;
 
-  ///
+  //Test export JSON
   oExportTest = new ExportTest();
-
-  //progress bar
-  progBar: number = 0;
-  syncstatus: boolean = false;
 
   showAlert = async (heading: string, message: string) => {
     let msg = this.alertCtrl.create({
@@ -39,14 +37,22 @@ export class SyncerPage implements OnInit {
     private _sqlite: SqliteService,
     private _dbService: DatabaseService,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private network: NetworkService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.network.onNetworkChange().subscribe((data) => {
+      console.log("NetStat:" + this.network.getCurrentNetworkStatus());
+    });
+  }
 
   async fullSync() {
-    //view progress bar
-    this.syncstatus = true;
+    if (this.network.getCurrentNetworkStatus() == 1) {
+      this.log =
+        "You are currently not connected. Please connect to a network and try again.";
+      return;
+    }
 
     //loading spinner
     const loading = await this.loadingCtrl.create({
@@ -67,63 +73,85 @@ export class SyncerPage implements OnInit {
       await db.open();
 
       // export json
-      let jsonObj: any = await db.exportToJson("full");
+      let jsonObj: any;
+      try{
+        jsonObj = await db.exportToJson("partial");
+      }
+      catch(err){
+        throw Error("Database already up-to-date");
+      }
 
-      this.exportedJson += JSON.stringify(jsonObj.export);
-
-      //this.logs = this.exportedJson;
-
-      // test Json object validity
+      // test JSON object validity
       let result = await this._sqlite.isJsonValid(
         JSON.stringify(jsonObj.export)
       );
+      this.exportedJson = JSON.stringify(jsonObj.export);
+      console.log("zog: "+ this.exportedJson);
 
       if (!result.result) {
         return Promise.reject(new Error("IsJsonValid export 'full' failed"));
       }
-      //this.log = "Json export valid";
-      this.progBar = 0.25;
 
-      // Close Connection MyDB
+      // Close Connection to martis
       await this._sqlite.closeConnection("martis");
 
       //export to Main DB
-      this._dbService.fullExportAll(jsonObj.export).subscribe(async (data) => {
+      this._dbService.partialExportAll(jsonObj.export).subscribe(async (data) => {
         console.log("Export post method success?: ", data);
 
-        this.progBar = 0.5;
-
         if (data) {
-          //this.showAlert("Success","Completely Exported");
+          //delete unwanted rows in mySQL
+          let deleted = await this._dbService.deleteDeletables();
 
-          /////////////////////////////import fully from mysql
+          if(JSON.stringify(deleted) != `{"status":"D"}`){
+            return Promise.reject(new Error("Deletion failed"));
+          }
+          console.log("successfully deleted.");
+
+          //import fully from mySQL
           let imported = await this._dbService.fullImportAll();
+
           // test Json object validity
           let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
+
           if (!result.result) {
             return Promise.reject(new Error("IsJsonValid failed"));
           }
-          //progress bar
-          this.progBar = 0.75;
 
           // full import
           let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
 
-          if (ret.changes.changes === -1)
+          if (ret.changes.changes === -1) {
             return Promise.reject(
               new Error("ImportFromJson 'full' dataToImport failed")
             );
+          }
+          //connect to martis
+          const db = await this._sqlite.createConnection("martis",false,"no-encryption",1);
 
-          //this.showAlert("Success", "completely imported");
+          //open martis
+          await db.open();
+
+          //search for sync_table and create if not there
+          if (!(await db.isTable("sync_table")).result) {
+            ret = await db.createSyncTable();
+            console.log("$$$ createSyncTable ret.changes.changes in db " +ret.changes.changes);
+          }
+
+          //set sync date
+          let syncDate = new Date().toISOString();
+          await db.setSyncDate(syncDate);
+
+          // Close Connection to martis
+          await this._sqlite.closeConnection("martis");
 
           //dismiss loader
           await loading.dismiss();
           this.log = "Successfully Synced!";
-          this.progBar = 1;
         } else {
           //dismiss loader
           await loading.dismiss();
-          this.showAlert("Error", "Export not added.");
+          this.showAlert("Error", "Could not export DB data");
           return Promise.reject(
             new Error("Exporting unsuccessful. Try again later")
           );
@@ -134,7 +162,7 @@ export class SyncerPage implements OnInit {
     } catch (err) {
       //dismiss loader
       await loading.dismiss();
-      // Close Connection MyDB
+      // Close Connection to martis
       await this._sqlite.closeConnection("martis");
       //error message
       this.showAlert("Failed", err.message);
@@ -142,32 +170,86 @@ export class SyncerPage implements OnInit {
     }
   }
 
-  //testing function
+  //to wipe SQLite data and get full copy of MySQL DB
   async fullImport() {
+    if (this.network.getCurrentNetworkStatus() == 1) {
+      this.log =
+        "You are currently not connected. Please connect to a network and try again.";
+      return;
+    }
+
+    //loading spinner
+    const loading = await this.loadingCtrl.create({
+      message: "Deleting data & Syncing...",
+    });
+    await loading.present();
+
     try {
-      /////////////////////////////import fully from mysql
+      //import fully from mySQL
       let imported = await this._dbService.fullImportAll();
-      this.logs += JSON.stringify(imported);
+
       // test Json object validity
       let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
+
       if (!result.result) {
         return Promise.reject(new Error("IsJsonValid failed"));
       }
-      this.log = "import json valid";
+
       // full import
       let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
 
-      if (ret.changes.changes === -1)
+      if (ret.changes.changes === -1) {
         return Promise.reject(
           new Error("ImportFromJson 'full' dataToImport failed")
         );
+      }
+      //connect to martis
+      const db = await this._sqlite.createConnection(
+        "martis",
+        false,
+        "no-encryption",
+        1
+      );
 
-      this.showAlert("Success", "completely imported");
+      //open martis
+      await db.open();
+
+      //search for sync_table and create if not there
+      if (!(await db.isTable("sync_table")).result) {
+        ret = await db.createSyncTable();
+        console.log(
+          "$$$ createSyncTable ret.changes.changes in db " + ret.changes.changes
+        );
+      }
+
+      //set sync date
+      let syncDate = new Date().toISOString();
+      await db.setSyncDate(syncDate);
+
+      // Close Connection to martis
+      await this._sqlite.closeConnection("martis");
+
+      //dismiss loader
+      await loading.dismiss();
+      this.log = "Successfully Synced!";
+
+      return Promise.resolve();
     } catch (err) {
+      //dismiss loader
+      await loading.dismiss();
+      // Close Connection to martis
+      if(this._sqlite.sqlite.isConnection("martis")) {
+        await this._sqlite.closeConnection("martis");
+      }
       //error message
       this.showAlert("Failed", err.message);
       return Promise.reject(err);
     }
+  }
+
+  
+  wipeout() {
+    this.deleteAllData = !this.deleteAllData;
   }
 }
 

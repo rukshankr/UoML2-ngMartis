@@ -15,6 +15,7 @@ import { AssetService } from "src/app/services/asset-service.service";
 import { DeviceAuthService } from "src/app/services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { BehaviorSubject, Observable } from "rxjs";
+import { NetworkService } from "src/app/services/network.service";
 
 // import { TIMEOUT } from 'dns';
 // import { type } from 'os';
@@ -46,11 +47,11 @@ export class SelectionPage implements OnInit {
     private http: HttpClient,
     private _mainService: DatabaseService,
     private deviceAuth: DeviceAuthService,
-    private uniqueDeviceID: UniqueDeviceID
+    private uniqueDeviceID: UniqueDeviceID,
+    private network: NetworkService
   ) {
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
-      this.loadMobiTable();
     } else {
       this.desktop = true;
       this.loadTable();
@@ -69,7 +70,7 @@ export class SelectionPage implements OnInit {
     speed: 400,
     slidesPerView: 4,
   };
-  //for mobile
+  //for mobile slider
   mobSlideOpts = {
     initialSlide: 0,
     speed: 400,
@@ -86,19 +87,26 @@ export class SelectionPage implements OnInit {
     }
   }
 
-  loadTable(event?: Event) {
-    if (this.desktop) {
-      this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
-        this.nextpg = data.next ? data.next.page : null;
+  async loadTable(event?: Event) {
+    //loading spinner
+    const loading = await this.loadingCtrl.create({
+      spinner: "bubbles",
+    });
+    await loading.present();
 
-        this.table = this.table.concat(data.results);
-        console.log(this.table);
+    this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
+      this.nextpg = data.next ? data.next.page : null;
 
-        if (event) {
-          event.target.removeEventListener;
-        }
-      });
-    }
+      this.table = this.table.concat(data.results);
+      console.log(this.table);
+
+      //dismiss loader
+      loading.dismiss();
+
+      if (event) {
+        event.target.removeEventListener;
+      }
+    });
   }
 
   async loadMobiTable(): Promise<void> {
@@ -123,6 +131,7 @@ export class SelectionPage implements OnInit {
       if (ret.values.length === 0) {
         return Promise.reject(new Error("Query for assets failed"));
       }
+      console.log("#### Assets loaded");
 
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");
@@ -196,6 +205,9 @@ export class SelectionPage implements OnInit {
       });
       (await alert).present();
     }
+    if (!this.desktop) {
+      this.loadMobiTable();
+    }
   }
 
   async ngOnInit() {
@@ -212,6 +224,11 @@ export class SelectionPage implements OnInit {
     }
 
     if (!this.desktop) {
+      //check network
+      this.network.onNetworkChange().subscribe((data) => {
+        console.log("NetStat:" + data);
+      });
+
       const showAlert = async (message: string) => {
         let msg = this.atrCtrl.create({
           header: "Error",
@@ -230,7 +247,6 @@ export class SelectionPage implements OnInit {
       } catch (err) {
         await showAlert(err.message);
       }
-    } else {
     }
   }
 
@@ -264,6 +280,13 @@ export class SelectionPage implements OnInit {
     await loading.present();
 
     try {
+      //check network
+      if (this.network.getCurrentNetworkStatus() == 1) {
+        return Promise.reject(
+          new Error("Not connected to a network. Connect and try again.")
+        );
+      }
+
       //import fully from mysql
       let imported = await this._mainService.fullImportAll();
 
@@ -291,6 +314,19 @@ export class SelectionPage implements OnInit {
 
       // open db testNew
       await db.open();
+
+      //check for sync_table and create if not there
+      if (!(await db.isTable("sync_table")).result) {
+        await db.createSyncTable();
+      }
+
+      //update the sync date
+      let syncDate = new Date().toISOString();
+      await db.setSyncDate(syncDate);
+
+      //get Sync Date
+      syncDate = await db.getSyncDate();
+      console.log("synced at: " + syncDate);
 
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");
