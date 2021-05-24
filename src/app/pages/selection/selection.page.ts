@@ -36,7 +36,7 @@ export class SelectionPage implements OnInit {
   desktop: boolean = true;
   Deviceid;
 
-  userID = new BehaviorSubject("EMP999");
+  userID;
 
   constructor(
     public atrCtrl: AlertController,
@@ -79,7 +79,7 @@ export class SelectionPage implements OnInit {
     slidesPerView: 2,
   };
   //to get role
-  empRole : string = "";
+  empRole: string = "";
 
   loadMore(event: Event) {
     if (this.nextpg) {
@@ -125,7 +125,7 @@ export class SelectionPage implements OnInit {
 
       // open db testNew
       await db.open();
-      
+
       let ret = await db.execute(`
       create VIEW if not EXISTS unassignedRepairs 
       as
@@ -135,13 +135,15 @@ export class SelectionPage implements OnInit {
       as 
       select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = "NULL") GROUP BY a.id;
       `);
-      console.log("@@@create view changes: "+ret.changes.changes);
+      console.log("@@@create view changes: " + ret.changes.changes);
 
-      if(ret.changes.changes == -1){
+      if (ret.changes.changes == -1) {
         return Promise.reject(new Error("Creating views failed"));
       }
 
-      let rets = await db.query(`select ut.id, ut.Status, ut.noOfTests, ur.noOfRepairs from unassignedTests ut join unassignedRepairs ur on ur.id = ut.id;`)
+      let rets = await db.query(
+        `select ut.id, ut.Status, ut.noOfTests, ur.noOfRepairs from unassignedTests ut join unassignedRepairs ur on ur.id = ut.id;`
+      );
 
       this.table = rets.values;
       if (rets.values.length === 0) {
@@ -155,7 +157,7 @@ export class SelectionPage implements OnInit {
       return Promise.resolve();
     } catch (err) {
       // Close Connection MyDB
-      if(this._sqlite.sqlite.isConnection("martis")){
+      if (this._sqlite.sqlite.isConnection("martis")) {
         await this._sqlite.closeConnection("martis");
       }
 
@@ -269,7 +271,7 @@ export class SelectionPage implements OnInit {
     //get user role
     this.appcomp.UserRolesub.subscribe((data) => {
       this.empRole = data;
-      console.log("role:"+this.empRole);
+      console.log("role:" + this.empRole);
     });
   }
 
@@ -289,10 +291,6 @@ export class SelectionPage implements OnInit {
         console.log(error);
         this.Deviceid = error;
       });
-  }
-
-  get UserID() {
-    return this.userID.asObservable();
   }
 
   async firstSync(): Promise<void> {
