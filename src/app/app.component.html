@@ -31,10 +31,6 @@
                 <ion-text style="font-style: italic">
                   <ion-text> {{ userRole }} </ion-text>
                 </ion-text>
-
-                <ion-text style="font-style: italic">
-                  <ion-text> {{ EmpId }} </ion-text>
-                </ion-text>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -44,7 +40,14 @@
             <ion-icon name="add" slot="start"></ion-icon>
             Create Asset</ion-item
           >
-          <ion-item routerLink="/selection">
+          <ion-item
+            routerLink="/selection"
+            *ngIf="
+              userRole == 'Manager' ||
+              userRole == 'Inspector' ||
+              userRole == 'Engineer'
+            "
+          >
             <ion-icon name="home" slot="start"></ion-icon>
             Test Selection
           </ion-item>
@@ -98,7 +101,15 @@
             <ion-icon name="text" slot="start"></ion-icon>
             Generate Report
           </ion-item>
-          <ion-item routerLink="/syncer" *ngIf="!desktop">
+          <ion-item
+            routerLink="/syncer"
+            *ngIf="
+              !desktop &&
+              (userRole == 'Manager' ||
+                userRole == 'Inspector' ||
+                userRole == 'Engineer')
+            "
+          >
             <ion-icon name="sync" slot="start"></ion-icon>
             Sync
           </ion-item>
@@ -106,14 +117,24 @@
             <ion-icon name="log-out" slot="start"></ion-icon>
             Log Out
           </ion-item>
+
+          <ion-item
+            (click)="refresh()"
+            button
+            *ngIf="
+              !(
+                userRole == 'Manager' ||
+                userRole == 'Inspector' ||
+                userRole == 'Engineer'
+              )
+            "
+            ><ion-icon name="refresh-outline" slot="start"></ion-icon> Refresh
+            Side Menu</ion-item
+          >
         </ion-menu-toggle>
       </ion-list>
     </ion-content>
   </ion-menu>
 
   <ion-router-outlet id="main"></ion-router-outlet>
-  <!-- <ion-content>
-    <ion-button *ngIf="!isAuthenticated" (click)="login()">Login</ion-button>
-    <ion-button *ngIf="isAuthenticated" (click)="logout()">Logout</ion-button>
-  </ion-content> -->
 </ion-app>

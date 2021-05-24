@@ -42,6 +42,11 @@ export class AppComponent implements OnInit {
       this.isAuthenticated = auth;
     });
   }
+
+  refresh() {
+    this.getUniqueDeviceID();
+  }
+
   async ngOnInit() {
     this.desktop =
       this.platform.is("mobile") ||
