@@ -52,6 +52,10 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+    let words = "This is a sentence";
+    let wordsArray = words.split(" ");
+    console.log(words);
+    console.log(wordsArray);
     this.desktop =
       this.platform.is("mobile") ||
       this.platform.is("android") ||
@@ -67,7 +71,9 @@ export class AppComponent implements OnInit {
           console.log(data);
           this.userRole = data.family_name.split(" ")[0];
           this.EmpRole.next(this.userRole);
+          console.log("split 0 role :" + this.userRole);
           this.EmpId = data.family_name.split(" ")[2];
+          console.log("split 2 id : " + this.EmpId);
           this.UserID.next(this.EmpId);
           this.userName = data.given_name;
         })
