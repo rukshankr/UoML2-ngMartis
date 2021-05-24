@@ -14,6 +14,7 @@ import { ThrowStmt } from "@angular/compiler";
 import { AssetService } from "src/app/services/asset-service.service";
 import { DeviceAuthService } from "src/app/services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
+import { BehaviorSubject, Observable } from "rxjs";
 import { NetworkService } from "src/app/services/network.service";
 
 // import { TIMEOUT } from 'dns';
@@ -33,6 +34,8 @@ export class SelectionPage implements OnInit {
   importJson;
   desktop: boolean = true;
   Deviceid;
+
+  userID = new BehaviorSubject("EMP999");
 
   constructor(
     public atrCtrl: AlertController,
@@ -87,23 +90,23 @@ export class SelectionPage implements OnInit {
   async loadTable(event?: Event) {
     //loading spinner
     const loading = await this.loadingCtrl.create({
-      spinner: "bubbles"
+      spinner: "bubbles",
     });
     await loading.present();
 
-      this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
-        this.nextpg = data.next ? data.next.page : null;
+    this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
+      this.nextpg = data.next ? data.next.page : null;
 
-        this.table = this.table.concat(data.results);
-        console.log(this.table);
+      this.table = this.table.concat(data.results);
+      console.log(this.table);
 
-        //dismiss loader
-        loading.dismiss();
+      //dismiss loader
+      loading.dismiss();
 
-        if (event) {
-          event.target.removeEventListener;
-        }
-      });
+      if (event) {
+        event.target.removeEventListener;
+      }
+    });
   }
 
   async loadMobiTable(): Promise<void> {
@@ -220,7 +223,7 @@ export class SelectionPage implements OnInit {
       });
       (await alert).present();
     }
-    if(!this.desktop){
+    if (!this.desktop) {
       this.loadMobiTable();
     }
   }
@@ -240,10 +243,10 @@ export class SelectionPage implements OnInit {
 
     if (!this.desktop) {
       //check network
-      this.network.onNetworkChange().subscribe((data)=>{
-        console.log("NetStat:"+data);
+      this.network.onNetworkChange().subscribe((data) => {
+        console.log("NetStat:" + data);
       });
-      
+
       const showAlert = async (message: string) => {
         let msg = this.atrCtrl.create({
           header: "Error",
@@ -274,12 +277,17 @@ export class SelectionPage implements OnInit {
 
         this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
           this.userPin = device.data[0].PIN;
+          this.userID = device.data[0].UserID;
         });
       })
       .catch((error: any) => {
         console.log(error);
         this.Deviceid = error;
       });
+  }
+
+  get UserID() {
+    return this.userID.asObservable();
   }
 
   async firstSync(): Promise<void> {
@@ -291,8 +299,10 @@ export class SelectionPage implements OnInit {
 
     try {
       //check network
-      if(this.network.getCurrentNetworkStatus() == 1){
-        return Promise.reject(new Error("Not connected to a network. Connect and try again."));
+      if (this.network.getCurrentNetworkStatus() == 1) {
+        return Promise.reject(
+          new Error("Not connected to a network. Connect and try again.")
+        );
       }
 
       //import fully from mysql
@@ -324,7 +334,7 @@ export class SelectionPage implements OnInit {
       await db.open();
 
       //check for sync_table and create if not there
-      if(!(await db.isTable("sync_table")).result){
+      if (!(await db.isTable("sync_table")).result) {
         await db.createSyncTable();
       }
 
@@ -333,8 +343,8 @@ export class SelectionPage implements OnInit {
       await db.setSyncDate(syncDate);
 
       //get Sync Date
-      syncDate = await db.getSyncDate()
-      console.log("synced at: "+syncDate);
+      syncDate = await db.getSyncDate();
+      console.log("synced at: " + syncDate);
 
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");

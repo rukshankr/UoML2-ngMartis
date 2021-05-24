@@ -1,18 +1,12 @@
 import { Component, OnInit } from "@angular/core";
-import { Router, NavigationStart } from "@angular/router";
+import { Router } from "@angular/router";
 import { LoadingController, Platform } from "@ionic/angular";
-
 import { OktaAuthService } from "@okta/okta-angular";
-
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { DeviceAuthService } from "../services/device-auth.service";
 
 @Component({
   selector: "app-secure",
-  // template: `
-  //   <!-- Container to inject the Sign-In Widget -->
-  //   <div id="okta-signin-container"></div>
-  // `,
   templateUrl: "./login-comp.component.html",
   styleUrls: ["./login-comp.component.scss"],
 })
@@ -31,17 +25,6 @@ export class LoginComponent implements OnInit {
     private loadingController: LoadingController
   ) {}
 
-  async presentLoading() {
-    const loading = await this.loadingController.create({
-      message: "Please wait...",
-      duration: 2000,
-    });
-    await loading.present();
-
-    await loading.onDidDismiss();
-    console.log("Loading dismissed!");
-  }
-
   isAuthenticated: boolean;
   async ngOnInit() {
     this.desktop =
@@ -49,16 +32,10 @@ export class LoginComponent implements OnInit {
         ? false
         : true;
     this.isAuthenticated = await this.oktaAuth.isAuthenticated();
-
     if (this.desktop == false) {
-      this.presentLoading();
       this.getUniqueDeviceID();
     }
   }
-  //   this.widget.showSignInAndRedirect().catch((err) => {
-  //     throw err;
-  //   });
-  // }
 
   login() {
     this.oktaAuth.signInWithRedirect({
@@ -66,7 +43,12 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  getUniqueDeviceID() {
+  async getUniqueDeviceID() {
+    const loading = await this.loadingController.create({
+      message: "Please wait...",
+      duration: 2000,
+    });
+    await loading.present();
     this.uniqueDeviceID
       .get()
       .then((uuid: any) => {
@@ -80,6 +62,7 @@ export class LoginComponent implements OnInit {
           } else {
             this.firstTimeLogin = false;
           }
+          loading.onDidDismiss();
         });
       })
       .catch((error: any) => {
