@@ -10,6 +10,7 @@ import { OktaAuthService } from "@okta/okta-angular";
 import { DeviceAuthService } from "./services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { SelectionPage } from "./pages/selection/selection.page";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -62,6 +63,7 @@ export class AppComponent implements OnInit {
         .then((data) => {
           console.log(data);
           this.userRole = data.family_name.split(" ")[0];
+
           this.userName = data.given_name;
         })
         .catch((err) => console.log(err));
