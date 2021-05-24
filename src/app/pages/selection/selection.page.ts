@@ -81,6 +81,11 @@ export class SelectionPage implements OnInit {
   //to get role
   empRole : string = "";
 
+  //to get tests
+  tests = [];
+  //to get repairs
+  repairs = [];
+
   loadMore(event: Event) {
     if (this.nextpg) {
       this.page = this.nextpg;
@@ -328,12 +333,7 @@ export class SelectionPage implements OnInit {
         );
 
       // initialize the connection
-      const db = await this._sqlite.createConnection(
-        "martis",
-        false,
-        "no-encryption",
-        1
-      );
+      const db = await this._sqlite.createConnection("martis",false,"no-encryption",1);
 
       // open db testNew
       await db.open();
@@ -365,6 +365,90 @@ export class SelectionPage implements OnInit {
       this.log = "\nCannot Sync right now. Try again later";
       this.showError(err.message);
       return Promise.reject(err);
+    }
+  }
+
+  async getTests(assetID, noOfTests){
+    if(noOfTests == 0) return;
+    if(this.desktop){
+      this.assetService.getAssignedTestsByAssetID(assetID).subscribe((data) => {
+        console.log(data.data);
+        this.tests = data.data;
+        this.repairs = [];
+    });
+  }
+    else{
+      try{
+        // initialize the connection
+        const db = await this._sqlite.createConnection("martis", false, "no-encryption",1);
+
+        // open db martis
+        await db.open();
+
+        let tests = await db.query(`
+        SELECT t.id AS TestID, t.SupervisorID, t.InspectorID, t.TestModID
+				FROM test t
+				where (t.DateCompleted is null or t.DateCompleted = "NULL")
+				AND t.AssetID = ? 
+				ORDER BY t.Priority;`, [assetID]);
+
+        if(tests.values.length == 0){
+          return;
+        }
+        this.tests = tests.values;
+        this.repairs = [];
+
+        // close martis
+        await this._sqlite.closeConnection("martis");
+      }
+      catch(err){
+        //close connection
+        if((await this._sqlite.sqlite.isConnection("martis")).result){
+          await this._sqlite.closeConnection("martis");
+        }
+      }
+    }
+  }
+
+  async getRepairs(assetID, noOfRepairs){
+    if(noOfRepairs == 0) return;
+    if(this.desktop){
+      this.assetService.getAssignedRepairsByAssetID(assetID).subscribe((data) => {
+        console.log(data.data);
+        this.repairs = data.data;
+        this.tests = [];
+      });
+    }
+    else{
+      try{
+        // initialize the connection
+        const db = await this._sqlite.createConnection("martis", false, "no-encryption",1);
+
+        // open db martis
+        await db.open();
+
+        let repairs = await db.query(`
+        SELECT r.CreatedDate, r.EngineerID, r.comments
+				FROM repair r
+				where (r.CompletedDate is null or r.CompletedDate = "NULL")
+				AND r.id = ? 
+				ORDER BY r.CreatedDate DESC;`, [assetID]);
+
+        if(repairs.values.length == 0){
+          return;
+        }
+        this.repairs = repairs.values;
+        this.tests = [];
+
+        // close martis
+        await this._sqlite.closeConnection("martis");
+      }
+      catch(err){
+        //close connection
+        if((await this._sqlite.sqlite.isConnection("martis")).result){
+          await this._sqlite.closeConnection("martis");
+        }
+      }
     }
   }
 }

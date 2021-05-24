@@ -37,4 +37,12 @@ export class AssetService {
 	getTestNoForAssets(page: number): Observable<any> {
 		return this.http.get(`https://martisapiversion1.herokuapp.com/asset/getAssetsTests?page=${page}&limit=5`);
 	}
+
+	getAssignedTestsByAssetID(AssetID): Observable<any> {
+		return this.http.get(`https://martisapiversion1.herokuapp.com/test/getTestsByAssetID?AssetID=${AssetID}`);
+	  }
+	
+	getAssignedRepairsByAssetID(AssetID): Observable<any> {
+		return this.http.get(`https://martisapiversion1.herokuapp.com/repair/getRepairsByAssetID?AssetID=${AssetID}`);
+	  }
 }

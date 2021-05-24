@@ -25,7 +25,7 @@
 }
 
 .cardhead {
-	background-color: rgb(235, 235, 235);
+	background-color: rgba(235, 235, 235, 0.699);
 }
 
 .slidecard {
@@ -46,4 +46,8 @@
 
 .id {
 	background-color: rgb(255, 100, 100);
+}
+
+.bb {
+	padding-top: -10px;
 }
