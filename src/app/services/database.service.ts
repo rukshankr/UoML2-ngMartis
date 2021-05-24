@@ -62,7 +62,6 @@ export class DatabaseService {
 
 	//partial db export
 	partialExportAll(exported: Object): Observable<any> {
-		console.log("in the partial export thing"+ JSON.stringify(exported));
 		return this.http.post("https://martisapiversion1.herokuapp.com/sync/partialimport", exported);
 	}
 
