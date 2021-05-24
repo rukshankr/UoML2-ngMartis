@@ -37,6 +37,15 @@ export class inspectionListService {
     );
   }
 
+  sortInspectionsByPriorityAndEmpID(empID): Observable<any> {
+    return this.http.post(
+      "https://martiswabtec.herokuapp.com/test/orderByPriorityAndEmpID",
+      {
+        empId: empID,
+      }
+    );
+  }
+
   sortInspectionsByPriority(): Observable<any> {
     return this.http.get(
       "https://martiswabtec.herokuapp.com/test/orderByPriority"

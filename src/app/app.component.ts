@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
         .then((data) => {
           console.log(data);
           this.userRole = data.family_name.split(" ")[0];
-          this.EmpId = data.family_name.split(" ")[1];
+          this.EmpId = data.family_name.split(" ")[2];
           this.UserID.next(this.EmpId);
           this.userName = data.given_name;
         })

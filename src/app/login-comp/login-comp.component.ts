@@ -1,18 +1,12 @@
 import { Component, OnInit } from "@angular/core";
-import { Router, NavigationStart } from "@angular/router";
+import { Router } from "@angular/router";
 import { LoadingController, Platform } from "@ionic/angular";
-
 import { OktaAuthService } from "@okta/okta-angular";
-
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { DeviceAuthService } from "../services/device-auth.service";
 
 @Component({
   selector: "app-secure",
-  // template: `
-  //   <!-- Container to inject the Sign-In Widget -->
-  //   <div id="okta-signin-container"></div>
-  // `,
   templateUrl: "./login-comp.component.html",
   styleUrls: ["./login-comp.component.scss"],
 })
@@ -38,9 +32,7 @@ export class LoginComponent implements OnInit {
         ? false
         : true;
     this.isAuthenticated = await this.oktaAuth.isAuthenticated();
-
     if (this.desktop == false) {
-      //this.presentLoading();
       this.getUniqueDeviceID();
     }
   }

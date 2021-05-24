@@ -68,7 +68,7 @@ export class InspectionListPage implements OnInit {
           setTimeout(() => {
             loadingEl.dismiss();
           }, 5000);
-          if (this.empRole == "Manage") {
+          if (this.empRole == "Manager") {
             this._inspectionListService
               .sortInspectionsByPriority()
               .subscribe((inspections) => {
@@ -76,6 +76,12 @@ export class InspectionListPage implements OnInit {
                 this.lst = Array.of(inspections.data);
               });
           } else {
+            this._inspectionListService
+              .sortInspectionsByPriorityAndEmpID(this.empId)
+              .subscribe((inspections) => {
+                loadingEl.dismiss();
+                this.lst = Array.of(inspections.data);
+              });
           }
         });
     }
@@ -112,12 +118,21 @@ export class InspectionListPage implements OnInit {
           setTimeout(() => {
             loadingEl.dismiss();
           }, 5000);
-          this._inspectionListService
-            .sortInspectionsByPriority()
-            .subscribe((inspections) => {
-              loadingEl.dismiss();
-              this.lst = Array.of(inspections.data);
-            });
+          if (this.empRole == "Manager") {
+            this._inspectionListService
+              .sortInspectionsByPriority()
+              .subscribe((inspections) => {
+                loadingEl.dismiss();
+                this.lst = Array.of(inspections.data);
+              });
+          } else {
+            this._inspectionListService
+              .sortInspectionsByPriorityAndEmpID(this.empId)
+              .subscribe((inspections) => {
+                loadingEl.dismiss();
+                this.lst = Array.of(inspections.data);
+              });
+          }
         });
     } else {
       this.loadingctrl
