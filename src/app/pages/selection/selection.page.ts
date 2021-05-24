@@ -49,7 +49,6 @@ export class SelectionPage implements OnInit {
   ) {
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
-      this.loadMobiTable();
     } else {
       this.desktop = true;
       this.loadTable();
@@ -87,7 +86,9 @@ export class SelectionPage implements OnInit {
 
   async loadTable(event?: Event) {
     //loading spinner
-    const loading = await this.loadingCtrl.create();
+    const loading = await this.loadingCtrl.create({
+      spinner: "bubbles"
+    });
     await loading.present();
 
       this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
@@ -200,6 +201,9 @@ export class SelectionPage implements OnInit {
         ],
       });
       (await alert).present();
+    }
+    if(!this.desktop){
+      this.loadMobiTable();
     }
   }
 

@@ -73,12 +73,20 @@ export class SyncerPage implements OnInit {
       await db.open();
 
       // export json
-      let jsonObj: any = await db.exportToJson("full");
+      let jsonObj: any;
+      try{
+        jsonObj = await db.exportToJson("partial");
+      }
+      catch(err){
+        throw Error("Database already up-to-date");
+      }
 
       // test JSON object validity
       let result = await this._sqlite.isJsonValid(
         JSON.stringify(jsonObj.export)
       );
+      this.exportedJson = JSON.stringify(jsonObj.export);
+      console.log("zog: "+ this.exportedJson);
 
       if (!result.result) {
         return Promise.reject(new Error("IsJsonValid export 'full' failed"));
@@ -88,7 +96,7 @@ export class SyncerPage implements OnInit {
       await this._sqlite.closeConnection("martis");
 
       //export to Main DB
-      this._dbService.fullExportAll(jsonObj.export).subscribe(async (data) => {
+      this._dbService.partialExportAll(jsonObj.export).subscribe(async (data) => {
         console.log("Export post method success?: ", data);
 
         if (data) {
@@ -239,49 +247,7 @@ export class SyncerPage implements OnInit {
     }
   }
 
-  //testing function
-  async partialExport() {
-    try {
-      // initialize the connection
-      const db = await this._sqlite.createConnection(
-        "martis",
-        false,
-        "no-encryption",
-        1
-      );
-
-      // open db martis
-      await db.open();
-
-      // export json
-      let jsonObj: any = await db.exportToJson("partial");
-
-      this.exportedJson += JSON.stringify(jsonObj.export);
-
-      console.log(this.exportedJson);
-
-      // test Json object validity
-      let result = await this._sqlite.isJsonValid(
-        JSON.stringify(jsonObj.export)
-      );
-
-      if (!result.result) {
-        return Promise.reject(new Error("IsJsonValid export 'full' failed"));
-      }
-      //this.log = "Json export valid";
-
-      // Close Connection to martis
-      await this._sqlite.closeConnection("martis");
-    } catch (err) {
-      //error message
-      this.showAlert("Failed", err.message);
-      // Close Connection to martis
-      await this._sqlite.closeConnection("martis");
-
-      return Promise.reject(err);
-    }
-  }
-
+  
   wipeout() {
     this.deleteAllData = !this.deleteAllData;
   }

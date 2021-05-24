@@ -85,7 +85,7 @@ export class RepairFormPage implements OnInit {
 
 				//open
 				await db.open();
-				this.log +=
+				console.log(
 					' // db opened // ComD8:' +
 					this.opost.CreatedDate +
 					', comments:' +
@@ -93,8 +93,8 @@ export class RepairFormPage implements OnInit {
 					', id:' +
 					this.opost.AssetId +
 					', completedD8:' +
-					this.completedDate;
-				//insert
+					this.completedDate);
+				//update
 				let sqlcmd: string =
 					"UPDATE repair SET CompletedDate = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ? AND CreatedDate = ?";
 
@@ -105,14 +105,15 @@ export class RepairFormPage implements OnInit {
 					this.opost.CreatedDate
 				];
 				let ret: any = await db.run(sqlcmd, postableChanges);
-				this.log += ' // query run //' + ret.changes.changes;
+
+				console.log(' // query run //' + ret.changes.changes);
+
 				//check insert
 				if (ret.changes.changes == 0) {
 					return Promise.reject(new Error('Execution failed'));
 				}
 				this.log += '\n update successful: changes: ';
-				//disconnect
-				// Close Connection MyDB
+				//disconnect martis
 				await this._sqlite.closeConnection('martis');
 				this.log += "\n> closeConnection 'martis' successful\n";
 				await this.showAlert(true);
@@ -122,12 +123,15 @@ export class RepairFormPage implements OnInit {
 				return Promise.resolve();
 			} catch (err) {
 				// Close Connection MyDB
-				await this._sqlite.closeConnection('martis');
+				if(this._sqlite.sqlite.isConnection("martis")){
+					await this._sqlite.closeConnection('martis');
+				}
+				
 				this.log += "\n> closeConnection 'martis' successful\n";
 				//error message
 				return await this.showAlert(false, err.message, true);
 			}
-			return;
+			
 		}
 		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'utc').toString();
 		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-dd HH:mm:ss');
@@ -162,7 +166,7 @@ export class RepairFormPage implements OnInit {
 			.then((res) => res.present());
 	}
 
-	confirmez() {
+	confirmer() {
 		this.confirm = !this.confirm;
 	}
 }

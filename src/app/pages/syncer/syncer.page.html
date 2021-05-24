@@ -20,12 +20,6 @@
         </ion-card-subtitle>
       </ion-card-header>
     </ion-row>
-    <!-- <ion-row>
-      <ion-card-content>
-        <ion-button (click)="partialExport()">PArt export</ion-button>
-        <p>{{exportedJson}}</p>
-      </ion-card-content>
-    </ion-row> -->
   </ion-card>
     <ion-row *ngIf="!deleteAllData" class="column">
       <ion-col class="text-class-center" size=4>
@@ -37,7 +31,7 @@
     </ion-row>
     <ion-row *ngIf="deleteAllData">
       <ion-col>
-          <ion-button size="large" color="danger" expand="block" (click)="fullImport()">Wipe all data and re-sync</ion-button>
+          <ion-button size="large" color="danger" expand="block" (click)="fullImport()">reset database</ion-button>
       </ion-col>
     </ion-row>
     <ion-row class="wipeout">

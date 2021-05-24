@@ -49,7 +49,7 @@ export class CreateAssetPage implements OnInit {
 		Region: [ '' ],
 		GPSLongitude: [ '', [ Validators.pattern('^[-]*[0-9]+.?[0-9]*') ] ],
 		GPSLatitude: [ '', [ Validators.pattern('^[-]*[0-9]+.?[0-9]*') ] ],
-		LastTestedDate: null
+		LastTestedDate: [new Date()]
 	});
 
 	constructor(
@@ -81,15 +81,16 @@ export class CreateAssetPage implements OnInit {
 			try {
 				//connect
 				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
-				this.log += '\ndb connected ' + db;
+				
 				//open
 				await db.open();
-				this.log += '\ndb opened.\n';
+				
 				//insert
 				let sqlcmd: string =
 					"INSERT INTO asset (id, AssetType, Status, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate, last_modified) VALUES (?,?,?,?,?,?,?,?,?,?, (strftime('%s', 'now')))";
 				this.opost = this.createAssetForm.value;
 				var p = this.opost;
+				
 				let postableChanges = [
 					p.AssetID,
 					p.AssetType,
@@ -100,8 +101,8 @@ export class CreateAssetPage implements OnInit {
 					p.Division,
 					p.SubDivision,
 					p.NearestMilePost,
-					`CURRENT_TIMESTAMP`
-					//p.LastTestedDate,
+					//`CURRENT_TIMESTAMP`
+					p.LastTestedDate.toISOString(),
 				];
 				let ret: any = await db.run(sqlcmd, postableChanges);
 				
@@ -161,10 +162,10 @@ export class CreateAssetPage implements OnInit {
 		try{
 			//connect
 			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
-			this.log += '\ndb connected ' + db;
+			
 			//open
 			await db.open();
-			this.log += '\ndb opened.\n';
+			
 			//query
 			let sqlcmd: string ="SELECT id FROM asset ORDER BY id DESC limit 1;";
 			let ret: any = await db.query(sqlcmd);
@@ -205,5 +206,5 @@ export class Posts {
 	Region: string;
 	GPSLongitude: string;
 	GPSLatitude: string;
-	LastTestedDate: null;
+	LastTestedDate: Date;
 }
