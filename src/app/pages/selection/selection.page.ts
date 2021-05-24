@@ -120,15 +120,31 @@ export class SelectionPage implements OnInit {
       await db.open();
 
       // select all assets in db
-      let ret = await db.query(
-        "select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = '0000-00-00 00:00:00') GROUP BY a.id"
-      );
+      // let ret = await db.query(
+      //   "select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = '0000-00-00 00:00:00') GROUP BY a.id"
+      // );
+      let ret = await db.execute(`
+      create VIEW if not EXISTS unassignedRepairs 
+      as
+      select a.id, COUNT(r.id) AS noOfRepairs FROM asset AS a LEFT JOIN repair AS r ON a.id = r.id AND (r.completeddate is null or r.completeddate = "NULL") GROUP BY a.id;
 
-      this.table = ret.values;
-      if (ret.values.length === 0) {
+      create view if not EXISTS unassignedTests
+      as 
+      select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = "NULL") GROUP BY a.id;
+      `);
+      console.log("@@@create view changes: "+ret.changes.changes);
+
+      if(ret.changes.changes == -1){
+        return Promise.reject(new Error("Creating views failed"));
+      }
+
+      let rets = await db.query(`select ut.id, ut.Status, ut.noOfTests, ur.noOfRepairs from unassignedTests ut join unassignedRepairs ur on ur.id = ut.id;`)
+
+      this.table = rets.values;
+      if (rets.values.length === 0) {
         return Promise.reject(new Error("Query for assets failed"));
       }
-      console.log("#### Assets loaded")
+      console.log("#### Assets loaded");
 
       // Close Connection MyDB
       await this._sqlite.closeConnection("martis");
@@ -136,7 +152,9 @@ export class SelectionPage implements OnInit {
       return Promise.resolve();
     } catch (err) {
       // Close Connection MyDB
-      await this._sqlite.closeConnection("martis");
+      if(this._sqlite.sqlite.isConnection("martis")){
+        await this._sqlite.closeConnection("martis");
+      }
 
       this.showError("Error");
       return Promise.reject(err);
@@ -212,7 +230,7 @@ export class SelectionPage implements OnInit {
       const userClaims = await this.oktaAuth
         .getUser()
         .then((data) => {
-          this.userPin = +data.family_name.split(" ")[1];
+          this.userPin = +data.family_name.split(" ")[0];
           console.log(this.userPin);
         })
         .catch((err) => console.log(err));

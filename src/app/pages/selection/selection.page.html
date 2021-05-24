@@ -51,6 +51,12 @@
                 </ion-col>
               </ion-row>
               <ion-row>
+                <ion-col className="ion-align-items-center">
+                  <ion-label>Ongoing repairs: </ion-label>
+                  <ion-badge [ngClass]="{zero: item.noOfRepairs == 0, one: item.noOfRepairs >=1}">{{item.noOfRepairs}}</ion-badge> 
+                </ion-col>
+              </ion-row> 
+              <ion-row>
                 <ion-col>
                   <ion-button color="danger" [routerLink]="['/','create-inspection',item.id]">
                     Assign
