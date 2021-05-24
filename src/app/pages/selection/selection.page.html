@@ -58,7 +58,7 @@
               </ion-row> 
               <ion-row>
                 <ion-col>
-                  <ion-button color="danger" [routerLink]="['/','create-inspection',item.id]">
+                  <ion-button *ngIf="empRole == 'Manager'" color="danger" [routerLink]="['/','create-inspection',item.id]">
                     Assign
                   </ion-button>
                 </ion-col>

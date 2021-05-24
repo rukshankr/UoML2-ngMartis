@@ -16,6 +16,7 @@ import { DeviceAuthService } from "src/app/services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { BehaviorSubject, Observable } from "rxjs";
 import { NetworkService } from "src/app/services/network.service";
+import { AppComponent } from "src/app/app.component";
 
 // import { TIMEOUT } from 'dns';
 // import { type } from 'os';
@@ -48,7 +49,8 @@ export class SelectionPage implements OnInit {
     private _mainService: DatabaseService,
     private deviceAuth: DeviceAuthService,
     private uniqueDeviceID: UniqueDeviceID,
-    private network: NetworkService
+    private network: NetworkService,
+    private appcomp: AppComponent
   ) {
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
@@ -76,6 +78,8 @@ export class SelectionPage implements OnInit {
     speed: 400,
     slidesPerView: 2,
   };
+  //to get role
+  empRole : string = "";
 
   loadMore(event: Event) {
     if (this.nextpg) {
@@ -121,11 +125,7 @@ export class SelectionPage implements OnInit {
 
       // open db testNew
       await db.open();
-
-      // select all assets in db
-      // let ret = await db.query(
-      //   "select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = '0000-00-00 00:00:00') GROUP BY a.id"
-      // );
+      
       let ret = await db.execute(`
       create VIEW if not EXISTS unassignedRepairs 
       as
@@ -229,6 +229,11 @@ export class SelectionPage implements OnInit {
   }
 
   async ngOnInit() {
+    //get user role
+    this.appcomp.UserRolesub.subscribe((data) => {
+      this.empRole = data;
+      console.log("role:"+this.empRole);
+    });
     if (this.desktop) {
       const userClaims = await this.oktaAuth
         .getUser()
