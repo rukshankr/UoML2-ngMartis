@@ -8,11 +8,6 @@ import { Observable } from "rxjs";
 export class DeviceAuthService {
   constructor(private http: HttpClient) {}
 
-  testData = new Observable((observer) => {
-    let firstData: Number;
-
-    observer.next(456);
-  });
 
   getDevice(DeviceId): Observable<any> {
     return this.http.post(
