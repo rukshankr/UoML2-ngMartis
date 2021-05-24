@@ -16,7 +16,8 @@ export class inspectionListService {
   getinspections(): Observable<any> {
     return this.http.get(
       //"https://martisapiversion1.herokuapp.com/test/getTests"
-      "https://martiswabtec.herokuapp.com/test/getTests"
+      //"https://martiswabtec.herokuapp.com/test/getTests"
+      "https://localhost:3000/test/getTests"
     );
   }
 
@@ -43,7 +44,8 @@ export class inspectionListService {
   sortInspectionsByPriority(): Observable<any> {
     return this.http.get(
       // "https://martisapiversion1.herokuapp.com/test/orderByPriority",
-      "https://martiswabtec.herokuapp.com/test/orderByPriority"
+      //"https://martiswabtec.herokuapp.com/test/orderByPriority",
+      "https://localhost:3000/test/orderByPriority"
     );
   }
 }

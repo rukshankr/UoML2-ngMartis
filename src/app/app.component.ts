@@ -26,6 +26,11 @@ export class AppComponent implements OnInit {
   public Deviceid;
   public EmpId;
 
+  UserID: BehaviorSubject<string> = new BehaviorSubject("");
+  UserIDsub = this.UserID.asObservable();
+  UserRole: BehaviorSubject<string> = new BehaviorSubject("");
+  UserRolesub = this.UserRole.asObservable();
+
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -63,15 +68,13 @@ export class AppComponent implements OnInit {
         .then((data) => {
           console.log(data);
           this.userRole = data.family_name.split(" ")[0];
-
+          this.EmpId = data.family_name.split(" ")[1];
+          this.UserID.next(this.EmpId);
           this.userName = data.given_name;
         })
         .catch((err) => console.log(err));
     } else {
       this.getUniqueDeviceID();
-      this.selction.UserID.subscribe((data) => {
-        this.EmpId = data;
-      });
     }
   }
 
@@ -89,6 +92,7 @@ export class AppComponent implements OnInit {
 
         this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
           this.EmpId = device.data[0].UserID;
+          this.UserID.next(this.EmpId);
 
           this.deviceAuth.getUserNameAndRole(this.EmpId).subscribe((user) => {
             this.userName = user.data[0].Name;
