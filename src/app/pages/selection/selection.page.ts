@@ -235,7 +235,7 @@ export class SelectionPage implements OnInit {
       const userClaims = await this.oktaAuth
         .getUser()
         .then((data) => {
-          this.userPin = +data.family_name.split(" ")[1];
+          this.userPin = data.family_name.split(" ")[1];
           console.log(this.userPin);
         })
         .catch((err) => console.log(err));

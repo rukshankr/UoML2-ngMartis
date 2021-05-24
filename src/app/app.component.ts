@@ -52,10 +52,9 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    let words = "This is a sentence";
-    let wordsArray = words.split(" ");
-    console.log(words);
-    console.log(wordsArray);
+    let words = "This 1321 a sentence";
+    console.log(typeof +words.split(" ")[1]);
+
     this.desktop =
       this.platform.is("mobile") ||
       this.platform.is("android") ||
