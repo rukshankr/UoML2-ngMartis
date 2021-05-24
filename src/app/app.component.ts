@@ -9,7 +9,6 @@ import { Router } from "@angular/router";
 import { OktaAuthService } from "@okta/okta-angular";
 import { DeviceAuthService } from "./services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
-import { SelectionPage } from "./pages/selection/selection.page";
 import { BehaviorSubject } from "rxjs";
 
 @Component({
@@ -39,8 +38,7 @@ export class AppComponent implements OnInit {
     public oktaAuth: OktaAuthService,
     private deviceAuth: DeviceAuthService,
     private router: Router,
-    private uniqueDeviceID: UniqueDeviceID,
-    private selction: SelectionPage
+    private uniqueDeviceID: UniqueDeviceID
   ) {
     this.initializeApp();
     this.isAuthenticated = false;
