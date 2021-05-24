@@ -16,6 +16,7 @@ import { DeviceAuthService } from "src/app/services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { BehaviorSubject, Observable } from "rxjs";
 import { NetworkService } from "src/app/services/network.service";
+import { AppComponent } from "src/app/app.component";
 
 // import { TIMEOUT } from 'dns';
 // import { type } from 'os';
@@ -48,7 +49,8 @@ export class SelectionPage implements OnInit {
     private _mainService: DatabaseService,
     private deviceAuth: DeviceAuthService,
     private uniqueDeviceID: UniqueDeviceID,
-    private network: NetworkService
+    private network: NetworkService,
+    private appcomp: AppComponent
   ) {
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
@@ -76,6 +78,8 @@ export class SelectionPage implements OnInit {
     speed: 400,
     slidesPerView: 2,
   };
+  //to get role
+  empRole : string = "";
 
   loadMore(event: Event) {
     if (this.nextpg) {
@@ -121,14 +125,26 @@ export class SelectionPage implements OnInit {
 
       // open db testNew
       await db.open();
+      
+      let ret = await db.execute(`
+      create VIEW if not EXISTS unassignedRepairs 
+      as
+      select a.id, COUNT(r.id) AS noOfRepairs FROM asset AS a LEFT JOIN repair AS r ON a.id = r.id AND (r.completeddate is null or r.completeddate = "NULL") GROUP BY a.id;
 
-      // select all assets in db
-      let ret = await db.query(
-        "select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = '0000-00-00 00:00:00') GROUP BY a.id"
-      );
+      create view if not EXISTS unassignedTests
+      as 
+      select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = "NULL") GROUP BY a.id;
+      `);
+      console.log("@@@create view changes: "+ret.changes.changes);
 
-      this.table = ret.values;
-      if (ret.values.length === 0) {
+      if(ret.changes.changes == -1){
+        return Promise.reject(new Error("Creating views failed"));
+      }
+
+      let rets = await db.query(`select ut.id, ut.Status, ut.noOfTests, ur.noOfRepairs from unassignedTests ut join unassignedRepairs ur on ur.id = ut.id;`)
+
+      this.table = rets.values;
+      if (rets.values.length === 0) {
         return Promise.reject(new Error("Query for assets failed"));
       }
       console.log("#### Assets loaded");
@@ -139,7 +155,9 @@ export class SelectionPage implements OnInit {
       return Promise.resolve();
     } catch (err) {
       // Close Connection MyDB
-      await this._sqlite.closeConnection("martis");
+      if(this._sqlite.sqlite.isConnection("martis")){
+        await this._sqlite.closeConnection("martis");
+      }
 
       this.showError("Error");
       return Promise.reject(err);
@@ -211,11 +229,16 @@ export class SelectionPage implements OnInit {
   }
 
   async ngOnInit() {
+    //get user role
+    this.appcomp.UserRolesub.subscribe((data) => {
+      this.empRole = data;
+      console.log("role:"+this.empRole);
+    });
     if (this.desktop) {
       const userClaims = await this.oktaAuth
         .getUser()
         .then((data) => {
-          this.userPin = +data.family_name.split(" ")[1];
+          this.userPin = +data.family_name.split(" ")[0];
           console.log(this.userPin);
         })
         .catch((err) => console.log(err));
