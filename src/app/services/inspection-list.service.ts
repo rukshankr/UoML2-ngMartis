@@ -22,6 +22,8 @@ export class inspectionListService {
       this.latitude = resp.coords.latitude.toString();
       this.longitude = resp.coords.longitude.toString();
     });
+    console.log(this.latitude);
+    console.log(this.longitude);
   }
 
   sortInspectionsByDistance(): Observable<any> {
