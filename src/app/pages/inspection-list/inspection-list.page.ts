@@ -186,11 +186,12 @@ export class InspectionListPage implements OnInit {
       // open db martis
       await db.open();
 
-      let ret;
+      
       //manager's | inspector's inspection list
+      console.log("role:"+this.empRole);
       if (this.empRole == "Manager") {
         // select tests from db
-        ret = priority
+        this.ret = priority
           ? await db.query(
                 `SELECT * from test 
                 WHERE DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" 
@@ -201,10 +202,10 @@ export class InspectionListPage implements OnInit {
               where t.AssetID = a.id`
             );
 
-        this.lest = ret.values;
+        this.lest = this.ret.values;
       } else {
         // select tests from db
-        ret = priority
+        this.ret = priority
           ? await db.query(
               `SELECT * from test 
           WHERE DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" 
@@ -220,7 +221,7 @@ export class InspectionListPage implements OnInit {
               [this.empId]
             );
 
-        this.lest = ret.values;
+        this.lest = this.ret.values;
       }
 
       //sorting by distance

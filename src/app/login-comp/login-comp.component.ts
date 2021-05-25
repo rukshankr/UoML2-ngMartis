@@ -4,6 +4,8 @@ import { LoadingController, Platform } from "@ionic/angular";
 import { OktaAuthService } from "@okta/okta-angular";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { DeviceAuthService } from "../services/device-auth.service";
+import { SqliteService } from "../services/sqlite.service";
+import { NetworkService } from "../services/network.service";
 
 @Component({
   selector: "app-secure",
@@ -22,7 +24,9 @@ export class LoginComponent implements OnInit {
     private plt: Platform,
     private uniqueDeviceID: UniqueDeviceID,
     private deviceAuth: DeviceAuthService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private _sqlite: SqliteService,
+    private network: NetworkService
   ) {}
 
   isAuthenticated: boolean;
@@ -35,6 +39,9 @@ export class LoginComponent implements OnInit {
     if (this.desktop == false) {
       this.getUniqueDeviceID();
     }
+    this.network.onNetworkChange().subscribe((data) => {
+      console.log("NetStat:" + this.network.getCurrentNetworkStatus());
+    });
   }
 
   login() {
@@ -51,19 +58,53 @@ export class LoginComponent implements OnInit {
     await loading.present();
     this.uniqueDeviceID
       .get()
-      .then((uuid: any) => {
+      .then( async (uuid: any) => {
         console.log(uuid);
         this.Deviceid = uuid;
 
-        this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
-          this.availableDevice = device.data[0].PIN;
-          if (device == null) {
+        if(!this.desktop && (this.network.getCurrentNetworkStatus() == 1)){
+          try{
+            // initialize the connection
+            const db = await this._sqlite.createConnection("martis",false,"no-encryption",1);
+
+            // open db martis
+            await db.open();
+
+            //query for id
+            let res = await db.query(`SELECT * 
+            FROM device 
+            WHERE id = ?`, [this.Deviceid]);
+
+            //check query
+            console.log('@@vals: '+res.values.length);
+            if(res.values.length == 0){
+              this.firstTimeLogin = false;
+            }
             this.firstTimeLogin = true;
-          } else {
-            this.firstTimeLogin = false;
+
+            // Close Connection MyDB
+            await this._sqlite.closeConnection("martis");
+
+            return;
           }
-          loading.onDidDismiss();
-        });
+          catch(err){
+            // Close Connection MyDB
+            if((await this._sqlite.sqlite.isConnection("matis")).result){
+              await this._sqlite.closeConnection("martis");
+            }
+          }
+        }
+        else{
+          this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
+            this.availableDevice = device.data[0].PIN;
+            if (device == null) {
+              this.firstTimeLogin = true;
+            } else {
+              this.firstTimeLogin = false;
+            }
+            loading.onDidDismiss();
+          });
+        }
       })
       .catch((error: any) => {
         console.log(error);
