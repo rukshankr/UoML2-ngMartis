@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
 
   UserID: BehaviorSubject<string> = new BehaviorSubject("");
   UserIDsub = this.UserID.asObservable();
-  EmpRole: BehaviorSubject<string> = new BehaviorSubject("Tester");
+  EmpRole: BehaviorSubject<string> = new BehaviorSubject("Manager");
   UserRolesub = this.EmpRole.asObservable();
 
   constructor(
@@ -52,9 +52,6 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    let words = "This 1321 a sentence";
-    console.log(typeof +words.split(" ")[1]);
-
     this.desktop =
       this.platform.is("mobile") ||
       this.platform.is("android") ||
