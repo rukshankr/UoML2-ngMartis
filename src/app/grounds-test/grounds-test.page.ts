@@ -5,7 +5,7 @@ import { SetresultGroundsService } from '../services/setresult-grounds.service';
 import { ActivatedRoute } from '@angular/router';
 import { SqliteService } from '../services/sqlite.service';
 import { DatePipe } from '@angular/common';
-import { delay } from 'rxjs/operators';
+import { delay, throwIfEmpty } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-grounds-test',

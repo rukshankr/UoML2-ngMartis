@@ -185,17 +185,42 @@ export class InspectionListPage implements OnInit {
       // open db martis
       await db.open();
 
-      // select tests from db
-      let ret = priority
-        ? await db.query(
-            `SELECT * from test where DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" ORDER by Priority ASC`
-          )
-        : await db.query(`SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
-      from test t, asset a
-      where t.AssetID = a.id
-      AND t.InspectorID = 'EMP101'`);
+      let ret;
+      //manager's | inspector's inspection list
+      if (this.empRole == "Manager") {
+        // select tests from db
+        ret = priority
+          ? await db.query(
+                `SELECT * from test 
+                WHERE DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" 
+                ORDER by Priority ASC`)
+          : await db.query(
+              `SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
+              from test t, asset a
+              where t.AssetID = a.id`
+            );
 
-      this.lest = ret.values;
+        this.lest = ret.values;
+      } else {
+        // select tests from db
+        ret = priority
+          ? await db.query(
+              `SELECT * from test 
+          WHERE DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" 
+          AND InspectorID = ?
+          ORDER by Priority ASC`,
+              [this.empId]
+            )
+          : await db.query(
+                `SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
+                from test t, asset a
+                where t.AssetID = a.id
+                AND t.InspectorID = ?`,
+              [this.empId]
+            );
+
+        this.lest = ret.values;
+      }
 
       //sorting by distance
       if (!priority) {
