@@ -28,7 +28,6 @@ export class InspectionListPage implements OnInit {
   empLocation: Coords;
   empId;
   empRole;
-  ret;
 
   ////
   log: string;
@@ -187,29 +186,16 @@ export class InspectionListPage implements OnInit {
       await db.open();
 
       // select tests from db
-      if (this.empRole == "Manager") {
-        this.ret = priority
-          ? await db.query(
-              `SELECT * from test where DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" ORDER by Priority ASC`
-            )
-          : await db.query(
-              `SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
-			  from test t, asset a
-			  where t.AssetID = a.id
-			  AND t.InspectorID = ` + this.empId
-            );
-      } else {
-        this.ret = priority
-          ? await db.query(
-              `SELECT * from test where DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" ORDER by Priority ASC`
-            )
-          : await db.query(`SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
-			  from test t, asset a
-			  where t.AssetID = a.id
-			  AND t.InspectorID = `);
-      }
+      let ret = priority
+        ? await db.query(
+            `SELECT * from test where DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" ORDER by Priority ASC`
+          )
+        : await db.query(`SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
+      from test t, asset a
+      where t.AssetID = a.id
+      AND t.InspectorID = 'EMP101'`);
 
-      this.lest = this.ret.values;
+      this.lest = ret.values;
 
       //sorting by distance
       if (!priority) {
@@ -237,7 +223,7 @@ export class InspectionListPage implements OnInit {
         this.lest = nearByAssets.sort((a, b) => a.distance - b.distance);
       }
 
-      if (this.ret.values.length === 0) {
+      if (ret.values.length === 0) {
         return Promise.reject(new Error("getTests query failed"));
       }
 
