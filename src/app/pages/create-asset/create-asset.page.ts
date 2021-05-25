@@ -63,17 +63,10 @@ export class CreateAssetPage implements OnInit {
 	ngOnInit() {
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
-			this.getLatestAssetIncrement();
-
 		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
-			this.assetService.getLatestAsset().subscribe((data) => {
-				this.assetid = data.data[0].AssetID;
-				let num = parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
-				this.assetid = this.assetid[0] + num.toString();
-				console.log(this.assetid);
-			});
 		}
+		this.getLatestAssetIncrement();
 	}
 
 	async onSave() {
@@ -145,6 +138,7 @@ export class CreateAssetPage implements OnInit {
 						text: 'OK',
 						handler: () => {
 							this.createAssetForm.reset();
+							this.getLatestAssetIncrement();
 						}
 					}
 				]
@@ -159,39 +153,49 @@ export class CreateAssetPage implements OnInit {
 	}
 
 	async getLatestAssetIncrement(){
-		try{
-			//connect
-			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
-			
-			//open
-			await db.open();
-			
-			//query
-			let sqlcmd: string ="SELECT id FROM asset ORDER BY id DESC limit 1;";
-			let ret: any = await db.query(sqlcmd);
-
-			//check insert
-			if (ret.values.length === 0) {
-				return Promise.reject(new CapacitorException('Query failed'));
-			}
-			
-			console.log("last asset: "+ret.values[0].id);
-
-			//disconnect
-			await this._sqlite.closeConnection('martis');
-
-			this.assetid = ret.values[0].id;
-			let num = parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
-			this.assetid = this.assetid[0] + num.toString();
-
-			return Promise.resolve();
-		}
-		catch(err){
-			//disconnect
-			if(this._sqlite.sqlite.isConnection("martis")){
+		if(!this.desktop){
+			try{
+				//connect
+				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
+				
+				//open
+				await db.open();
+				
+				//query
+				let sqlcmd: string ="SELECT id FROM asset ORDER BY id DESC limit 1;";
+				let ret: any = await db.query(sqlcmd);
+	
+				//check insert
+				if (ret.values.length === 0) {
+					return Promise.reject(new CapacitorException('Query failed'));
+				}
+				
+				console.log("last asset: "+ret.values[0].id);
+	
+				//disconnect
 				await this._sqlite.closeConnection('martis');
+	
+				this.assetid = ret.values[0].id;
+				let num = parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
+				this.assetid = this.assetid[0] + num.toString();
+	
+				return Promise.resolve();
 			}
-			return Promise.reject();
+			catch(err){
+				//disconnect
+				if(this._sqlite.sqlite.isConnection("martis")){
+					await this._sqlite.closeConnection('martis');
+				}
+				return Promise.reject();
+			}
+		}
+		else{
+			this.assetService.getLatestAsset().subscribe((data) => {
+				this.assetid = data.data[0].AssetID;
+				let num = parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
+				this.assetid = this.assetid[0] + num.toString();
+				console.log(this.assetid);
+			});
 		}
 	}
 }
