@@ -28,6 +28,7 @@ export class InspectionListPage implements OnInit {
   empLocation: Coords;
   empId;
   empRole;
+  ret;
 
   ////
   log: string;
@@ -248,7 +249,7 @@ export class InspectionListPage implements OnInit {
         this.lest = nearByAssets.sort((a, b) => a.distance - b.distance);
       }
 
-      if (ret.values.length === 0) {
+      if (this.ret.values.length === 0) {
         return Promise.reject(new Error("getTests query failed"));
       }
 
