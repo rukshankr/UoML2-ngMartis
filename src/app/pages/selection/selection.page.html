@@ -38,7 +38,7 @@
               </ion-col>
               <ion-col >
                 <div className="slidestatus">
-                  <ion-label >{{item.Status}}</ion-label> 
+                  <ion-label [color]="item.Status == 'Functions' ? 'success' : 'danger' ">{{item.Status}}</ion-label> 
                 </div>
               </ion-col>
             </ion-card-header>
@@ -58,8 +58,11 @@
               </ion-row> 
               <ion-row>
                 <ion-col>
-                  <ion-button *ngIf="empRole == 'Manager'" color="danger" [routerLink]="['/','create-inspection',item.id]">
+                  <ion-button [disabled]="item.noOfTests >= 2" *ngIf="empRole == 'Manager' && item.Status == 'Functions'" color="danger" [routerLink]="['/','create-inspection',item.id]">
                     Assign
+                  </ion-button>
+                  <ion-button *ngIf="empRole == 'Manager' && item.Status != 'Functions'" color="success" >
+                    Fixed
                   </ion-button>
                 </ion-col>
               </ion-row>

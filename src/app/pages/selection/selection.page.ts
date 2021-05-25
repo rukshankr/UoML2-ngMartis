@@ -367,13 +367,14 @@ export class SelectionPage implements OnInit {
   }
 
   async getTests(assetID, noOfTests){
+    if(noOfTests == 0) return;
+    
     //loading spinner
     const loading = await this.loadingCtrl.create({
       spinner: "bubbles"
     });
     await loading.present();
 
-    if(noOfTests == 0) return;
     if(this.desktop){
       this.assetService.getAssignedTestsByAssetID(assetID).subscribe((data) => {
         console.log(data.data);
@@ -421,13 +422,14 @@ export class SelectionPage implements OnInit {
   }
 
   async getRepairs(assetID, noOfRepairs){
+    if(noOfRepairs == 0) return;
+
     //loading spinner
     const loading = await this.loadingCtrl.create({
       spinner: "bubbles"
     });
     await loading.present();
-    
-    if(noOfRepairs == 0) return;
+  
     if(this.desktop){
       this.assetService.getAssignedRepairsByAssetID(assetID).subscribe((data) => {
         console.log(data.data);
