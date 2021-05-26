@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FileSharer } from '@byteowls/capacitor-filesharer';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AlertController, Platform } from '@ionic/angular';
 import { CreateReportEmpidService } from 'src/app/services/create-report-empid.service';

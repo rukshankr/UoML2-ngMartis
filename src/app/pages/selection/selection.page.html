@@ -133,7 +133,7 @@
           <ion-card-content *ngFor="let item of repairs">
             <ion-row>
               <ion-col>
-                <ion-label color="success" mode="ios">{{item.CreatedDate}}</ion-label> 
+                <ion-label color="success" mode="ios"> {{this.datePipe.transform(item.CreatedDate, 'MMM d, y')}}</ion-label> 
               </ion-col>
               <ion-col>
                 <ion-label>{{item.EngineerID}}</ion-label> 
