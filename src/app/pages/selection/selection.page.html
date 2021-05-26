@@ -61,7 +61,7 @@
                   <ion-button [disabled]="item.noOfTests >= 2" *ngIf="empRole == 'Manager' && item.Status == 'Functions'" color="danger" [routerLink]="['/','create-inspection',item.id]">
                     Assign
                   </ion-button>
-                  <ion-button *ngIf="empRole == 'Manager' && item.Status != 'Functions'" color="success" >
+                  <ion-button *ngIf="empRole == 'Manager' && item.Status != 'Functions'" color="success" (click)="setAssetAsFunctional(item.id)">
                     Fixed
                   </ion-button>
                 </ion-col>
@@ -84,7 +84,7 @@
                 <ion-card-subtitle class="ion-text-wrap">Test No</ion-card-subtitle>
               </ion-col>
               <ion-col size="3">
-                <ion-card-subtitle class="ion-text-wrap">Supervisor ID</ion-card-subtitle>
+                <ion-card-subtitle class="ion-text-wrap">Manager ID</ion-card-subtitle>
               </ion-col>
               <ion-col size="3">
                 <ion-card-subtitle class="ion-text-wrap">Inspector ID</ion-card-subtitle>
@@ -100,7 +100,7 @@
                 <ion-label color="success" mode="ios">{{item.TestID}}</ion-label> 
               </ion-col>
               <ion-col>
-                <ion-label>{{item.SupervisorID}}</ion-label> 
+                <ion-label>{{item.ManagerID}}</ion-label> 
               </ion-col>
               <ion-col>
                 <ion-label>{{item.InspectorID}}</ion-label> 

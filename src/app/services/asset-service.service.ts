@@ -45,4 +45,8 @@ export class AssetService {
 	getAssignedRepairsByAssetID(AssetID): Observable<any> {
 		return this.http.get(`https://martisapiversion1.herokuapp.com/repair/getRepairsByAssetID?AssetID=${AssetID}`);
 	  }
+
+	setAssetAsFunctional(AssetID):Observable <any> {
+		return this.http.patch(`https://martisapiversion1.herokuapp.com/asset/setAssetAsFunctional`,{assetId: AssetID})
+	}
 }

@@ -180,6 +180,14 @@ export class SelectionPage implements OnInit {
     });
     (await alert).present();
   }
+  //Normal error alert
+  async showAlert(data:any){
+    let alert = this.atrCtrl.create({
+      header: data.head,
+      message: data.msg
+    });
+    (await alert).present();
+  }
 
   async ionViewWillEnter() {
     if (!this.pinValidated) {
@@ -361,14 +369,14 @@ export class SelectionPage implements OnInit {
       //dismiss loader
       await loading.dismiss();
       this.log = "\nCannot Sync right now. Try again later";
-      this.showError(err.message);
+      this.showAlert({head: 'Sync Failed', msg: err.message});
       return Promise.reject(err);
     }
   }
 
   async getTests(assetID, noOfTests){
     if(noOfTests == 0) return;
-    
+
     //loading spinner
     const loading = await this.loadingCtrl.create({
       spinner: "bubbles"
@@ -392,6 +400,7 @@ export class SelectionPage implements OnInit {
         // open db martis
         await db.open();
 
+        //fetch tests by asset id
         let tests = await db.query(`
         SELECT t.id AS TestID, t.SupervisorID, t.InspectorID, t.TestModID
 				FROM test t
@@ -417,6 +426,8 @@ export class SelectionPage implements OnInit {
         }
         //dismiss loader
         await loading.dismiss();
+        //show errors
+        this.showAlert({head: 'Fetch Tests', msg: err.message});
       }
     }
   }
@@ -472,7 +483,89 @@ export class SelectionPage implements OnInit {
         }
         //dismiss loader
         await loading.dismiss();
+        //show errors
+        this.showAlert({head: 'Fetch Repairs', msg: err.message});
       }
     }
   }
+
+  async setAssetAsFunctional(aid: string){
+    //loading spinner
+    const loading = await this.loadingCtrl.create({
+      message: "Setting as fixed...",
+      spinner: "bubbles"
+    });
+    await loading.present();
+    if(!this.desktop){
+      try{
+        // initialize the connection
+      const db = await this._sqlite.createConnection("martis", false, "no-encryption",1);
+
+      // open db martis
+      await db.open();
+
+      //run sqlite update statement
+      let ret = db.run(`UPDATE asset SET Status = "Functions" WHERE id = ? `,[aid]);
+
+      //check execution
+      console.log('@@@changes: '+(await ret).changes.changes);
+      if((await ret).changes.changes == 0){
+        throw new Error('Failed to set Asset as Functional');
+      }
+
+      //close connection
+      await this._sqlite.closeConnection("martis");
+      
+      //dismiss loader
+      await loading.dismiss();
+      //show alert
+      this.showAlert({head: 'Success!', msg: 'Asset set as Fixed'});
+
+      //reload dashboard
+      this.loadMobiTable();
+
+      return;
+      }
+      catch(err){
+        //close connection
+        if((await this._sqlite.sqlite.isConnection("martis")).result){
+          await this._sqlite.closeConnection("martis");
+        }
+        //dismiss loader
+        await loading.dismiss();
+        //show error alert
+        this.showAlert({head: 'Set as Fixed Failed', msg:err.message})
+      }
+      
+    }
+    else{
+      this.assetService.setAssetAsFunctional(aid).subscribe(async (data) => {
+        console.log(data);
+        if(data = "Asset Set as Fixed"){
+          //show success alert
+          this.showAlert({head: 'Success!', msg: 'Asset set as Fixed'}).then(() => {
+            this.table = [];
+            this.page = 1;
+            //reload dashboard
+            this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
+              this.nextpg = data.next ? data.next.page : null;
+        
+              this.table = this.table.concat(data.results);
+              console.log(this.table);
+        
+              //dismiss loader
+              loading.dismiss();
+            });
+          });
+        }
+        else{
+          //dismiss loader
+          await loading.dismiss();
+          //show alert
+          this.showAlert({head: 'Failed', msg: 'Could not set asset as fixed'});
+        }
+      });
+    }
+  }
+
 }
