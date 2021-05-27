@@ -11,9 +11,6 @@ import { NetworkService } from 'src/app/services/network.service';
 import { AppComponent } from 'src/app/app.component';
 import { DatePipe } from '@angular/common';
 
-// import { TIMEOUT } from 'dns';
-// import { type } from 'os';
-// import { timer } from 'rxjs';
 
 @Component({
 	selector: 'app-selection',
