@@ -103,7 +103,11 @@ const routes: Routes = [
 	{
 		path: 'mobile-login',
 		component: MobileLoginComponent
-	}
+	},  {
+    path: 'location-select',
+    loadChildren: () => import('./pages/location-select/location-select.module').then( m => m.LocationSelectPageModule)
+  }
+
 ];
 
 @NgModule({

@@ -1,17 +1,19 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AssetService } from 'src/app/services/asset-service.service';
 import { AlertController, Platform } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { CapacitorException } from '@capacitor/core';
+import { Subscription } from 'rxjs';
+import { MapLocationService } from 'src/app/services/map-location.service';
 
 @Component({
 	selector: 'app-create-asset',
 	templateUrl: './create-asset.page.html',
 	styleUrls: [ './create-asset.page.scss' ]
 })
-export class CreateAssetPage implements OnInit {
+export class CreateAssetPage implements OnInit, OnDestroy {
 	opost = new Posts();
 	sendToMain: boolean = true;
 	log: string = '';
@@ -19,6 +21,9 @@ export class CreateAssetPage implements OnInit {
 
 	//platform check
 	desktop: boolean = true;
+
+	//gmaps subscription
+	mapSubscription : Subscription;
 
 	get assetID() {
 		return this.createAssetForm.get('AssetID');
@@ -57,7 +62,8 @@ export class CreateAssetPage implements OnInit {
 		private assetService: AssetService,
 		private _sqlite: SqliteService,
 		private alertCtrl: AlertController,
-		private plt: Platform
+		private plt: Platform,
+		private mapLocation: MapLocationService
 	) {}
 
 	ngOnInit() {
@@ -67,6 +73,13 @@ export class CreateAssetPage implements OnInit {
 			this.desktop = true;
 		}
 		this.getLatestAssetIncrement();
+		this.mapSubscription = this.mapLocation.getMapLocation().subscribe((location) => {
+			console.log(location);
+			if(location){
+				this.createAssetForm['GPSLatitude'] = location.lat;
+				this.createAssetForm['GPSLongitude'] = location.long;
+			}
+		});
 	}
 
 	async onSave() {
@@ -197,6 +210,10 @@ export class CreateAssetPage implements OnInit {
 				console.log(this.assetid);
 			});
 		}
+	}
+
+	ngOnDestroy(){
+		this.mapSubscription.unsubscribe();
 	}
 }
 
