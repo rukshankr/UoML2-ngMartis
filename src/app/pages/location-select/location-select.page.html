@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+
+  <ion-toolbar color="danger">
+    <ion-button (click)="loadMap()" shape="round" color="dark">
+      <ion-icon slot="start" name="locate"></ion-icon>
+      Get My Location
+    </ion-button>
+    <ion-title slot="end">Google Maps</ion-title>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <div class="map-wrapper">
+    <div id="map_center">
+      <img src="assets/icon/location-marker.png"/>
+    </div>
+    <div #map id="map"></div>
+  </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="3">
+        <b>Lattitude</b>
+      </ion-col>
+      <ion-col>
+        {{latitude}}
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="3">
+        <b>Longitude</b>
+      </ion-col>
+      <ion-col>
+        {{longitude}}
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="9">
+        <ion-button color="success" (click)="setLocation()">Set Asset Location</ion-button>
+      </ion-col>
+      <ion-col size="3">
+        <ion-button color="danger" (click)="back()">Cancel</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
