@@ -109,6 +109,15 @@ export class ReportGenerationAssetPage implements OnInit {
 			}
 		}
 	}
+
+	doRefresh(event) {
+		window.location.reload();
+		this.ngOnInit();
+		setTimeout(() => {
+			event.target.complete();
+		}, 2000);
+	}
+
 	async showAlert(val, Message?) {
 		await this.alertCtrl
 			.create({

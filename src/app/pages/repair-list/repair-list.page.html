@@ -11,12 +11,13 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content>  
+   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" >
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>  
   <ion-grid>
     <ion-button (click)="ngOnInit()">
-      <ion-icon name="refresh"></ion-icon>
-      <ion-label> Refresh</ion-label>
-        
+      <ion-icon name="refresh"></ion-icon>        
     </ion-button>
     <div [ngSwitch]="desktop">
       <div *ngSwitchCase="false">

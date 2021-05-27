@@ -80,6 +80,14 @@ export class SelectionPage implements OnInit {
 	//to get repairs
 	repairs = [];
 
+	doRefresh(event) {
+		window.location.reload();
+		this.ngOnInit();
+		setTimeout(() => {
+			event.target.complete();
+		}, 2000);
+	}
+
 	loadMore(event: Event) {
 		if (this.nextpg) {
 			this.page = this.nextpg;
