@@ -468,7 +468,7 @@ export class SelectionPage implements OnInit {
 				//fetch tests by asset id
 				let tests = await db.query(
 					`
-        SELECT t.id AS TestID, t.SupervisorID, t.InspectorID, t.TestModID
+        SELECT t.id AS TestID, t.ManagerID, t.InspectorID, t.TestModID
 				FROM test t
 				where (t.DateCompleted is null or t.DateCompleted = "NULL")
 				AND t.AssetID = ? 
