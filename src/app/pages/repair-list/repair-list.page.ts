@@ -3,6 +3,7 @@ import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { Repair } from 'src/app/services/database.service';
 import { RepairListService } from 'src/app/services/repair-list.service';
+
 import { Geolocation } from '@capacitor/geolocation';
 import { DatePipe } from '@angular/common';
 @Component({
@@ -30,6 +31,14 @@ export class RepairListPage implements OnInit {
 	lest: Repair[] = [];
 	desktop: boolean = true;
 	empLocation: Coords;
+
+	doRefresh(event) {
+		window.location.reload();
+		this.ngOnInit();
+		setTimeout(() => {
+			event.target.complete();
+		}, 2000);
+	}
 
 	async ngOnInit() {
 		const showAlert = async (message: string) => {

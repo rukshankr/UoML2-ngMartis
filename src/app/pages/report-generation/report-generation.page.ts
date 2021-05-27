@@ -49,6 +49,14 @@ export class ReportGenerationPage implements OnInit {
 	assets = [];
 	users: any = [];
 
+	doRefresh(event) {
+		window.location.reload();
+		this.ngOnInit();
+		setTimeout(() => {
+			event.target.complete();
+		}, 2000);
+	}
+
 	async onSave() {
 		this.opost = this.createReportForm.value;
 		if (this.desktop) {
