@@ -499,64 +499,6 @@ export class SelectionPage implements OnInit {
 		}
 	}
 
-	async getRepairs(assetID, noOfRepairs) {
-		if (noOfRepairs == 0) return;
-
-		//loading spinner
-		const loading = await this.loadingCtrl.create({
-			spinner: 'bubbles'
-		});
-		await loading.present();
-
-		if (this.desktop) {
-			this.assetService.getAssignedRepairsByAssetID(assetID).subscribe((data) => {
-				console.log(data.data);
-				this.repairs = data.data;
-				this.tests = [];
-				//dismiss loader
-				loading.dismiss();
-			});
-		} else {
-			try {
-				// initialize the connection
-				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
-
-				// open db martis
-				await db.open();
-
-				let repairs = await db.query(
-					`
-        SELECT r.CreatedDate, r.EngineerID, r.comments
-				FROM repair r
-				where (r.CompletedDate is null or r.CompletedDate = "NULL")
-				AND r.id = ? 
-				ORDER BY r.CreatedDate DESC;`,
-					[ assetID ]
-				);
-
-				if (repairs.values.length == 0) {
-					return;
-				}
-				this.repairs = repairs.values;
-				this.tests = [];
-
-				// close martis
-				await this._sqlite.closeConnection('martis');
-				//dismiss loader
-				await loading.dismiss();
-			} catch (err) {
-				//close connection
-				if ((await this._sqlite.sqlite.isConnection('martis')).result) {
-					await this._sqlite.closeConnection('martis');
-				}
-				//dismiss loader
-				await loading.dismiss();
-				//show errors
-				this.showAlert({ head: 'Fetch Repairs', msg: err.message });
-			}
-		}
-	}
-
 	async setAssetAsFunctional(aid: string) {
 		//loading spinner
 		const loading = await this.loadingCtrl.create({

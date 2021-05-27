@@ -20,8 +20,7 @@ export class AssetService {
    * @param http The standard Angular HttpClient to make requests
    */
 	constructor(private http: HttpClient) {}
-
-	////////////////if this doesn't work, it's not an error here, but in the API//////////////////////
+	
 	post(opost: Posts): Observable<any> {
 		return this.http.post('https://martisapiversion1.herokuapp.com/asset/createNewAsset', opost);
 	}
@@ -40,10 +39,6 @@ export class AssetService {
 
 	getAssignedTestsByAssetID(AssetID): Observable<any> {
 		return this.http.get(`https://martisapiversion1.herokuapp.com/test/getTestsByAssetID?AssetID=${AssetID}`);
-	  }
-	
-	getAssignedRepairsByAssetID(AssetID): Observable<any> {
-		return this.http.get(`https://martisapiversion1.herokuapp.com/repair/getRepairsByAssetID?AssetID=${AssetID}`);
 	  }
 
 	setAssetAsFunctional(AssetID):Observable <any> {

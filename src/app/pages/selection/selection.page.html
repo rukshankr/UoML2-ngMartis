@@ -54,7 +54,8 @@
                 </ion-col>
               </ion-row>
               <ion-row>
-                <ion-col className="ion-align-items-center" (click)="getRepairs(item.id, item.noOfRepairs)">
+                <!-- <ion-col className="ion-align-items-center" (click)="getRepairs(item.id, item.noOfRepairs)"> -->
+                <ion-col className="ion-align-items-center">
                   <ion-label>Ongoing repairs: </ion-label>
                     <ion-badge [ngClass]="{zero: item.noOfRepairs == 0, one: item.noOfRepairs >=1}">{{item.noOfRepairs}}</ion-badge>
                 </ion-col>
@@ -81,7 +82,7 @@
     <ion-row *ngIf="tests.length > 0" className="ion-text-center ion-align-items-center">
       <ion-col>
         <ion-card>
-          <ion-card-header className="cardhead">
+          <ion-card-header color="dark" className="cardhead">
             <ion-row>
               <ion-col size="3">
                 <ion-card-subtitle class="ion-text-wrap">Test No</ion-card-subtitle>
@@ -93,7 +94,7 @@
                 <ion-card-subtitle class="ion-text-wrap">Inspector ID</ion-card-subtitle>
               </ion-col>
               <ion-col size="3">
-                <ion-card-subtitle class="ion-text-wrap">Test Module ID</ion-card-subtitle>
+                <ion-card-subtitle class="ion-text-wrap">Test Module</ion-card-subtitle>
               </ion-col>
             </ion-row>
           </ion-card-header>
@@ -109,46 +110,13 @@
                 <ion-label>{{item.InspectorID}}</ion-label> 
               </ion-col>
               <ion-col>
-                <ion-label>{{item.TestModID}}</ion-label> 
+                <ion-label>{{(item.TestModID == "TM101")? "Grounds": "Signal"}}</ion-label> 
               </ion-col>
             </ion-row>            
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row> 
-    <!--Repairs table-->
-    <ion-row *ngIf="repairs.length > 0" className="ion-text-center ion-align-items-center">
-      <ion-col>
-        <ion-card>
-          <ion-card-header className="cardhead">
-            <ion-row>
-              <ion-col size="4">
-                <ion-card-subtitle class="ion-text-wrap">Created Date</ion-card-subtitle>
-              </ion-col>
-              <ion-col size="4">
-                <ion-card-subtitle class="ion-text-wrap">Engineer ID</ion-card-subtitle>
-              </ion-col>
-              <ion-col size="4">
-                <ion-card-subtitle class="ion-text-wrap">Comments</ion-card-subtitle>
-              </ion-col>
-            </ion-row>
-          </ion-card-header>
-          <ion-card-content *ngFor="let item of repairs">
-            <ion-row>
-              <ion-col>
-                <ion-label color="success" mode="ios"> {{this.datePipe.transform(item.CreatedDate, 'MMM d, y')}}</ion-label> 
-              </ion-col>
-              <ion-col>
-                <ion-label>{{item.EngineerID}}</ion-label> 
-              </ion-col>
-              <ion-col>
-                <ion-label>{{item.comments}}</ion-label> 
-              </ion-col>
-            </ion-row>            
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row> <!---->
       <ion-row *ngIf="empRole == 'Manager'">
         <ion-col>
             <ion-button className="alltest" [routerLink]="['/','create-asset']" color="danger" expand="block"  >
