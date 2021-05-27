@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { SegmentChangeEventDetail } from '@ionic/core';
 import { inspectionListService } from 'src/app/services/inspection-list.service';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { Geolocation } from '@capacitor/geolocation';
-
 import { AppComponent } from 'src/app/app.component';
+
+declare var google;
 
 @Component({
 	selector: 'app-inspection-list',
@@ -42,6 +43,25 @@ export class InspectionListPage implements OnInit {
 		setTimeout(() => {
 			event.target.complete();
 		}, 2000);
+	}
+
+	@ViewChild('map1', { static: false })
+	mapElement: ElementRef;
+	map: any;
+	address: string;
+
+	loadMap(latitude, longitude) {
+		let latLng = new google.maps.LatLng(latitude, longitude);
+		let mapOptions = {
+			center: latLng,
+			zoom: 18,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+		this.map.addListener('dragend', () => {
+			latitude = this.map.center.lat();
+			longitude = this.map.center.lng();
+		});
 	}
 
 	async ngOnInit() {
