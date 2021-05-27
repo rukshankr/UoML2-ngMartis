@@ -14,7 +14,7 @@ export class inspectionListService {
 	}
 
 	getinspections(): Observable<any> {
-		return this.http.get('https://martiswabtec.herokuapp.com/test/getTests');
+		return this.http.get('https://martisapiversion1.herokuapp.com/test/getTests');
 	}
 
 	async getCoords() {
@@ -28,7 +28,7 @@ export class inspectionListService {
 
 	sortInspectionsByDistance(): Observable<any> {
 		this.getCoords();
-		return this.http.post('https://martiswabtec.herokuapp.com/test/orderByLocationAndInspector', {
+		return this.http.post('https://martisapiversion1.herokuapp.com/test/orderByLocationAndInspector', {
 			empLatitude: this.latitude,
 			empLongitude: this.longitude
 		});
@@ -36,7 +36,7 @@ export class inspectionListService {
 
 	sortByLocationAndInspectorAndEmpID(empID): Observable<any> {
 		this.getCoords();
-		return this.http.post('https://martiswabtec.herokuapp.com/test/orderByLocationAndInspectorAndEmpID', {
+		return this.http.post('https://martisapiversion1.herokuapp.com/test/orderByLocationAndInspectorAndEmpID', {
 			empLatitude: this.latitude,
 			empLongitude: this.longitude,
 			empId: empID
@@ -44,12 +44,12 @@ export class inspectionListService {
 	}
 
 	sortInspectionsByPriorityAndEmpID(empID): Observable<any> {
-		return this.http.post('https://martiswabtec.herokuapp.com/test/orderByPriorityAndEmpID', {
+		return this.http.post('https://martisapiversion1.herokuapp.com/test/orderByPriorityAndEmpID', {
 			empId: empID
 		});
 	}
 
 	sortInspectionsByPriority(): Observable<any> {
-		return this.http.get('https://martiswabtec.herokuapp.com/test/orderByPriority');
+		return this.http.get('https://martisapiversion1.herokuapp.com/test/orderByPriority');
 	}
 }
