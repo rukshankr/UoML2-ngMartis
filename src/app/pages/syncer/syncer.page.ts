@@ -28,7 +28,7 @@ export class SyncerPage implements OnInit {
     let msg = this.alertCtrl.create({
       header: heading,
       message: message,
-      buttons: ["OK"],
+      buttons: ["OK"]
     });
     (await msg).present();
   };

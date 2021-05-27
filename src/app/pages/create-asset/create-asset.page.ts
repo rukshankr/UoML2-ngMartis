@@ -7,6 +7,8 @@ import { SqliteService } from 'src/app/services/sqlite.service';
 import { CapacitorException } from '@capacitor/core';
 import { Subscription } from 'rxjs';
 import { MapLocationService } from 'src/app/services/map-location.service';
+import { NetworkService } from 'src/app/services/network.service';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-create-asset',
@@ -24,6 +26,16 @@ export class CreateAssetPage implements OnInit, OnDestroy {
 
 	//gmaps subscription
 	mapSubscription : Subscription;
+
+	//network alert
+	noNetAlert = async () => {
+		let noNetMsg = this.alertCtrl.create({
+		  header: 'No network',
+		  message: 'Please connect to a network and try again',
+		  buttons: ["OK"]
+		});
+		(await noNetMsg).present();
+	  };
 
 	get assetID() {
 		return this.createAssetForm.get('AssetID');
@@ -63,7 +75,9 @@ export class CreateAssetPage implements OnInit, OnDestroy {
 		private _sqlite: SqliteService,
 		private alertCtrl: AlertController,
 		private plt: Platform,
-		private mapLocation: MapLocationService
+		private mapLocation: MapLocationService,
+		private network: NetworkService,
+		private router: Router
 	) {}
 
 	ngOnInit() {
@@ -80,6 +94,9 @@ export class CreateAssetPage implements OnInit, OnDestroy {
 				this.createAssetForm['GPSLongitude'] = location.long;
 			}
 		});
+		this.network.onNetworkChange().subscribe((data) => {
+			console.log("NetStat:" + this.network.getCurrentNetworkStatus());
+		  });
 	}
 
 	async onSave() {
@@ -209,6 +226,15 @@ export class CreateAssetPage implements OnInit, OnDestroy {
 				this.assetid = this.assetid[0] + num.toString();
 				console.log(this.assetid);
 			});
+		}
+	}
+
+	goToMap(){
+		if(this.network.getCurrentNetworkStatus() == 0){
+			this.router.navigate(['/', 'location-select']);
+		}
+		else{
+			this.noNetAlert();
 		}
 	}
 

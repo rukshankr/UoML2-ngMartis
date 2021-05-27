@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-//import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Geolocation } from '@capacitor/geolocation';
-import { NavController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { MapLocationService } from 'src/app/services/map-location.service';
+
 
 declare var google;
 
@@ -24,9 +24,8 @@ export class LocationSelectPage implements OnInit {
   constructor(
     //private geolocation: Geolocation,
     private navCtrl : NavController,
-    private mapLocation: MapLocationService) {
-  }
-
+    private mapLocation: MapLocationService
+    ) {}
 
   ngOnInit() {
     this.loadMap();

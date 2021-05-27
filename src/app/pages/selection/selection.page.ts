@@ -295,69 +295,145 @@ export class SelectionPage implements OnInit {
 			});
 	}
 
-	async firstSync(): Promise<void> {
+	async firstSync() {
+		if (this.network.getCurrentNetworkStatus() == 1) {
+		  this.log =
+			"You are currently not connected. Please connect to a network and try again.";
+		  return;
+		}
+	
 		//loading spinner
 		const loading = await this.loadingCtrl.create({
-			message: 'Syncing... please wait'
+		  message: "Deleting data & Syncing...",
 		});
 		await loading.present();
-
+	
 		try {
-			//check network
-			if (this.network.getCurrentNetworkStatus() == 1) {
-				return Promise.reject(new Error('Not connected to a network. Connect and try again.'));
-			}
-
-			//import fully from mysql
-			let imported = await this._mainService.fullImportAll();
-
-			// test Json object validity
-			let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
-			if (!result.result) {
-				return Promise.reject(new Error('IsJsonValid failed'));
-			}
-
-			// full import
-			let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
-
-			if (ret.changes.changes === -1)
-				return Promise.reject(new Error("ImportFromJson 'full' dataToImport failed"));
-
-			// initialize the connection
-			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
-
-			// open db testNew
-			await db.open();
-
-			//check for sync_table and create if not there
-			if (!(await db.isTable('sync_table')).result) {
-				await db.createSyncTable();
-			}
-
-			//update the sync date
-			let syncDate = new Date().toISOString();
-			await db.setSyncDate(syncDate);
-
-			//get Sync Date
-			syncDate = await db.getSyncDate();
-			console.log('synced at: ' + syncDate);
-
-			// Close Connection MyDB
-			await this._sqlite.closeConnection('martis');
-
-			//dismiss loader
-			await loading.dismiss();
-			this.log = 'Successfully Synced!';
-
-			return Promise.resolve();
+		  //import fully from mySQL
+		  let imported = await this._mainService.fullImportAll();
+	
+		  // test Json object validity
+		  let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
+	
+		  if (!result.result) {
+			return Promise.reject(new Error("IsJsonValid failed"));
+		  }
+	
+		  // full import
+		  let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
+	
+		  if (ret.changes.changes === -1) {
+			return Promise.reject(
+			  new Error("ImportFromJson 'full' dataToImport failed")
+			);
+		  }
+		  //connect to martis
+		  const db = await this._sqlite.createConnection(
+			"martis",
+			false,
+			"no-encryption",
+			1
+		  );
+	
+		  //open martis
+		  await db.open();
+	
+		  //search for sync_table and create if not there
+		  if (!(await db.isTable("sync_table")).result) {
+			ret = await db.createSyncTable();
+			console.log(
+			  "$$$ createSyncTable ret.changes.changes in db " + ret.changes.changes
+			);
+		  }
+	
+		  //set sync date
+		  let syncDate = new Date().toISOString();
+		  await db.setSyncDate(syncDate);
+	
+		  // Close Connection to martis
+		  await this._sqlite.closeConnection("martis");
+	
+		  //dismiss loader
+		  await loading.dismiss();
+		  this.log = "Successfully Synced!";
+	
+		  return Promise.resolve();
 		} catch (err) {
-			//dismiss loader
-			await loading.dismiss();
-			this.log = '\nCannot Sync right now. Try again later';
-			this.showAlert({ head: 'Sync Failed', msg: err.message });
-			return Promise.reject(err);
+		  //dismiss loader
+		  await loading.dismiss();
+		  // Close Connection to martis
+		  if(this._sqlite.sqlite.isConnection("martis")) {
+			await this._sqlite.closeConnection("martis");
+		  }
+		  //error message
+		  this.showAlert({ head: 'Sync Failed', msg: err.message });
+		  return Promise.reject(err);
 		}
-	}
+	  }
+
+	// async firstSync(): Promise<void> {
+	// 	//loading spinner
+	// 	const loading = await this.loadingCtrl.create({
+	// 		message: 'Syncing... please wait'
+	// 	});
+	// 	await loading.present();
+
+	// 	try {
+	// 		//check network
+	// 		if (this.network.getCurrentNetworkStatus() == 1) {
+	// 			return Promise.reject(new Error('Not connected to a network. Connect and try again.'));
+	// 		}
+
+	// 		//import fully from mysql
+	// 		let imported = await this._mainService.fullImportAll();
+
+	// 		// test Json object validity
+	// 		let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
+	// 		if (!result.result) {
+	// 			return Promise.reject(new Error('IsJsonValid failed'));
+	// 		}
+
+	// 		// full import
+	// 		let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
+
+	// 		if (ret.changes.changes === -1)
+	// 			return Promise.reject(new Error("ImportFromJson 'full' dataToImport failed"));
+
+	// 		// initialize the connection
+	// 		const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
+
+	// 		// open db testNew
+	// 		await db.open();
+
+	// 		//check for sync_table and create if not there
+	// 		if (!(await db.isTable('sync_table')).result) {
+	// 			await db.createSyncTable();
+	// 		}
+
+	// 		//update the sync date
+	// 		let syncDate = new Date().toISOString();
+	// 		await db.setSyncDate(syncDate);
+
+	// 		//get Sync Date
+	// 		syncDate = await db.getSyncDate();
+	// 		console.log('synced at: ' + syncDate);
+
+	// 		// Close Connection MyDB
+	// 		await this._sqlite.closeConnection('martis');
+
+	// 		//dismiss loader
+	// 		await loading.dismiss();
+	// 		this.log = 'Successfully Synced!';
+
+	// 		return Promise.resolve();
+	// 	} catch (err) {
+	// 		//dismiss loader
+	// 		await loading.dismiss();
+	// 		this.log = '\nCannot Sync right now. Try again later';
+	// 		this.showAlert({ head: 'Sync Failed', msg: err.message });
+	// 		return Promise.reject(err);
+	// 	}
+	// }
 
 	async getTests(assetID, noOfTests) {
 		if (noOfTests == 0) return;
