@@ -38,7 +38,6 @@ export class InspectionListPage implements OnInit {
 	filterOption = 'priority';
 
 	doRefresh(event) {
-		window.location.reload();
 		this.ngOnInit();
 		setTimeout(() => {
 			event.target.complete();

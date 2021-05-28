@@ -33,7 +33,6 @@ export class RepairListPage implements OnInit {
 	empLocation: Coords;
 
 	doRefresh(event) {
-		window.location.reload();
 		this.ngOnInit();
 		setTimeout(() => {
 			event.target.complete();
