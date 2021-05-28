@@ -77,6 +77,27 @@ export class SelectionPage implements OnInit {
 	//to get repairs
 	repairs = [];
 
+	calcDueIn(days: number){
+		if(days <= 0){
+			return "Overdue!";
+		}
+		if(days/365 >= 1){
+			var yearSP = (days/365) >1 ? 's': ''; 
+			return (days/365)+" year"+ yearSP;
+		}
+		var months = Math.floor(days/30);
+		var monSP = (months > 1)? 's' : '';
+		var rest = Math.round(days%30);
+		var restSP = (rest > 1)? 's' : '';
+		
+		if(months >= 1){
+			return months +" month" + monSP + " " + rest + " day"+ restSP;
+		}
+		else{
+			return rest + " day"+ restSP;
+		}		
+	}
+
 	doRefresh(event) {
 		window.location.reload();
 		this.ngOnInit();
@@ -269,6 +290,7 @@ export class SelectionPage implements OnInit {
 
 				if (!isMartis.result) {
 					await this.firstSync();
+					this.loadMobiTable();
 				}
 				//get table
 			} catch (err) {
@@ -468,7 +490,7 @@ export class SelectionPage implements OnInit {
 				//fetch tests by asset id
 				let tests = await db.query(
 					`
-        SELECT t.id AS TestID, t.ManagerID, t.InspectorID, t.TestModID
+        SELECT t.id AS TestID, t.ManagerID, t.InspectorID, t.TestModID, (julianday(datetime(datetime(dateissued),'+' || (12/frequency) ||' month')) - julianday('now')) AS 'DueIn'
 				FROM test t
 				where (t.DateCompleted is null or t.DateCompleted = "NULL")
 				AND t.AssetID = ? 

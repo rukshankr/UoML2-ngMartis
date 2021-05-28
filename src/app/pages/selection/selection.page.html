@@ -54,10 +54,8 @@
                 </ion-col>
               </ion-row>
               <ion-row>
-                <!-- <ion-col className="ion-align-items-center" (click)="getRepairs(item.id, item.noOfRepairs)"> -->
                 <ion-col className="ion-align-items-center">
-                  <ion-label>Ongoing repairs: </ion-label>
-                    <ion-badge [ngClass]="{zero: item.noOfRepairs == 0, one: item.noOfRepairs >=1}">{{item.noOfRepairs}}</ion-badge>
+                    <ion-badge [color]="item.noOfRepairs >= 1 ? 'secondary' : 'medium' ">{{(item.noOfRepairs == 0)? 'No repairs' : 'Repairs Ongoing'}}</ion-badge>
                 </ion-col>
               </ion-row> 
               <ion-row>
@@ -94,14 +92,14 @@
                 <ion-card-subtitle class="ion-text-wrap">Inspector ID</ion-card-subtitle>
               </ion-col>
               <ion-col size="3">
-                <ion-card-subtitle class="ion-text-wrap">Test Module</ion-card-subtitle>
+                <ion-card-subtitle class="ion-text-wrap">Due in</ion-card-subtitle>
               </ion-col>
             </ion-row>
           </ion-card-header>
           <ion-card-content *ngFor="let item of tests">
             <ion-row>
               <ion-col>
-                <ion-label color="success" mode="ios">{{item.TestID}}</ion-label> 
+                <ion-label color="success" mode="ios">{{item.TestID}} {{(item.TestModID == "TM101")? "(G)" : "(S)"}}</ion-label> 
               </ion-col>
               <ion-col>
                 <ion-label>{{item.ManagerID}}</ion-label> 
@@ -110,7 +108,7 @@
                 <ion-label>{{item.InspectorID}}</ion-label> 
               </ion-col>
               <ion-col>
-                <ion-label>{{(item.TestModID == "TM101")? "Grounds": "Signal"}}</ion-label> 
+                <ion-label [color]="(calcDueIn(item.DueIn) == 'Overdue!')? 'danger': ''">{{calcDueIn(item.DueIn)}}</ion-label> 
               </ion-col>
             </ion-row>            
           </ion-card-content>
