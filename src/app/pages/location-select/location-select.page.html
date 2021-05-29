@@ -5,9 +5,22 @@
       <ion-icon slot="start" name="locate"></ion-icon>
       Get My Location
     </ion-button>
-    <ion-title slot="end">Google Maps</ion-title>
+    <ion-label slot="end" *ngIf="desktop">Locations of existing assets: </ion-label>
+    <ion-item slot="end" color="danger">
+      <ion-select
+      [(ngModel)]="asset"
+      interface = "popover"
+      placeholder = "Other Assets"
+      (ionChange)="loadMapForAsset(asset)"
+      >
+      <ion-select-option *ngFor="let c of coords" value={{c.AssetID}} >
+        {{c.AssetID}}
+      </ion-select-option>
+    </ion-select>
+    </ion-item>
+    <!-- <ion-title *ngIF="desktop" slot="end">Google Maps</ion-title> -->
   </ion-toolbar>
-
+  
 </ion-header>
 
 <ion-content [fullscreen]="true">
@@ -27,8 +40,14 @@
       <ion-col>
         {{latitude}}
       </ion-col>
+      <ion-col *ngIf="desktop" size="3">
+        <b>Longitude</b>
+      </ion-col>
+      <ion-col *ngIf="desktop">
+        {{longitude}}
+      </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row *ngIf="!desktop">
       <ion-col size="3">
         <b>Longitude</b>
       </ion-col>
@@ -37,13 +56,19 @@
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size="9">
-        <ion-button color="success" (click)="setLocation()">Set Asset Location</ion-button>
+      <ion-col size="6">
+        <ion-button shape="round" color="success" (click)="setLocation()">
+          <ion-icon slot="start" name="location"></ion-icon>
+          Set As Asset Location
+        </ion-button>
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size="3">
-        <ion-button color="danger" (click)="back()">Cancel</ion-button>
+      <ion-col class="ion-align-items-center">
+        <ion-button shape="round" color="danger" (click)="back()">
+          <ion-icon slot="start" name="close"></ion-icon>
+          Cancel
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

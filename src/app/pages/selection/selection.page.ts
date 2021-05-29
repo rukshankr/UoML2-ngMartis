@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { DatabaseService } from 'src/app/services/database.service';
 import { SqliteService } from 'src/app/services/sqlite.service';
@@ -10,13 +10,14 @@ import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
 import { NetworkService } from 'src/app/services/network.service';
 import { AppComponent } from 'src/app/app.component';
 import { DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-selection',
 	templateUrl: './selection.page.html',
 	styleUrls: [ './selection.page.scss' ]
 })
-export class SelectionPage implements OnInit {
+export class SelectionPage implements OnInit, OnDestroy {
 	log: string = '';
 	username: string;
 	userPin;
@@ -26,6 +27,12 @@ export class SelectionPage implements OnInit {
 	Deviceid;
 
 	userID;
+
+	//subscriptions
+	mainDashboardSub : Subscription;
+	networkSub: Subscription;
+	setAssetAsFunctionalSub: Subscription;
+	getTestsByAidSub: Subscription;
 
 	constructor(
 		public atrCtrl: AlertController,
@@ -121,7 +128,7 @@ export class SelectionPage implements OnInit {
 		});
 		await loading.present();
 
-		this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
+		this.mainDashboardSub = this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
 			this.nextpg = data.next ? data.next.page : null;
 
 			this.table = this.table.concat(data.results);
@@ -169,12 +176,12 @@ export class SelectionPage implements OnInit {
 			}
 			console.log('#### Assets loaded');
 
-			// Close Connection MyDB
+			// Close Connection Martis
 			await this._sqlite.closeConnection('martis');
 
 			return Promise.resolve();
 		} catch (err) {
-			// Close Connection MyDB
+			// Close Connection Martis
 			if (this._sqlite.sqlite.isConnection('martis')) {
 				await this._sqlite.closeConnection('martis');
 			}
@@ -271,7 +278,7 @@ export class SelectionPage implements OnInit {
 
 		if (!this.desktop) {
 			//check network
-			this.network.onNetworkChange().subscribe((data) => {
+			this.networkSub = this.network.onNetworkChange().subscribe((data) => {
 				console.log('NetStat:' + data);
 			});
 
@@ -386,70 +393,6 @@ export class SelectionPage implements OnInit {
 		}
 	}
 
-	// async firstSync(): Promise<void> {
-	// 	//loading spinner
-	// 	const loading = await this.loadingCtrl.create({
-	// 		message: 'Syncing... please wait'
-	// 	});
-	// 	await loading.present();
-
-	// 	try {
-	// 		//check network
-	// 		if (this.network.getCurrentNetworkStatus() == 1) {
-	// 			return Promise.reject(new Error('Not connected to a network. Connect and try again.'));
-	// 		}
-
-	// 		//import fully from mysql
-	// 		let imported = await this._mainService.fullImportAll();
-
-	// 		// test Json object validity
-	// 		let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
-	// 		if (!result.result) {
-	// 			return Promise.reject(new Error('IsJsonValid failed'));
-	// 		}
-
-	// 		// full import
-	// 		let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
-
-	// 		if (ret.changes.changes === -1)
-	// 			return Promise.reject(new Error("ImportFromJson 'full' dataToImport failed"));
-
-	// 		// initialize the connection
-	// 		const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
-
-	// 		// open db testNew
-	// 		await db.open();
-
-	// 		//check for sync_table and create if not there
-	// 		if (!(await db.isTable('sync_table')).result) {
-	// 			await db.createSyncTable();
-	// 		}
-
-	// 		//update the sync date
-	// 		let syncDate = new Date().toISOString();
-	// 		await db.setSyncDate(syncDate);
-
-	// 		//get Sync Date
-	// 		syncDate = await db.getSyncDate();
-	// 		console.log('synced at: ' + syncDate);
-
-	// 		// Close Connection MyDB
-	// 		await this._sqlite.closeConnection('martis');
-
-	// 		//dismiss loader
-	// 		await loading.dismiss();
-	// 		this.log = 'Successfully Synced!';
-
-	// 		return Promise.resolve();
-	// 	} catch (err) {
-	// 		//dismiss loader
-	// 		await loading.dismiss();
-	// 		this.log = '\nCannot Sync right now. Try again later';
-	// 		this.showAlert({ head: 'Sync Failed', msg: err.message });
-	// 		return Promise.reject(err);
-	// 	}
-	// }
-
 	async getTests(assetID, noOfTests) {
 		if (noOfTests == 0) return;
 
@@ -460,7 +403,7 @@ export class SelectionPage implements OnInit {
 		await loading.present();
 
 		if (this.desktop) {
-			this.assetService.getAssignedTestsByAssetID(assetID).subscribe((data) => {
+			this.getTestsByAidSub = this.assetService.getAssignedTestsByAssetID(assetID).subscribe((data) => {
 				console.log(data.data);
 				this.tests = data.data;
 				this.repairs = [];
@@ -556,7 +499,7 @@ export class SelectionPage implements OnInit {
 				this.showAlert({ head: 'Set as Fixed Failed', msg: err.message });
 			}
 		} else {
-			this.assetService.setAssetAsFunctional(aid).subscribe(async (data) => {
+			this.setAssetAsFunctionalSub = this.assetService.setAssetAsFunctional(aid).subscribe(async (data) => {
 				console.log(data);
 				if ((data = 'Asset Set as Fixed')) {
 					//show success alert
@@ -581,6 +524,21 @@ export class SelectionPage implements OnInit {
 					this.showAlert({ head: 'Failed', msg: 'Could not set asset as fixed' });
 				}
 			});
+		}
+	}
+
+	ngOnDestroy(){
+		if(this.mainDashboardSub){
+			this.mainDashboardSub.unsubscribe();
+		}
+		if(this.networkSub){
+			this.networkSub.unsubscribe();
+		}
+		if(this.setAssetAsFunctionalSub){
+			this.setAssetAsFunctionalSub.unsubscribe();
+		}
+		if(this.getTestsByAidSub){
+			this.getTestsByAidSub.unsubscribe();
 		}
 	}
 }
