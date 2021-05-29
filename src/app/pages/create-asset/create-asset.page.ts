@@ -24,8 +24,10 @@ export class CreateAssetPage implements OnInit, OnDestroy {
 	//platform check
 	desktop: boolean = true;
 
-	//gmaps subscription
+	// subscriptions
 	mapSubscription : Subscription;
+	networkSub: Subscription;
+	getLatestAssetSub: Subscription;
 
 	//network alert
 	noNetAlert = async () => {
@@ -94,7 +96,7 @@ export class CreateAssetPage implements OnInit, OnDestroy {
 				this.createAssetForm['GPSLongitude'] = location.long;
 			}
 		});
-		this.network.onNetworkChange().subscribe((data) => {
+		this.networkSub = this.network.onNetworkChange().subscribe((data) => {
 			console.log("NetStat:" + this.network.getCurrentNetworkStatus());
 		  });
 	}
@@ -220,7 +222,7 @@ export class CreateAssetPage implements OnInit, OnDestroy {
 			}
 		}
 		else{
-			this.assetService.getLatestAsset().subscribe((data) => {
+			this.getLatestAssetSub = this.assetService.getLatestAsset().subscribe((data) => {
 				this.assetid = data.data[0].AssetID;
 				let num = parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
 				this.assetid = this.assetid[0] + num.toString();
@@ -239,7 +241,9 @@ export class CreateAssetPage implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(){
-		this.mapSubscription.unsubscribe();
+		if(this.mapSubscription) this.mapSubscription.unsubscribe();
+		if(this.networkSub) this.networkSub.unsubscribe();
+		if(this.getLatestAssetSub) this.getLatestAssetSub.unsubscribe();
 	}
 }
 
