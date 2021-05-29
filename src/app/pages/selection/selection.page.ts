@@ -76,29 +76,36 @@ export class SelectionPage implements OnInit {
 	//to get repairs
 	repairs = [];
 
-	calcDueIn(days: number){
-		if(days <= 0){
-			return "Overdue!";
+	calcDueIn(days: number) {
+		if (days <= 0) {
+			return 'Overdue!';
 		}
-		if(days/365 >= 1){
-			var yearSP = (days/365) >1 ? 's': ''; 
-			return (days/365)+" year"+ yearSP;
+		if (days / 365 >= 1) {
+			var yearSP = days / 365 > 1 ? 's' : '';
+			return days / 365 + ' year' + yearSP;
 		}
-		var months = Math.floor(days/30);
-		var monSP = (months > 1)? 's' : '';
-		var rest = Math.round(days%30);
-		var restSP = (rest > 1)? 's' : '';
-		
-		if(months >= 1){
-			return months +" month" + monSP + " " + rest + " day"+ restSP;
+		var months = Math.floor(days / 30);
+		var monSP = months > 1 ? 's' : '';
+		var rest = Math.round(days % 30);
+		var restSP = rest > 1 ? 's' : '';
+
+		if (months >= 1) {
+			return months + ' month' + monSP + ' ' + rest + ' day' + restSP;
+		} else {
+			return rest + ' day' + restSP;
 		}
-		else{
-			return rest + " day"+ restSP;
-		}		
 	}
 
 	doRefresh(event) {
 		this.ngOnInit();
+		this.table = [];
+		this.page = 1;
+		//reload dashboard
+		this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
+			this.nextpg = data.next ? data.next.page : null;
+			this.table = this.table.concat(data.results);
+			console.log(this.table);
+		});
 		setTimeout(() => {
 			event.target.complete();
 		}, 2000);
