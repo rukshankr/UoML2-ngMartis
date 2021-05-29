@@ -47,6 +47,6 @@ export class AssetService {
 
 	////
 	getAssetLocations(): Observable <any> {
-		return this.http.get(`http://localhost:3000/asset/getAssetLocations`);
+		return this.http.get(`https://martisapiversion1.herokuapp.com/asset/getAssetLocations`);
 	}
 }
