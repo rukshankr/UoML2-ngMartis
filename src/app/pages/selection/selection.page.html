@@ -30,7 +30,7 @@
               </ion-col>
             </ion-row>
           </ion-card-header>
-          <ion-slides pager="false" mode="ios" [options]="(desktop)? slideOpts: mobSlideOpts" (ionSlideReachEnd)="loadMore($event)">
+          <ion-slides class="pagination" [scrollbar]="!desktop" [pager]="desktop" mode="ios" [options]="(desktop)? slideOpts: mobSlideOpts" (ionSlideReachEnd)="loadMore($event)">
             <ion-slide *ngFor="let item of table">
           <ion-card className="slidecard">
             <ion-card-header className="cardhead">
@@ -50,7 +50,7 @@
               <ion-row>
                 <ion-col className="ion-align-items-center" (click)="getTests(item.id, item.noOfTests)">
                   <ion-label>Assigned tests: </ion-label>
-                  <ion-badge [ngClass]="{zero: item.noOfTests == 0, one: item.noOfTests >=1}">{{item.noOfTests}}</ion-badge>
+                  <button [ngClass]="{zero: item.noOfTests == 0, one: item.noOfTests >=1}">{{item.noOfTests}}</button>
                 </ion-col>
               </ion-row>
               <ion-row>
@@ -98,7 +98,7 @@
           </ion-card-header>
           <ion-card-content *ngFor="let item of tests">
             <ion-row>
-              <ion-col>
+              <ion-col color="dark">
                 <ion-label color="success" mode="ios">{{item.TestID}} {{(item.TestModID == "TM101")? "(G)" : "(S)"}}</ion-label> 
               </ion-col>
               <ion-col>

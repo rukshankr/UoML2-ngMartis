@@ -45,7 +45,6 @@ export class AssetService {
 		return this.http.patch(`https://martisapiversion1.herokuapp.com/asset/setAssetAsFunctional`,{assetId: AssetID})
 	}
 
-	////
 	getAssetLocations(): Observable <any> {
 		return this.http.get(`https://martisapiversion1.herokuapp.com/asset/getAssetLocations`);
 	}

@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 	styleUrls: [ './selection.page.scss' ]
 })
 export class SelectionPage implements OnInit, OnDestroy {
+
 	log: string = '';
 	username: string;
 	userPin;
@@ -67,7 +68,14 @@ export class SelectionPage implements OnInit, OnDestroy {
 	slideOpts = {
 		initialSlide: 0,
 		speed: 400,
-		slidesPerView: 4
+		slidesPerView: 4,
+		pagination: {
+			el: '.swiper-pagination',
+			clickable: true,
+			renderBullet: function (index, className) {
+			  return '<span class="' + className + '">' + (index + 1) + '</span>';
+			}
+		}
 	};
 	//for mobile slider
 	mobSlideOpts = {
@@ -130,7 +138,7 @@ export class SelectionPage implements OnInit, OnDestroy {
 
 		this.mainDashboardSub = this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
 			this.nextpg = data.next ? data.next.page : null;
-
+			
 			this.table = this.table.concat(data.results);
 			console.log(this.table);
 
