@@ -1,17 +1,21 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, OnDestroy } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { AssetService } from "src/app/services/asset-service.service";
 import { AlertController, Platform } from "@ionic/angular";
 import { Geolocation } from "@capacitor/geolocation";
 import { SqliteService } from "src/app/services/sqlite.service";
 import { CapacitorException } from "@capacitor/core";
+import { Subscription } from "rxjs";
+import { MapLocationService } from "src/app/services/map-location.service";
+import { NetworkService } from "src/app/services/network.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-create-asset",
   templateUrl: "./create-asset.page.html",
   styleUrls: ["./create-asset.page.scss"],
 })
-export class CreateAssetPage implements OnInit {
+export class CreateAssetPage implements OnInit, OnDestroy {
   opost = new Posts();
   sendToMain: boolean = true;
   log: string = "";
@@ -19,6 +23,21 @@ export class CreateAssetPage implements OnInit {
 
   //platform check
   desktop: boolean = true;
+
+  // subscriptions
+  mapSubscription: Subscription;
+  networkSub: Subscription;
+  getLatestAssetSub: Subscription;
+
+  //network alert
+  noNetAlert = async () => {
+    let noNetMsg = this.alertCtrl.create({
+      header: "No network",
+      message: "Please connect to a network and try again",
+      buttons: ["OK"],
+    });
+    (await noNetMsg).present();
+  };
 
   get assetID() {
     return this.createAssetForm.get("AssetID");
@@ -32,6 +51,7 @@ export class CreateAssetPage implements OnInit {
 
   public errorMessage = {
     assetID: [
+      { type: "required", message: "Asset ID is required" },
       { type: "maxlength", message: "Can't be longer than 4 characters" },
       { type: "pattern", message: "Should follow the pattern of A000" },
     ],
@@ -69,23 +89,31 @@ export class CreateAssetPage implements OnInit {
     private assetService: AssetService,
     private _sqlite: SqliteService,
     private alertCtrl: AlertController,
-    private plt: Platform
+    private plt: Platform,
+    private mapLocation: MapLocationService,
+    private network: NetworkService,
+    private router: Router
   ) {}
 
   ngOnInit() {
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
-      this.getLatestAssetIncrement();
     } else if (this.plt.is("desktop")) {
       this.desktop = true;
-      this.assetService.getLatestAsset().subscribe((data) => {
-        this.assetid = data.data[0].AssetID;
-        let num =
-          parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
-        this.assetid = this.assetid[0] + num.toString();
-        console.log(this.assetid);
-      });
     }
+    this.getLatestAssetIncrement();
+    this.mapSubscription = this.mapLocation
+      .getMapLocation()
+      .subscribe((location) => {
+        console.log(location);
+        if (location) {
+          this.createAssetForm["GPSLatitude"] = location.lat;
+          this.createAssetForm["GPSLongitude"] = location.long;
+        }
+      });
+    this.networkSub = this.network.onNetworkChange().subscribe((data) => {
+      console.log("NetStat:" + this.network.getCurrentNetworkStatus());
+    });
   }
 
   async onSave() {
@@ -162,6 +190,7 @@ export class CreateAssetPage implements OnInit {
             text: "OK",
             handler: () => {
               this.createAssetForm.reset();
+              this.getLatestAssetIncrement();
             },
           },
         ],
@@ -176,45 +205,71 @@ export class CreateAssetPage implements OnInit {
   }
 
   async getLatestAssetIncrement() {
-    try {
-      //connect
-      const db = await this._sqlite.createConnection(
-        "martis",
-        false,
-        "no-encryption",
-        1
-      );
+    if (!this.desktop) {
+      try {
+        //connect
+        const db = await this._sqlite.createConnection(
+          "martis",
+          false,
+          "no-encryption",
+          1
+        );
 
-      //open
-      await db.open();
+        //open
+        await db.open();
 
-      //query
-      let sqlcmd: string = "SELECT id FROM asset ORDER BY id DESC limit 1;";
-      let ret: any = await db.query(sqlcmd);
+        //query
+        let sqlcmd: string = "SELECT id FROM asset ORDER BY id DESC limit 1;";
+        let ret: any = await db.query(sqlcmd);
 
-      //check insert
-      if (ret.values.length === 0) {
-        return Promise.reject(new CapacitorException("Query failed"));
-      }
+        //check insert
+        if (ret.values.length === 0) {
+          return Promise.reject(new CapacitorException("Query failed"));
+        }
 
-      console.log("last asset: " + ret.values[0].id);
+        console.log("last asset: " + ret.values[0].id);
 
-      //disconnect
-      await this._sqlite.closeConnection("martis");
-
-      this.assetid = ret.values[0].id;
-      let num =
-        parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
-      this.assetid = this.assetid[0] + num.toString();
-
-      return Promise.resolve();
-    } catch (err) {
-      //disconnect
-      if (this._sqlite.sqlite.isConnection("martis")) {
+        //disconnect
         await this._sqlite.closeConnection("martis");
+
+        this.assetid = ret.values[0].id;
+        let num =
+          parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
+        this.assetid = this.assetid[0] + num.toString();
+
+        return Promise.resolve();
+      } catch (err) {
+        //disconnect
+        if (this._sqlite.sqlite.isConnection("martis")) {
+          await this._sqlite.closeConnection("martis");
+        }
+        return Promise.reject();
       }
-      return Promise.reject();
+    } else {
+      this.getLatestAssetSub = this.assetService
+        .getLatestAsset()
+        .subscribe((data) => {
+          this.assetid = data.data[0].AssetID;
+          let num =
+            parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
+          this.assetid = this.assetid[0] + num.toString();
+          console.log(this.assetid);
+        });
     }
+  }
+
+  goToMap() {
+    if (this.network.getCurrentNetworkStatus() == 0) {
+      this.router.navigate(["/", "location-select"]);
+    } else {
+      this.noNetAlert();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.mapSubscription) this.mapSubscription.unsubscribe();
+    if (this.networkSub) this.networkSub.unsubscribe();
+    if (this.getLatestAssetSub) this.getLatestAssetSub.unsubscribe();
   }
 }
 

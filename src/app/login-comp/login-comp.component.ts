@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { LoadingController, Platform } from "@ionic/angular";
+import { AlertController, LoadingController, Platform } from "@ionic/angular";
 import { OktaAuthService } from "@okta/okta-angular";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { DeviceAuthService } from "../services/device-auth.service";
@@ -26,7 +26,8 @@ export class LoginComponent implements OnInit {
     private deviceAuth: DeviceAuthService,
     private loadingController: LoadingController,
     private _sqlite: SqliteService,
-    private network: NetworkService
+    private network: NetworkService,
+    private alertCtrl: AlertController
   ) {}
 
   isAuthenticated: boolean;
@@ -78,9 +79,12 @@ export class LoginComponent implements OnInit {
             //check query
             console.log('@@vals: '+res.values.length);
             if(res.values.length == 0){
+              this.firstTimeLogin = true;
+              throw new Error('Please try again with a network connection');
+            }
+            else{
               this.firstTimeLogin = false;
             }
-            this.firstTimeLogin = true;
 
             // Close Connection MyDB
             await this._sqlite.closeConnection("martis");
@@ -92,6 +96,10 @@ export class LoginComponent implements OnInit {
             if((await this._sqlite.sqlite.isConnection("matis")).result){
               await this._sqlite.closeConnection("martis");
             }
+            this.alertCtrl.create({
+              header: "Error",
+              message: err.message
+            }).then((res) => res.present());
           }
         }
         else{

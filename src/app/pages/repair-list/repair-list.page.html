@@ -11,8 +11,14 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content>  
+   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" >
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>  
   <ion-grid>
+    <ion-button (click)="ngOnInit()">
+      <ion-icon name="refresh"></ion-icon>        
+    </ion-button>
     <div [ngSwitch]="desktop">
       <div *ngSwitchCase="false">
         <ion-row>
@@ -55,7 +61,7 @@
                     <ion-label>Distance:{{item.distance}} km</ion-label>
                   </ion-item>
                   <ion-item>
-                    <ion-label>Created Date:{{item.CreatedDate}}</ion-label>
+                    <ion-label>Created Date: {{this.datePipe.transform(item.CreatedDate, 'MMM d, y')}}</ion-label>
                   </ion-item>
                   <ion-item>
                     <ion-button
@@ -63,6 +69,7 @@
                     >
                       Fix
                     </ion-button>
+                    <ion-button (click)="loadMap(item.GPSLatitude,item.GPSLongitude)">Show location</ion-button>
                   </ion-item>
                 </ion-list>
               </ion-card-content>
@@ -72,4 +79,10 @@
       </div>
     </div>
   </ion-grid>
+  <div class="map-wrapper">
+    <div id="map_center">
+      <img src="assets/icon/location-marker.png"/>
+    </div>
+    <div #map1 id="map"></div>
+  </div> 
 </ion-content>

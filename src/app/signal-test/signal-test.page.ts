@@ -91,18 +91,11 @@ export class SignalTestPage implements OnInit {
     }
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
-      this.getLatestTestIncrement();
     } else if (this.plt.is("desktop")) {
       this.desktop = true;
-      if (this.testid == null) {
-        this.setresult.getLatestTest().subscribe((data) => {
-          this.testid = data.data[0].TestID;
-          let num =
-            parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
-          this.testid = this.testid[0] + num.toString();
-          console.log(this.testid);
-        });
-      }
+    }
+    if (this.testid == null) {
+      this.getLatestTestIncrement();
     }
   }
 
@@ -154,7 +147,7 @@ export class SignalTestPage implements OnInit {
           "no-encryption",
           1
         );
-        this.log += "connected // "; //+ JSON.stringify(this.opost);
+        this.log += "connected // ";
         //open
         await db.open();
 
@@ -229,6 +222,7 @@ export class SignalTestPage implements OnInit {
             handler: () => {
               if (!reset) {
                 this.createTestForm.reset();
+                this.getLatestTestIncrement();
               }
             },
           },
@@ -238,43 +232,54 @@ export class SignalTestPage implements OnInit {
   }
 
   async getLatestTestIncrement() {
-    try {
-      //connect
-      const db = await this._sqlite.createConnection(
-        "martis",
-        false,
-        "no-encryption",
-        1
-      );
+    if (!this.desktop) {
+      try {
+        //connect
+        const db = await this._sqlite.createConnection(
+          "martis",
+          false,
+          "no-encryption",
+          1
+        );
 
-      //open
-      await db.open();
+        //open
+        await db.open();
 
-      //query
-      let sqlcmd: string = "SELECT id FROM test ORDER BY id DESC limit 1;";
-      let ret: any = await db.query(sqlcmd);
+        //query
+        let sqlcmd: string = "SELECT id FROM test ORDER BY id DESC limit 1;";
+        let ret: any = await db.query(sqlcmd);
 
-      //check insert
-      if (ret.values.length === 0) {
-        return Promise.reject(new Error("Query failed"));
-      }
+        //check insert
+        if (ret.values.length === 0) {
+          return Promise.reject(new Error("Query failed"));
+        }
 
-      console.log("last asset: " + ret.values[0].id);
+        console.log("last asset: " + ret.values[0].id);
 
-      //disconnect
-      await this._sqlite.closeConnection("martis");
-
-      this.testid = ret.values[0].id;
-      let num = parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
-      this.testid = this.testid[0] + num.toString();
-
-      return Promise.resolve();
-    } catch (err) {
-      //disconnect martis
-      if (this._sqlite.sqlite.isConnection("martis")) {
+        //disconnect
         await this._sqlite.closeConnection("martis");
+
+        this.testid = ret.values[0].id;
+        let num =
+          parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
+        this.testid = this.testid[0] + num.toString();
+
+        return Promise.resolve();
+      } catch (err) {
+        //disconnect martis
+        if (this._sqlite.sqlite.isConnection("martis")) {
+          await this._sqlite.closeConnection("martis");
+        }
+        return Promise.reject();
       }
-      return Promise.reject();
+    } else {
+      this.setresult.getLatestTest().subscribe((data) => {
+        this.testid = data.data[0].TestID;
+        let num =
+          parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
+        this.testid = this.testid[0] + num.toString();
+        console.log(this.testid);
+      });
     }
   }
 

@@ -1,6 +1,5 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { FileSharer } from "@byteowls/capacitor-filesharer";
 import { FormBuilder, Validators } from "@angular/forms";
 import { AlertController, Platform } from "@ionic/angular";
 import { CreateReportEmpidService } from "src/app/services/create-report-empid.service";
@@ -49,6 +48,14 @@ export class ReportGenerationPage implements OnInit {
   lst: any = [];
   assets = [];
   users: any = [];
+
+  doRefresh(event) {
+    window.location.reload();
+    this.ngOnInit();
+    setTimeout(() => {
+      event.target.complete();
+    }, 2000);
+  }
 
   async onSave() {
     this.opost = this.createReportForm.value;

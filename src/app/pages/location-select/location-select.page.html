@@ -1,0 +1,75 @@
+<ion-header [translucent]="true">
+
+  <ion-toolbar color="danger">
+    <ion-button (click)="loadMap()" shape="round" color="dark">
+      <ion-icon slot="start" name="locate"></ion-icon>
+      Get My Location
+    </ion-button>
+    <ion-label slot="end" *ngIf="desktop">Locations of existing assets: </ion-label>
+    <ion-item slot="end" color="danger">
+      <ion-select
+      [(ngModel)]="asset"
+      interface = "popover"
+      placeholder = "Other Assets"
+      (ionChange)="loadMapForAsset(asset)"
+      >
+      <ion-select-option *ngFor="let c of coords" value={{c.AssetID}} >
+        {{c.AssetID}}
+      </ion-select-option>
+    </ion-select>
+    </ion-item>
+    <!-- <ion-title *ngIF="desktop" slot="end">Google Maps</ion-title> -->
+  </ion-toolbar>
+  
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <div class="map-wrapper">
+    <div id="map_center">
+      <img src="assets/icon/location-marker.png"/>
+    </div>
+    <div #map id="map"></div>
+  </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="3">
+        <b>Lattitude</b>
+      </ion-col>
+      <ion-col>
+        {{latitude}}
+      </ion-col>
+      <ion-col *ngIf="desktop" size="3">
+        <b>Longitude</b>
+      </ion-col>
+      <ion-col *ngIf="desktop">
+        {{longitude}}
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="!desktop">
+      <ion-col size="3">
+        <b>Longitude</b>
+      </ion-col>
+      <ion-col>
+        {{longitude}}
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-button shape="round" color="success" (click)="setLocation()">
+          <ion-icon slot="start" name="location"></ion-icon>
+          Set As Asset Location
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="ion-align-items-center">
+        <ion-button shape="round" color="danger" (click)="back()">
+          <ion-icon slot="start" name="close"></ion-icon>
+          Cancel
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

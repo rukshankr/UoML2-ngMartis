@@ -1,7 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { capSQLiteSet, JsonSQLite } from "@capacitor-community/sqlite";
 import { AlertController, LoadingController } from "@ionic/angular";
-import { VirtualTimeScheduler } from "rxjs";
+import { Subscription, VirtualTimeScheduler } from "rxjs";
 import { InspectionService } from "src/app/services/create-inspection.service";
 import { DatabaseService } from "src/app/services/database.service";
 import { inspectionListService } from "src/app/services/inspection-list.service";
@@ -13,7 +13,7 @@ import { SqliteService } from "src/app/services/sqlite.service";
   templateUrl: "./syncer.page.html",
   styleUrls: ["./syncer.page.scss"],
 })
-export class SyncerPage implements OnInit {
+export class SyncerPage implements OnInit, OnDestroy {
   mainTests: any = [];
   localTests = [];
   log: string = "Press the SYNC button to begin syncing.";
@@ -24,11 +24,15 @@ export class SyncerPage implements OnInit {
   //Test export JSON
   oExportTest = new ExportTest();
 
+  //subscriptions
+  networkSub : Subscription;
+  partialExportSub : Subscription;
+
   showAlert = async (heading: string, message: string) => {
     let msg = this.alertCtrl.create({
       header: heading,
       message: message,
-      buttons: ["OK"],
+      buttons: ["OK"]
     });
     (await msg).present();
   };
@@ -40,9 +44,10 @@ export class SyncerPage implements OnInit {
     private loadingCtrl: LoadingController,
     private network: NetworkService
   ) {}
+  
 
   ngOnInit() {
-    this.network.onNetworkChange().subscribe((data) => {
+    this.networkSub = this.network.onNetworkChange().subscribe((data) => {
       console.log("NetStat:" + this.network.getCurrentNetworkStatus());
     });
   }
@@ -96,7 +101,7 @@ export class SyncerPage implements OnInit {
       await this._sqlite.closeConnection("martis");
 
       //export to Main DB
-      this._dbService.partialExportAll(jsonObj.export).subscribe(async (data) => {
+      this.partialExportSub = this._dbService.partialExportAll(jsonObj.export).subscribe(async (data) => {
         console.log("Export post method success?: ", data);
 
         if (data) {
@@ -251,6 +256,17 @@ export class SyncerPage implements OnInit {
   wipeout() {
     this.deleteAllData = !this.deleteAllData;
   }
+
+  ngOnDestroy(): void {
+    if(this.networkSub){
+      this.networkSub.unsubscribe();
+    }
+    if(this.partialExportSub){
+      this.partialExportSub.unsubscribe();
+    }
+  }
+
+  
 }
 
 export class ExportTest {

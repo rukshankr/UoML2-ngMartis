@@ -31,7 +31,7 @@ export class inspectionListService {
   sortInspectionsByDistance(): Observable<any> {
     this.getCoords();
     return this.http.post(
-      "http://localhost:3000/test/orderByLocationAndInspector",
+      "https://martisapiversion1.herokuapp.com/test/orderByLocationAndInspector",
       {
         empLatitude: this.latitude,
         empLongitude: this.longitude,
@@ -42,7 +42,7 @@ export class inspectionListService {
   sortByLocationAndInspectorAndEmpID(empID): Observable<any> {
     this.getCoords();
     return this.http.post(
-      "http://localhost:3000/test/orderByLocationAndInspectorAndEmpID",
+      "https://martisapiversion1.herokuapp.com/test/orderByLocationAndInspectorAndEmpID",
       {
         empLatitude: this.latitude,
         empLongitude: this.longitude,

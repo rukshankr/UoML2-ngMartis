@@ -13,7 +13,7 @@ export class RepairListService {
 
   sortRepairsByDistance(latitude, longitude): Observable<any> {
     return this.http.post(
-      "http://localhost:3000/repair/orderRepairsByLocation",
+      "https://martisapiversion1.herokuapp.com/repair/orderRepairsByLocation",
       {
         empLatitude: latitude,
         empLongitude: longitude,

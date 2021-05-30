@@ -1,11 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { AlertController, LoadingController, Platform } from "@ionic/angular";
 import { SegmentChangeEventDetail } from "@ionic/core";
 import { inspectionListService } from "src/app/services/inspection-list.service";
 import { SqliteService } from "src/app/services/sqlite.service";
 import { Geolocation } from "@capacitor/geolocation";
-
 import { AppComponent } from "src/app/app.component";
+
+declare var google;
 
 @Component({
   selector: "app-inspection-list",
@@ -28,12 +29,39 @@ export class InspectionListPage implements OnInit {
   empLocation: Coords;
   empId;
   empRole;
+  ret;
 
   ////
   log: string;
   ////
 
   filterOption = "priority";
+
+  doRefresh(event) {
+    this.ngOnInit();
+    setTimeout(() => {
+      event.target.complete();
+    }, 2000);
+  }
+
+  @ViewChild("map1", { static: false })
+  mapElement: ElementRef;
+  map: any;
+  address: string;
+
+  loadMap(latitude, longitude) {
+    let latLng = new google.maps.LatLng(latitude, longitude);
+    let mapOptions = {
+      center: latLng,
+      zoom: 16,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+    };
+    this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+    this.map.addListener("dragend", () => {
+      latitude = this.map.center.lat();
+      longitude = this.map.center.lng();
+    });
+  }
 
   async ngOnInit() {
     this.appcomp.UserIDsub.subscribe((data) => {
@@ -185,17 +213,43 @@ export class InspectionListPage implements OnInit {
       // open db martis
       await db.open();
 
-      // select tests from db
-      let ret = priority
-        ? await db.query(
-            `SELECT * from test where DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" ORDER by Priority ASC`
-          )
-        : await db.query(`SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
-      from test t, asset a
-      where t.AssetID = a.id
-      AND t.InspectorID = 'EMP101'`);
+      //manager's | inspector's inspection list
+      console.log("role:" + this.empRole);
+      if (this.empRole == "Manager") {
+        // select tests from db
+        this.ret = priority
+          ? await db.query(
+              `SELECT * from test 
+                WHERE DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" 
+                ORDER by Priority ASC`
+            )
+          : await db.query(
+              `SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
+              from test t, asset a
+              where t.AssetID = a.id`
+            );
 
-      this.lest = ret.values;
+        this.lest = this.ret.values;
+      } else {
+        // select tests from db
+        this.ret = priority
+          ? await db.query(
+              `SELECT * from test 
+          WHERE DateCompleted is NULL or DateCompleted = "0000-00-00 00:00:00" 
+          AND InspectorID = ?
+          ORDER by Priority ASC`,
+              [this.empId]
+            )
+          : await db.query(
+              `SELECT t.InspectorID, a.GPSLatitude, a.GPSLongitude, t.AssetID, t.id, t.TestModID
+                from test t, asset a
+                where t.AssetID = a.id
+                AND t.InspectorID = ?`,
+              [this.empId]
+            );
+
+        this.lest = this.ret.values;
+      }
 
       //sorting by distance
       if (!priority) {
@@ -223,7 +277,7 @@ export class InspectionListPage implements OnInit {
         this.lest = nearByAssets.sort((a, b) => a.distance - b.distance);
       }
 
-      if (ret.values.length === 0) {
+      if (this.ret.values.length === 0) {
         return Promise.reject(new Error("getTests query failed"));
       }
 

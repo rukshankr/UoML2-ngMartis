@@ -11,7 +11,10 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content>  
+   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" >
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-grid>
     <ion-row>
       <ion-col>
@@ -46,8 +49,7 @@
               </ion-item>
               <ion-item>
                 <ion-label
-                  >Test Type: {{item.TestModID =="TM101"? "Grounds
-                  Test":"Signals Test"}}
+                  >Test Type: {{item.TestModID =="TM101"? "Grounds Test":"Signals Test"}}
                 </ion-label>
               </ion-item>
               <ion-item *ngIf="item.distance">
@@ -68,6 +70,7 @@
                     Inspect
                   </ion-button>
                 </ng-container>
+                <ion-button (click)="loadMap(item.GPSLatitude,item.GPSLongitude)">Show location</ion-button>
               </ion-item>
             </ion-list>
           </ion-card-content>
@@ -75,4 +78,10 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <div class="map-wrapper">
+    <div id="map_center">
+      <img src="assets/icon/location-marker.png"/>
+    </div>
+    <div #map1 id="map"></div>
+  </div>  
 </ion-content>
