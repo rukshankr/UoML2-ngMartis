@@ -53,7 +53,7 @@ export class InspectionListPage implements OnInit {
 		let latLng = new google.maps.LatLng(latitude, longitude);
 		let mapOptions = {
 			center: latLng,
-			zoom: 18,
+			zoom: 16,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 		this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);

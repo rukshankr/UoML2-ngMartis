@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { Repair } from 'src/app/services/database.service';
 import { RepairListService } from 'src/app/services/repair-list.service';
-
 import { Geolocation } from '@capacitor/geolocation';
 import { DatePipe } from '@angular/common';
+declare var google;
 @Component({
 	selector: 'app-repair-list',
 	templateUrl: './repair-list.page.html',
@@ -37,6 +37,25 @@ export class RepairListPage implements OnInit {
 		setTimeout(() => {
 			event.target.complete();
 		}, 2000);
+	}
+
+	@ViewChild('map1', { static: false })
+	mapElement: ElementRef;
+	map: any;
+	address: string;
+
+	loadMap(latitude, longitude) {
+		let latLng = new google.maps.LatLng(latitude, longitude);
+		let mapOptions = {
+			center: latLng,
+			zoom: 16,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+		this.map.addListener('dragend', () => {
+			latitude = this.map.center.lat();
+			longitude = this.map.center.lng();
+		});
 	}
 
 	async ngOnInit() {

@@ -73,6 +73,7 @@
                     >
                       Fix
                     </ion-button>
+                    <ion-button (click)="loadMap(item.GPSLatitude,item.GPSLongitude)">Show location</ion-button>
                   </ion-item>
                 </ion-list>
               </ion-card-content>
@@ -82,4 +83,10 @@
       </div>
     </div>
   </ion-grid>
+  <div class="map-wrapper">
+    <div id="map_center">
+      <img src="assets/icon/location-marker.png"/>
+    </div>
+    <div #map1 id="map"></div>
+  </div> 
 </ion-content>
