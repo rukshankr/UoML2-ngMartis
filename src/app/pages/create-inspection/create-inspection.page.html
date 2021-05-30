@@ -24,7 +24,11 @@
               <ion-col>
                 <ion-label position="fixed">Test ID:</ion-label>
                 <ion-item>
-                  <ion-input [ngModel]="testid" formControlName="TestID"></ion-input>
+                  <ion-input
+                    [ngModel]="testid"
+                    formControlName="TestID"
+                    disabled
+                  ></ion-input>
                 </ion-item>
                 <div *ngFor="let error of errorMessage.testID">
                   <ng-container
@@ -48,13 +52,15 @@
           <ion-card-content>
             <ion-row>
               <ion-col>
-                <ion-label position="fixed">Asset ID: {{assetid? assetid : ""}}</ion-label>
+                <ion-label position="fixed"
+                  >Asset ID: {{assetid? assetid : ""}}</ion-label
+                >
                 <ion-item [disabled]="assetid">
                   <ion-select
                     value="AssetID"
                     interface="popover"
                     formControlName="AssetID"
-                    [ngModel] = "assetid"
+                    [ngModel]="assetid"
                   >
                     <ion-select-option
                       *ngFor="let a of (desktop ? assets[0] : assets)"
@@ -76,34 +82,62 @@
             <ion-card-title>Personnel Information</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ion-row>
-              <ion-col>
-                <ion-label position="fixed">Inspector ID:</ion-label>
-                <ion-item>
-                  <ion-input formControlName="InspectorID"></ion-input>
-                </ion-item>
-                <div *ngFor="let error of errorMessage.empID">
-                  <ng-container
-                    *ngIf="insId.hasError(error.type) && (insId.dirty || insId.touched)"
+            <div *ngIf="empRole == 'Manager'">
+              <ion-row>
+                <ion-col>
+                  <ion-label position="floating">Inspector: </ion-label>
+                  <ion-select
+                    value="inspectorID"
+                    interface="popover"
+                    formControlName="InspectorID"
                   >
-                    <small class="error-message">{{error.message}}</small>
-                  </ng-container>
-                </div>
-              </ion-col>
-              <ion-col>
-                <ion-label position="fixed">Supervisor ID:</ion-label>
-                <ion-item>
-                  <ion-input formControlName="SupervisorID"></ion-input>
-                </ion-item>
-                <div *ngFor="let error of errorMessage.empID">
-                  <ng-container
-                    *ngIf="supId.hasError(error.type) && (supId.dirty || supId.touched)"
-                  >
-                    <small class="error-message">{{error.message}}</small>
-                  </ng-container>
-                </div>
-              </ion-col>
-            </ion-row>
+                    <ion-select-option
+                      *ngFor="let e of Inspectors"
+                      value="{{e.UserID}}"
+                      >{{e.UserID}} : {{e.Name}}</ion-select-option
+                    >
+                  </ion-select>
+                </ion-col>
+                <ion-col>
+                  <ion-label position="fixed">Manager ID:</ion-label>
+                  <ion-item>
+                    <ion-input
+                      [ngModel]="empId"
+                      formControlName="SupervisorID"
+                      disabled
+                    ></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </div>
+            <div *ngIf="empRole == 'Inspector'">
+              <ion-row>
+                <ion-col>
+                  <ion-label position="floating">Inspector ID: </ion-label>
+                  <ion-input
+                    [ngModel]="empId"
+                    formControlName="InspectorID"
+                    disabled
+                  ></ion-input>
+                </ion-col>
+                <ion-col>
+                  <ion-label position="fixed">Manager:</ion-label>
+                  <ion-item>
+                    <ion-select
+                      value="inspectorID"
+                      interface="popover"
+                      formControlName="SupervisorID"
+                    >
+                      <ion-select-option
+                        *ngFor="let e of Managers"
+                        value="{{e.UserID}}"
+                        >{{e.UserID}} : {{e.Name}}</ion-select-option
+                      >
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -142,8 +176,12 @@
                     interface="popover"
                     formControlName="TestModID"
                   >
-                    <ion-select-option value="TM101">Grounds Test</ion-select-option>
-                    <ion-select-option value="TM102">Signal Test</ion-select-option>
+                    <ion-select-option value="TM101"
+                      >Grounds Test</ion-select-option
+                    >
+                    <ion-select-option value="TM102"
+                      >Signal Test</ion-select-option
+                    >
                   </ion-select>
                 </ion-item>
               </ion-col>
@@ -172,7 +210,12 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-button type="submit" color="danger" size="large" expand="block"
+        <ion-button
+          type="submit"
+          color="danger"
+          size="large"
+          expand="block"
+          [disabled]="!createInspectionForm.valid"
           >Save</ion-button
         >
       </ion-col>

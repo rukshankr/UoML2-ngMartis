@@ -70,7 +70,8 @@
         </ion-slides>
         </ion-card>
       </ion-col>
-    </ion-row>
+    </ion-row> 
+    <!--tests table-->
     <ion-row *ngIf="tests.length > 0" className="ion-text-center ion-align-items-center">
       <ion-col>
         <ion-card>
@@ -108,7 +109,8 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-    </ion-row> <!---->
+    </ion-row> 
+    <!--Repairs table-->
     <ion-row *ngIf="repairs.length > 0" className="ion-text-center ion-align-items-center">
       <ion-col>
         <ion-card>
@@ -141,7 +143,7 @@
         </ion-card>
       </ion-col>
     </ion-row> <!---->
-      <ion-row>
+      <ion-row *ngIf="empRole == 'Manager'">
         <ion-col>
             <ion-button className="alltest" [routerLink]="['/','create-asset']" color="danger" expand="block"  >
                 <ion-icon name="add" slot="icon-only"></ion-icon>
@@ -149,7 +151,7 @@
             </ion-button>
         </ion-col>
       </ion-row>
-      <ion-row>
+      <ion-row *ngIf="empRole == 'Manager'">
         <ion-col>
         <ion-button [routerLink]="['/','create-inspection']" fill="solid" color="danger" expand="block">
             <ion-icon name="globe" slot="icon-only" size="large"></ion-icon>

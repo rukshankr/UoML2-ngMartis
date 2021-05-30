@@ -367,12 +367,20 @@ export class SelectionPage implements OnInit {
   }
 
   async getTests(assetID, noOfTests){
+    //loading spinner
+    const loading = await this.loadingCtrl.create({
+      spinner: "bubbles"
+    });
+    await loading.present();
+
     if(noOfTests == 0) return;
     if(this.desktop){
       this.assetService.getAssignedTestsByAssetID(assetID).subscribe((data) => {
         console.log(data.data);
         this.tests = data.data;
         this.repairs = [];
+        //dismiss loader
+        loading.dismiss();
     });
   }
     else{
@@ -398,23 +406,35 @@ export class SelectionPage implements OnInit {
 
         // close martis
         await this._sqlite.closeConnection("martis");
+        //dismiss loader
+        await loading.dismiss();
       }
       catch(err){
         //close connection
         if((await this._sqlite.sqlite.isConnection("martis")).result){
           await this._sqlite.closeConnection("martis");
         }
+        //dismiss loader
+        await loading.dismiss();
       }
     }
   }
 
   async getRepairs(assetID, noOfRepairs){
+    //loading spinner
+    const loading = await this.loadingCtrl.create({
+      spinner: "bubbles"
+    });
+    await loading.present();
+    
     if(noOfRepairs == 0) return;
     if(this.desktop){
       this.assetService.getAssignedRepairsByAssetID(assetID).subscribe((data) => {
         console.log(data.data);
         this.repairs = data.data;
         this.tests = [];
+        //dismiss loader
+        loading.dismiss();
       });
     }
     else{
@@ -440,12 +460,16 @@ export class SelectionPage implements OnInit {
 
         // close martis
         await this._sqlite.closeConnection("martis");
+        //dismiss loader
+        await loading.dismiss();
       }
       catch(err){
         //close connection
         if((await this._sqlite.sqlite.isConnection("martis")).result){
           await this._sqlite.closeConnection("martis");
         }
+        //dismiss loader
+        await loading.dismiss();
       }
     }
   }

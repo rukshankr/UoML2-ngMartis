@@ -45,10 +45,10 @@ export class NetworkService {
     let connection = status == ConnectionStatus.Offline ? 'Offline' : 'Online';
     let toast = this.toastController.create({
       message: `You are now ${connection}`,
-      duration: 1500,
+      duration: 2000,
       position: 'bottom',
       mode: 'ios',
-      translucent: true
+      //translucent: true
     });
     toast.then(toast => toast.present());
   }
