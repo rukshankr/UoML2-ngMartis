@@ -19,6 +19,7 @@ import { MobileLoginComponent } from "./mobile-login/mobile-login.component";
 import { DeviceAuthService } from "./services/device-auth.service";
 import { Network } from "@ionic-native/network/ngx";
 import { MapLocationService } from "./services/map-location.service";
+import { AutoCompleteModule } from "ionic4-auto-complete";
 
 const config = {
   issuer: "https://dev-44560058.okta.com/oauth2/default",
@@ -39,6 +40,7 @@ const config = {
     FormsModule,
     OktaAuthModule,
     ReactiveFormsModule,
+    AutoCompleteModule,
   ],
   providers: [
     StatusBar,
@@ -52,7 +54,7 @@ const config = {
     Geolocation,
     DeviceAuthService,
     Network,
-    MapLocationService
+    MapLocationService,
   ],
   bootstrap: [AppComponent],
 })
