@@ -5,6 +5,7 @@ import { ActivatedRoute } from "@angular/router";
 import { DatePipe } from "@angular/common";
 import { CreateRepairService } from "src/app/services/create-repair.service";
 import { SqliteService } from "../services/sqlite.service";
+import { AppComponent } from "../app.component";
 
 @Component({
   selector: "app-repair-form",
@@ -53,11 +54,15 @@ export class RepairFormPage implements OnInit {
   }
 
   ngOnInit() {
+    this.app.UserIDsub.subscribe((data) => {
+      this.engineerid = data;
+      console.log(this.engineerid);
+    });
     console.log(this.route.snapshot.params.assetid);
     let date = new Date(this.route.snapshot.params.createddate);
     console.log(date);
     this.assetid = this.route.snapshot.params.assetid;
-    this.engineerid = this.route.snapshot.params.engineerid;
+    //this.engineerid = this.route.snapshot.params.engineerid;
     this.comments = this.route.snapshot.params.comments;
     this.createddate = this.route.snapshot.params.createddate;
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
@@ -74,7 +79,8 @@ export class RepairFormPage implements OnInit {
     private _sqlite: SqliteService,
     private route: ActivatedRoute,
     private datePipe: DatePipe,
-    private plt: Platform
+    private plt: Platform,
+    private app: AppComponent
   ) {}
 
   async onSave() {

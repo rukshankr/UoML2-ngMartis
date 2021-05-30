@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
 
   UserID: BehaviorSubject<string> = new BehaviorSubject("EMP000");
   UserIDsub = this.UserID.asObservable();
-  EmpRole: BehaviorSubject<string> = new BehaviorSubject("Inspector");
+  EmpRole: BehaviorSubject<string> = new BehaviorSubject("Manager");
   UserRolesub = this.EmpRole.asObservable();
 
   constructor(

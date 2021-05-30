@@ -144,6 +144,10 @@ export class CreateInspectionPage implements OnInit {
         console.log(this.Inspectors);
       });
 
+      this.inspectionService.getManagers().subscribe((data) => {
+        this.Managers = data.data;
+      });
+
       this._assetService.getAssets().subscribe((data) => {
         this.assets = data;
         this.assets = Array.of(this.assets.data);

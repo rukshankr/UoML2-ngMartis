@@ -25,9 +25,7 @@ export class CreateReportEmpidService {
   }
 
   getEmps(): Observable<any> {
-    return this.http.get(
-      "https://martisapiversion1.herokuapp.com/user/getEmps"
-    );
+    return this.http.get("http://localhost:3000/user/getInspectors");
   }
 
   getAssets(): Observable<any> {
