@@ -62,8 +62,6 @@ export class RepairFormPage implements OnInit {
     let date = new Date(this.route.snapshot.params.createddate);
     console.log(date);
     this.assetid = this.route.snapshot.params.assetid;
-    //this.engineerid = this.route.snapshot.params.engineerid;
-    this.comments = this.route.snapshot.params.comments;
     this.createddate = this.route.snapshot.params.createddate;
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;

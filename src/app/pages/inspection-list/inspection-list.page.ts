@@ -1,10 +1,17 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  OnDestroy,
+} from "@angular/core";
 import { AlertController, LoadingController, Platform } from "@ionic/angular";
 import { SegmentChangeEventDetail } from "@ionic/core";
 import { inspectionListService } from "src/app/services/inspection-list.service";
 import { SqliteService } from "src/app/services/sqlite.service";
 import { Geolocation } from "@capacitor/geolocation";
 import { AppComponent } from "src/app/app.component";
+import { Subscription } from "rxjs";
 
 declare var google;
 
@@ -30,6 +37,12 @@ export class InspectionListPage implements OnInit {
   empId;
   empRole;
   ret;
+
+  UserIDSub: Subscription;
+  UserRoleSub: Subscription;
+
+  PriorityBasedInspectionSub: Subscription;
+  DistanceBasedInspectionSub: Subscription;
 
   ////
   log: string;
@@ -64,10 +77,10 @@ export class InspectionListPage implements OnInit {
   }
 
   async ngOnInit() {
-    this.appcomp.UserIDsub.subscribe((data) => {
+    this.UserIDSub = this.appcomp.UserIDsub.subscribe((data) => {
       this.empId = data;
     });
-    this.appcomp.UserRolesub.subscribe((data) => {
+    this.UserRoleSub = this.appcomp.UserRolesub.subscribe((data) => {
       this.empRole = data;
     });
     const showAlert = async (message: string) => {
@@ -97,14 +110,14 @@ export class InspectionListPage implements OnInit {
             loadingEl.dismiss();
           }, 5000);
           if (this.empRole == "Manager") {
-            this._inspectionListService
+            this.PriorityBasedInspectionSub = this._inspectionListService
               .sortInspectionsByPriority()
               .subscribe((inspections) => {
                 loadingEl.dismiss();
                 this.lst = Array.of(inspections.data);
               });
           } else {
-            this._inspectionListService
+            this.PriorityBasedInspectionSub = this._inspectionListService
               .sortInspectionsByPriorityAndEmpID(this.empId)
               .subscribe((inspections) => {
                 loadingEl.dismiss();
@@ -147,14 +160,14 @@ export class InspectionListPage implements OnInit {
             loadingEl.dismiss();
           }, 5000);
           if (this.empRole == "Manager") {
-            this._inspectionListService
+            this.PriorityBasedInspectionSub = this._inspectionListService
               .sortInspectionsByPriority()
               .subscribe((inspections) => {
                 loadingEl.dismiss();
                 this.lst = Array.of(inspections.data);
               });
           } else {
-            this._inspectionListService
+            this.PriorityBasedInspectionSub = this._inspectionListService
               .sortInspectionsByPriorityAndEmpID(this.empId)
               .subscribe((inspections) => {
                 loadingEl.dismiss();
@@ -173,7 +186,7 @@ export class InspectionListPage implements OnInit {
             loadingEl.dismiss();
           }, 5000);
           if (this.empRole == "Manager") {
-            this._inspectionListService
+            this.DistanceBasedInspectionSub = this._inspectionListService
               .sortInspectionsByDistance()
               .subscribe((inspections) => {
                 if (inspections.data.length === 0) {
@@ -184,7 +197,7 @@ export class InspectionListPage implements OnInit {
                 console.log(this.lst);
               });
           } else {
-            this._inspectionListService
+            this.DistanceBasedInspectionSub = this._inspectionListService
               .sortByLocationAndInspectorAndEmpID(this.empId)
               .subscribe((inspections) => {
                 if (inspections.data.length === 0) {
@@ -291,6 +304,21 @@ export class InspectionListPage implements OnInit {
 
       //error message
       return Promise.reject(err);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.UserIDSub) {
+      this.UserIDSub.unsubscribe();
+    }
+    if (this.UserRoleSub) {
+      this.UserRoleSub.unsubscribe();
+    }
+    if (this.PriorityBasedInspectionSub) {
+      this.PriorityBasedInspectionSub.unsubscribe();
+    }
+    if (this.DistanceBasedInspectionSub) {
+      this.DistanceBasedInspectionSub.unsubscribe();
     }
   }
 }

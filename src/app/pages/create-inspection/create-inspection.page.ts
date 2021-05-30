@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { InspectionService } from "src/app/services/create-inspection.service";
 import { AlertController, Platform } from "@ionic/angular";
@@ -7,6 +7,7 @@ import { AssetService } from "src/app/services/asset-service.service";
 import { DatePipe } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { AppComponent } from "src/app/app.component";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-create-inspection",
@@ -23,6 +24,14 @@ export class CreateInspectionPage implements OnInit {
   empRole;
   Inspectors: any = [];
   Managers: any = [];
+
+  getInspectorsSub: Subscription;
+  getManagerSub: Subscription;
+  userIDSub: Subscription;
+  userRoleSub: Subscription;
+  getAssetsSub: Subscription;
+  saveFormSub: Subscription;
+  getLatestTestSub: Subscription;
 
   opost = new Posts();
 
@@ -99,19 +108,24 @@ export class CreateInspectionPage implements OnInit {
   };
 
   async ngOnInit() {
-    this.inspectionService.getInspectors().subscribe((data) => {
-      this.Inspectors = data.data;
-      console.log(this.Inspectors);
-    });
+    this.getInspectorsSub = this.inspectionService
+      .getInspectors()
+      .subscribe((data) => {
+        this.Inspectors = data.data;
+        console.log(this.Inspectors);
+      });
 
-    this.inspectionService.getManagers().subscribe((data) => {
-      this.Managers = data.data;
-    });
+    this.getManagerSub = this.inspectionService
+      .getManagers()
+      .subscribe((data) => {
+        this.Managers = data.data;
+      });
 
-    this.appcomp.UserIDsub.subscribe((data) => {
+    this.userIDSub = this.appcomp.UserIDsub.subscribe((data) => {
       this.empId = data;
     });
-    this.appcomp.UserRolesub.subscribe((data) => {
+
+    this.userRoleSub = this.appcomp.UserRolesub.subscribe((data) => {
       this.empRole = data;
     });
 
@@ -154,7 +168,7 @@ export class CreateInspectionPage implements OnInit {
       }
     } else if (this.plt.is("desktop")) {
       this.desktop = true;
-      this._assetService.getAssets().subscribe((data) => {
+      this.getAssetsSub = this._assetService.getAssets().subscribe((data) => {
         this.assets = data;
         this.assets = Array.of(this.assets.data);
         console.log(this.assets);
@@ -225,14 +239,16 @@ export class CreateInspectionPage implements OnInit {
 
     console.log("Page Saved", this.opost);
 
-    this.inspectionService.post(this.opost).subscribe((data) => {
-      console.log("Post method success?: ", data);
-      if (data) {
-        this.showAlert("Success", "inspection added.");
-      } else {
-        this.showAlert("Error", "Inspection not added.");
-      }
-    });
+    this.saveFormSub = this.inspectionService
+      .post(this.opost)
+      .subscribe((data) => {
+        console.log("Post method success?: ", data);
+        if (data) {
+          this.showAlert("Success", "inspection added.");
+        } else {
+          this.showAlert("Error", "Inspection not added.");
+        }
+      });
   }
 
   async getLatestTestIncrement() {
@@ -277,13 +293,39 @@ export class CreateInspectionPage implements OnInit {
         return Promise.reject();
       }
     } else {
-      this.inspectionService.getLatestTest().subscribe((data) => {
-        this.testid = data.data[0].TestID;
-        let num =
-          parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
-        this.testid = this.testid[0] + num.toString();
-        console.log(this.testid);
-      });
+      this.getLatestTestSub = this.inspectionService
+        .getLatestTest()
+        .subscribe((data) => {
+          this.testid = data.data[0].TestID;
+          let num =
+            parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
+          this.testid = this.testid[0] + num.toString();
+          console.log(this.testid);
+        });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.getInspectorsSub) {
+      this.getInspectorsSub.unsubscribe();
+    }
+    if (this.getManagerSub) {
+      this.getManagerSub.unsubscribe();
+    }
+    if (this.userIDSub) {
+      this.userIDSub.unsubscribe();
+    }
+    if (this.userRoleSub) {
+      this.userRoleSub.unsubscribe();
+    }
+    if (this.getAssetsSub) {
+      this.getAssetsSub.unsubscribe();
+    }
+    if (this.saveFormSub) {
+      this.saveFormSub.unsubscribe();
+    }
+    if (this.getLatestTestSub) {
+      this.getLatestTestSub.unsubscribe();
     }
   }
 }
