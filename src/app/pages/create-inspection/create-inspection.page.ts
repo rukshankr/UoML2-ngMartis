@@ -243,8 +243,8 @@ export class CreateInspectionPage implements OnInit {
       .post(this.opost)
       .subscribe((data) => {
         console.log("Post method success?: ", data);
-        if (data) {
-          this.showAlert("Success", "inspection added.");
+        if (data.message != "Error") {
+          this.showAlert("Success", "Inspection added.");
         } else {
           this.showAlert("Error", "Inspection not added.");
         }
