@@ -60,8 +60,11 @@ export class DatabaseService {
 		return this.http.post("https://martisapiversion1.herokuapp.com/sync/fullimport",exported);
 	  }
 
-	//partial db export
-	partialExportAll(exported: Object): Observable<any> {
+	//db export
+	exportAll(full: boolean, exported: Object): Observable<any> {
+		if(full){
+			return this.http.post("https://martisapiversion1.herokuapp.com/sync/fullimport", exported);	
+		}
 		return this.http.post("https://martisapiversion1.herokuapp.com/sync/partialimport", exported);
 	}
 

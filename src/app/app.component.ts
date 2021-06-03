@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 
-import { Platform } from "@ionic/angular";
+import { AlertController, Platform } from "@ionic/angular";
 import { SplashScreen } from "@ionic-native/splash-screen/ngx";
 import { StatusBar } from "@ionic-native/status-bar/ngx";
 import { SqliteService } from "./services/sqlite.service";
@@ -9,7 +9,8 @@ import { Router } from "@angular/router";
 import { OktaAuthService } from "@okta/okta-angular";
 import { DeviceAuthService } from "./services/device-auth.service";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
+import { NetworkService } from "./services/network.service";
 
 @Component({
   selector: "app-root",
@@ -27,8 +28,9 @@ export class AppComponent implements OnInit {
 
   UserID: BehaviorSubject<string> = new BehaviorSubject("EMP100");
   UserIDsub = this.UserID.asObservable();
-  EmpRole: BehaviorSubject<string> = new BehaviorSubject("Inspector");
+  EmpRole: BehaviorSubject<string> = new BehaviorSubject("Manager");
   UserRolesub = this.EmpRole.asObservable();
+  networkSub : Subscription;
 
   constructor(
     private platform: Platform,
@@ -38,7 +40,9 @@ export class AppComponent implements OnInit {
     public oktaAuth: OktaAuthService,
     private deviceAuth: DeviceAuthService,
     private router: Router,
-    private uniqueDeviceID: UniqueDeviceID
+    private uniqueDeviceID: UniqueDeviceID,
+    private network: NetworkService,
+    private alertCtrl: AlertController
   ) {
     this.initializeApp();
     this.isAuthenticated = false;
@@ -51,7 +55,20 @@ export class AppComponent implements OnInit {
     this.getUniqueDeviceID();
   }
 
+  //network alert
+  noNetAlert = async (page) => {
+    let noNetMsg = this.alertCtrl.create({
+      header: "No Network",
+      message: `Should have network connection to go to ${page} page.Please connect to a network and try again`,
+      buttons: ["OK"],
+    });
+    (await noNetMsg).present();
+  };
+
   async ngOnInit() {
+    this.networkSub = this.network.onNetworkChange().subscribe((data) => {
+      console.log("NetStat:" + this.network.getCurrentNetworkStatus());
+    });
     this.desktop =
       this.platform.is("mobile") ||
       this.platform.is("android") ||
@@ -82,6 +99,24 @@ export class AppComponent implements OnInit {
   async logout() {
     await this.oktaAuth.signOut();
     this.router.navigateByUrl("/login");
+  }
+
+  goToCreateAsset(){
+    if (this.network.getCurrentNetworkStatus() == 0) {
+      this.router.navigate(["/", "create-asset"]);
+    } else {
+      this.noNetAlert("Create Asset");
+      return;
+    }
+  }
+
+  goToCreateInspection(){
+    if (this.network.getCurrentNetworkStatus() == 0) {
+      this.router.navigate(["/", "create-inspection"]);
+    } else {
+      this.noNetAlert("Create Inspection");
+      return;
+    }
   }
 
   getUniqueDeviceID() {

@@ -96,6 +96,9 @@ export class CreateAssetPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.networkSub = this.network.onNetworkChange().subscribe((data) => {
+      console.log("NetStat:" + this.network.getCurrentNetworkStatus());
+    });
     if (this.plt.is("mobile") || this.plt.is("android") || this.plt.is("ios")) {
       this.desktop = false;
     } else if (this.plt.is("desktop")) {
@@ -111,62 +114,13 @@ export class CreateAssetPage implements OnInit, OnDestroy {
           this.createAssetForm["GPSLongitude"] = location.long;
         }
       });
-    this.networkSub = this.network.onNetworkChange().subscribe((data) => {
-      console.log("NetStat:" + this.network.getCurrentNetworkStatus());
-    });
   }
 
   async onSave() {
-    if (!this.desktop) {
-      try {
-        //connect
-        const db = await this._sqlite.createConnection(
-          "martis",
-          false,
-          "no-encryption",
-          1
-        );
-
-        //open
-        await db.open();
-
-        //insert
-        let sqlcmd: string =
-          "INSERT INTO asset (id, AssetType, Status, GPSLatitude, GPSLongitude, Region, Division, SubDivision, NearestMilePost, LastTestedDate, last_modified) VALUES (?,?,?,?,?,?,?,?,?,?, (strftime('%s', 'now')))";
-        this.opost = this.createAssetForm.value;
-        var p = this.opost;
-
-        let postableChanges = [
-          p.AssetID,
-          p.AssetType,
-          p.Status,
-          p.GPSLatitude,
-          p.GPSLongitude,
-          p.Region,
-          p.Division,
-          p.SubDivision,
-          p.NearestMilePost,
-          //`CURRENT_TIMESTAMP`
-          p.LastTestedDate.toISOString(),
-        ];
-        let ret: any = await db.run(sqlcmd, postableChanges);
-
-        //check insert
-        if (ret.changes.changes === 0) {
-          return Promise.reject(new CapacitorException("Execution failed"));
-        }
-
-        //disconnect
-        await this._sqlite.closeConnection("martis");
-        await this.showAlert("asset added.");
-        return Promise.resolve();
-      } catch (err) {
-        //disconnect
-        await this._sqlite.closeConnection("martis");
-        await this.showAlert(err.message);
-      }
-    } else {
-      console.log("platform-desktop: " + this.desktop);
+    if (this.network.getCurrentNetworkStatus() == 1) {
+      this.showAlert(false)
+      return;
+    }
       this.opost = this.createAssetForm.value;
       console.log("Page Saved", this.opost);
       this.assetService.post(this.opost).subscribe((data) => {
@@ -177,7 +131,6 @@ export class CreateAssetPage implements OnInit, OnDestroy {
           this.showAlert(false);
         }
       });
-    }
   }
 
   async showAlert(val) {
@@ -205,47 +158,48 @@ export class CreateAssetPage implements OnInit, OnDestroy {
   }
 
   async getLatestAssetIncrement() {
-    if (!this.desktop) {
-      try {
-        //connect
-        const db = await this._sqlite.createConnection(
-          "martis",
-          false,
-          "no-encryption",
-          1
-        );
+    // if (!this.desktop) {
+    //   try {
+    //     //connect
+    //     const db = await this._sqlite.createConnection(
+    //       "martis",
+    //       false,
+    //       "no-encryption",
+    //       1
+    //     );
 
-        //open
-        await db.open();
+    //     //open
+    //     await db.open();
 
-        //query
-        let sqlcmd: string = "SELECT id FROM asset ORDER BY id DESC limit 1;";
-        let ret: any = await db.query(sqlcmd);
+    //     //query
+    //     let sqlcmd: string = "SELECT id FROM asset ORDER BY id DESC limit 1;";
+    //     let ret: any = await db.query(sqlcmd);
 
-        //check insert
-        if (ret.values.length === 0) {
-          return Promise.reject(new CapacitorException("Query failed"));
-        }
+    //     //check insert
+    //     if (ret.values.length === 0) {
+    //       return Promise.reject(new CapacitorException("Query failed"));
+    //     }
 
-        console.log("last asset: " + ret.values[0].id);
+    //     console.log("last asset: " + ret.values[0].id);
 
-        //disconnect
-        await this._sqlite.closeConnection("martis");
+    //     //disconnect
+    //     await this._sqlite.closeConnection("martis");
 
-        this.assetid = ret.values[0].id;
-        let num =
-          parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
-        this.assetid = this.assetid[0] + num.toString();
+    //     this.assetid = ret.values[0].id;
+    //     let num =
+    //       parseInt(this.assetid[1] + this.assetid[2] + this.assetid[3]) + 1;
+    //     this.assetid = this.assetid[0] + num.toString();
 
-        return Promise.resolve();
-      } catch (err) {
-        //disconnect
-        if (this._sqlite.sqlite.isConnection("martis")) {
-          await this._sqlite.closeConnection("martis");
-        }
-        return Promise.reject();
-      }
-    } else {
+    //     return Promise.resolve();
+    //   } catch (err) {
+    //     //disconnect
+    //     if (this._sqlite.sqlite.isConnection("martis")) {
+    //       await this._sqlite.closeConnection("martis");
+    //     }
+    //     return Promise.reject();
+    //   }
+    // } else {
+      if (this.network.getCurrentNetworkStatus() == 0) {
       this.getLatestAssetSub = this.assetService
         .getLatestAsset()
         .subscribe((data) => {
@@ -255,7 +209,11 @@ export class CreateAssetPage implements OnInit, OnDestroy {
           this.assetid = this.assetid[0] + num.toString();
           console.log(this.assetid);
         });
-    }
+      }
+      else{
+        this.noNetAlert();
+      }
+    //}
   }
 
   goToMap() {

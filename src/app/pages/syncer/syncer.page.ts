@@ -21,8 +21,8 @@ export class SyncerPage implements OnInit, OnDestroy {
   exportedJson: string = "";
   deleteAllData: boolean = false;
 
-  //Test export JSON
-  oExportTest = new ExportTest();
+  //checking if full or partial export
+  full: boolean = false;
 
   //subscriptions
   networkSub : Subscription;
@@ -83,7 +83,9 @@ export class SyncerPage implements OnInit, OnDestroy {
         jsonObj = await db.exportToJson("partial");
       }
       catch(err){
-        throw Error("Database already up-to-date");
+        this.full = true;
+        jsonObj = await db.exportToJson("full");
+        console.log("full import"); 
       }
 
       // test JSON object validity
@@ -101,8 +103,8 @@ export class SyncerPage implements OnInit, OnDestroy {
       await this._sqlite.closeConnection("martis");
 
       //export to Main DB
-      this.partialExportSub = this._dbService.partialExportAll(jsonObj.export).subscribe(async (data) => {
-        console.log("Export post method success?: ", data);
+      this.partialExportSub = this._dbService.exportAll(this.full, jsonObj.export).subscribe(async (data) => {
+        console.log("Export post method success?: ", data.toString());
 
         if (data) {
           //delete unwanted rows in mySQL
@@ -267,18 +269,4 @@ export class SyncerPage implements OnInit, OnDestroy {
   }
 
   
-}
-
-export class ExportTest {
-  TestID: string;
-  DateIssued: string;
-  AssetID: string;
-  InspectorID: string;
-  Result: string;
-  SupervisorID: string;
-  DateCompleted: string;
-  Frequency: string;
-  Priority: string;
-  TestModID: string;
-  comments: string;
 }

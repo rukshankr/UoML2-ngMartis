@@ -11,6 +11,7 @@ import { NetworkService } from 'src/app/services/network.service';
 import { AppComponent } from 'src/app/app.component';
 import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-selection',
@@ -47,7 +48,8 @@ export class SelectionPage implements OnInit, OnDestroy {
 		public datePipe: DatePipe,
 		private uniqueDeviceID: UniqueDeviceID,
 		private network: NetworkService,
-		private appcomp: AppComponent
+		public appcomp: AppComponent,
+		private router: Router
 	) {
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
@@ -117,15 +119,21 @@ export class SelectionPage implements OnInit, OnDestroy {
 	}
 
 	doRefresh(event) {
+		//reload dashboard
 		this.ngOnInit();
 		this.table = [];
 		this.page = 1;
-		//reload dashboard
-		this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
-			this.nextpg = data.next ? data.next.page : null;
-			this.table = this.table.concat(data.results);
-			console.log(this.table);
-		});
+		if(!this.desktop){
+			this.loadMobiTable();
+		}
+		else{
+			this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
+				this.nextpg = data.next ? data.next.page : null;
+				this.table = this.table.concat(data.results);
+				console.log(this.table);
+			});
+		}
+		
 		setTimeout(() => {
 			event.target.complete();
 		}, 2000);
@@ -527,6 +535,15 @@ export class SelectionPage implements OnInit, OnDestroy {
 			});
 		}
 	}
+
+	goToAssignedInspection(id){
+		if (this.network.getCurrentNetworkStatus() == 0) {
+		  this.router.navigate(['/','create-inspection',id]);
+		} else {
+		  this.appcomp.noNetAlert("Create Inspection");
+		  return;
+		}
+	  }
 
 	ngOnDestroy() {
 		if (this.mainDashboardSub) {

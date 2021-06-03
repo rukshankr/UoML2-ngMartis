@@ -56,7 +56,7 @@
                     [ngModel]="assetid"
                   >
                     <ion-select-option
-                      *ngFor="let a of (desktop ? assets[0] : assets)"
+                      *ngFor="let a of assets[0]"
                       value="{{a.AssetID}}"
                       >{{a.AssetID}}</ion-select-option
                     >

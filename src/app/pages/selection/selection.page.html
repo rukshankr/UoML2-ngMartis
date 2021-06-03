@@ -11,21 +11,23 @@
    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" >
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+
   <ion-fab *ngIf="empRole == 'Manager'" [vertical]="desktop? 'top' : 'bottom'" horizontal="end" slot="fixed">
     <ion-fab-button color="danger">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="start">
-      <ion-button [routerLink]="['/','create-asset']" color="danger" shape="round">
-          <ion-icon *ngIf="desktop" name="add-circle"></ion-icon>
+      <ion-button [size]="(!desktop)? 'small':''" (click)="appcomp.goToCreateAsset()" color="danger" shape="round">
+          <ion-icon slot="start" name="add-circle"></ion-icon>
         Create Asset
       </ion-button>
-      <ion-button [routerLink]="['/','create-inspection']" color="danger" shape="round">
-          <ion-icon *ngIf="desktop" name="document"></ion-icon>
+      <ion-button [size]="(!desktop)? 'small':''" (click)="appcomp.goToCreateInspection()" color="danger" shape="round">
+          <ion-icon slot="start" name="document"></ion-icon>
         Create Test
       </ion-button>
     </ion-fab-list>
   </ion-fab>
+
   <ion-grid class="ion-text-center">
     <ion-row>
       <ion-col>
@@ -58,9 +60,6 @@
                 <ion-card-subtitle>
                   <ion-label [color]="item.Status == 'Functions' ? 'success' : 'danger' ">{{item.Status}}</ion-label> 
                 </ion-card-subtitle>
-                <!-- <div className="slidestatus">
-                  <ion-label [color]="item.Status == 'Functions' ? 'success' : 'danger' ">{{item.Status}}</ion-label> 
-                </div> -->
               </ion-col>
             </ion-card-header>
             
@@ -78,7 +77,7 @@
               </ion-row> 
               <ion-row>
                 <ion-col>
-                  <ion-button [disabled]="item.noOfTests >= 2" *ngIf="empRole == 'Manager' && item.Status == 'Functions'" color="danger" [routerLink]="['/','create-inspection',item.id]">
+                  <ion-button [disabled]="item.noOfTests >= 2" *ngIf="empRole == 'Manager' && item.Status == 'Functions'" color="danger" (click)="goToAssignedInspection(item.id)">
                     Assign
                   </ion-button>
                   <ion-button *ngIf="empRole == 'Manager' && item.Status != 'Functions'" color="success" (click)="setAssetAsFunctional(item.id)">
