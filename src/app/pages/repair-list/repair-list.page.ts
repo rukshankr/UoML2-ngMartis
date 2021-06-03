@@ -5,6 +5,7 @@ import { Repair } from 'src/app/services/database.service';
 import { RepairListService } from 'src/app/services/repair-list.service';
 import { Geolocation } from '@capacitor/geolocation';
 import { DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 declare var google;
 @Component({
 	selector: 'app-repair-list',
@@ -17,6 +18,8 @@ export class RepairListPage implements OnInit {
 	platform: string;
 	handlerPermissions: any;
 	initPlugin: boolean = false;
+
+	GetRepairSub: Subscription;
 
 	constructor(
 		private _RepairListService: RepairListService,
@@ -89,7 +92,7 @@ export class RepairListPage implements OnInit {
 					setTimeout(() => {
 						loadingEl.dismiss();
 					}, 5000);
-					this._RepairListService
+					this.GetRepairSub = this._RepairListService
 						.sortRepairsByDistance(this.empLocation.latitude, this.empLocation.longitude)
 						.subscribe((data) => {
 							this.lst = data;
@@ -151,6 +154,13 @@ export class RepairListPage implements OnInit {
 			await this._sqlite.closeConnection('martis');
 
 			return Promise.reject(err);
+		}
+	}
+
+	ngOnDestroy(): void {
+		if (this.GetRepairSub) {
+			this.GetRepairSub.unsubscribe();
+			console.log('Done');
 		}
 	}
 }
