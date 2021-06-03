@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AlertController, Platform } from '@ionic/angular';
 import { SetresultGroundsService } from '../services/setresult-grounds.service';
+import { CreateReportEmpidService } from 'src/app/services/create-report-empid.service';
 import { ActivatedRoute } from '@angular/router';
 import { SqliteService } from '../services/sqlite.service';
 import { DatePipe } from '@angular/common';
 import { delay, throwIfEmpty } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { AppComponent } from '../app.component';
 
 @Component({
 	selector: 'app-grounds-test',
@@ -19,12 +21,14 @@ export class GroundsTestPage implements OnInit {
 	assetid: String;
 	testid: String;
 	desktop: boolean;
+	EmpID: string;
+
+	assets = [];
 
 	SetResultSub: Subscription;
 	GetLatestTest: Subscription;
-
-	//confirm date
-	confirm: boolean = false;
+	GetAssetSub: Subscription;
+	GetEmpID: Subscription;
 
 	//scheduled or out of schedule
 	nonScheduleTest: boolean = false;
@@ -38,17 +42,19 @@ export class GroundsTestPage implements OnInit {
 		comments: [ '' ],
 		Result: [ '', [ Validators.required ] ],
 		DateCompleted: [ '', [ Validators.required ] ],
-		InspectorID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}'), Validators.maxLength(6) ] ]
+		InspectorID: [ Validators.required ]
 	});
 
 	constructor(
 		private formBuilder: FormBuilder,
 		private setresult: SetresultGroundsService,
+		private createReport: CreateReportEmpidService,
 		private alertCtrl: AlertController,
-		private route: ActivatedRoute,
+		public route: ActivatedRoute,
 		private plt: Platform,
 		private _sqlite: SqliteService,
-		private datePipe: DatePipe
+		private datePipe: DatePipe,
+		private appcomp: AppComponent
 	) {}
 
 	get assetID() {
@@ -68,6 +74,12 @@ export class GroundsTestPage implements OnInit {
 	}
 
 	ngOnInit() {
+		this.GetAssetSub = this.createReport.getAssets().subscribe((data) => {
+			this.assets = Array.of(data.data);
+		});
+		this.GetEmpID = this.appcomp.UserIDsub.subscribe((data) => {
+			this.EmpID = data;
+		});
 		if (this.route.snapshot.params.testid) {
 			this.testid = this.route.snapshot.params.testid;
 			this.assetid = this.route.snapshot.params.assetid;
@@ -86,10 +98,6 @@ export class GroundsTestPage implements OnInit {
 		this.opost = this.createTestForm.value;
 		this.opost.DateCompleted = this.datePipe.transform(this.opost.DateCompleted, 'yyyy-MM-dd HH:mm:ss');
 		this.opost.TestModID = 'TM101';
-		if (this.date.value == '' || this.confirm == false) {
-			this.showAlert(false, 'Please confirm inspection date.', true);
-			return;
-		}
 		console.log('Page Saved', this.opost);
 		if (this.desktop) {
 			if (this.nonScheduleTest == false) {
@@ -248,16 +256,18 @@ export class GroundsTestPage implements OnInit {
 	}
 
 	ngOnDestroy(): void {
+		if (this.GetAssetSub) {
+			this.GetAssetSub.unsubscribe();
+		}
 		if (this.GetLatestTest) {
 			this.GetLatestTest.unsubscribe();
 		}
 		if (this.SetResultSub) {
 			this.SetResultSub.unsubscribe();
 		}
-	}
-
-	confirmer() {
-		this.confirm = !this.confirm;
+		if (this.GetEmpID) {
+			this.GetEmpID.unsubscribe();
+		}
 	}
 	unschedule() {
 		this.nonScheduleTest = true;

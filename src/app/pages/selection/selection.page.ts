@@ -14,9 +14,9 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
-	selector: 'app-selection',
-	templateUrl: './selection.page.html',
-	styleUrls: [ './selection.page.scss' ]
+  selector: "app-selection",
+  templateUrl: "./selection.page.html",
+  styleUrls: ["./selection.page.scss"],
 })
 export class SelectionPage implements OnInit, OnDestroy {
 	log: string = '';
@@ -188,248 +188,266 @@ export class SelectionPage implements OnInit, OnDestroy {
       as 
       select a.id, a.Status, COUNT(t.id) AS noOfTests FROM asset AS a LEFT JOIN test AS t ON a.id = t.AssetID AND (t.DateCompleted is NULL OR t.DateCompleted = "NULL") GROUP BY a.id;
       `);
-			console.log('@@@create view changes: ' + ret.changes.changes);
+      console.log("@@@create view changes: " + ret.changes.changes);
 
-			if (ret.changes.changes == -1) {
-				return Promise.reject(new Error('Creating views failed'));
-			}
+      if (ret.changes.changes == -1) {
+        return Promise.reject(new Error("Creating views failed"));
+      }
 
-			let rets = await db.query(
-				`select ut.id, ut.Status, ut.noOfTests, ur.noOfRepairs from unassignedTests ut join unassignedRepairs ur on ur.id = ut.id;`
-			);
+      let rets = await db.query(
+        `select ut.id, ut.Status, ut.noOfTests, ur.noOfRepairs from unassignedTests ut join unassignedRepairs ur on ur.id = ut.id;`
+      );
 
-			this.table = rets.values;
-			if (rets.values.length === 0) {
-				return Promise.reject(new Error('Query for assets failed'));
-			}
-			console.log('#### Assets loaded');
+      this.table = rets.values;
+      if (rets.values.length === 0) {
+        return Promise.reject(new Error("Query for assets failed"));
+      }
+      console.log("#### Assets loaded");
 
-			// Close Connection Martis
-			await this._sqlite.closeConnection('martis');
+      // Close Connection Martis
+      await this._sqlite.closeConnection("martis");
 
-			return Promise.resolve();
-		} catch (err) {
-			// Close Connection Martis
-			if (this._sqlite.sqlite.isConnection('martis')) {
-				await this._sqlite.closeConnection('martis');
-			}
+      return Promise.resolve();
+    } catch (err) {
+      // Close Connection Martis
+      if (this._sqlite.sqlite.isConnection("martis")) {
+        await this._sqlite.closeConnection("martis");
+      }
 
-			this.showError('Error');
-			return Promise.reject(err);
-		}
-	}
+      this.showError("Error");
+      return Promise.reject(err);
+    }
+  }
 
-	//PIN error alert
-	async showError(data: any) {
-		let alert = this.atrCtrl.create({
-			message: data,
-			subHeader: 'Enter the correct PIN',
-			buttons: [ 'OK' ]
-		});
-		(await alert).present();
-	}
-	//Normal error alert
-	async showAlert(data: any) {
-		let alert = this.atrCtrl.create({
-			header: data.head,
-			message: data.msg
-		});
-		(await alert).present();
-	}
+  //PIN error alert
+  async showError(data: any) {
+    let alert = this.atrCtrl.create({
+      message: data,
+      subHeader: "Enter the correct PIN",
+      buttons: ["OK"],
+    });
+    (await alert).present();
+  }
+  //Normal error alert
+  async showAlert(data: any) {
+    let alert = this.atrCtrl.create({
+      header: data.head,
+      message: data.msg,
+    });
+    (await alert).present();
+  }
 
-	async ionViewWillEnter() {
-		if (!this.pinValidated) {
-			let alert = this.atrCtrl.create({
-				message: 'Enter PIN',
-				inputs: [
-					{
-						name: 'pin',
-						placeholder: 'Enter PIN',
-						type: 'password'
-					}
-				],
-				buttons: [
-					{
-						text: 'Login',
-						handler: (data) => {
-							if (data.pin == this.userPin || data.pin == 1234) {
-								console.log('Success');
-								this.pinValidated = true;
-							} else {
-								console.log('fail');
-								this.showError('Invalid PIN');
+  async ionViewWillEnter() {
+    if (!this.pinValidated) {
+      let alert = this.atrCtrl.create({
+        message: "Enter PIN",
+        inputs: [
+          {
+            name: "pin",
+            placeholder: "Enter PIN",
+            type: "password",
+          },
+        ],
+        buttons: [
+          {
+            text: "Login",
+            handler: (data) => {
+              if (data.pin == this.userPin || data.pin == 1234) {
+                console.log("Success");
+                this.pinValidated = true;
+              } else {
+                console.log("fail");
+                this.showError("Invalid PIN");
 
-								return false;
-							}
-						}
-					}
-				]
-			});
-			(await alert).present();
-		}
-		if (!this.desktop) {
-			this.loadMobiTable();
-		}
-	}
+                return false;
+              }
+            },
+          },
+        ],
+        backdropDismiss: false,
+      });
+      (await alert).present();
+    }
+    if (!this.desktop) {
+      this.loadMobiTable();
+    }
+  }
 
-	async ngOnInit() {
-		if (this.desktop) {
-			const userClaims = await this.oktaAuth
-				.getUser()
-				.then((data) => {
-					this.userPin = data.family_name.split(' ')[1];
-					console.log('UserPIN: ' + this.userPin);
-				})
-				.catch((err) => console.log(err));
-		} else {
-			this.getUniqueDeviceID();
-		}
+  async ngOnInit() {
+    if (this.desktop) {
+      const userClaims = await this.oktaAuth
+        .getUser()
+        .then((data) => {
+          this.userPin = data.family_name.split(" ")[1];
+          console.log("UserPIN: " + this.userPin);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      this.getUniqueDeviceID();
+    }
 
-		if (!this.desktop) {
-			//check network
-			this.networkSub = this.network.onNetworkChange().subscribe((data) => {
-				console.log('NetStat:' + data);
-			});
+    if (!this.desktop) {
+      //check network
+      this.networkSub = this.network.onNetworkChange().subscribe((data) => {
+        console.log("NetStat:" + data);
+      });
 
-			const showAlert = async (message: string) => {
-				let msg = this.atrCtrl.create({
-					header: 'Error',
-					message: message,
-					buttons: [ 'OK' ]
-				});
-				(await msg).present();
-			};
-			try {
-				let isMartis = await this._sqlite.sqlite.isDatabase('martis');
+      const showAlert = async (message: string) => {
+        let msg = this.atrCtrl.create({
+          header: "Error",
+          message: message,
+          buttons: ["OK"],
+        });
+        (await msg).present();
+      };
+      try {
+        let isMartis = await this._sqlite.sqlite.isDatabase("martis");
 
-				if (!isMartis.result) {
-					await this.firstSync();
-					this.loadMobiTable();
-				}
-				//get table
-			} catch (err) {
-				await showAlert(err.message);
-			}
-		}
-		//get user role
-		this.appcomp.UserRolesub.subscribe((data) => {
-			this.empRole = data;
-			console.log('role:' + this.empRole);
-		});
-	}
+        if (!isMartis.result) {
+          await this.firstSync();
+          this.loadMobiTable();
+        }
+        //get table
+      } catch (err) {
+        await showAlert(err.message);
+      }
+    }
+    //get user role
+    this.appcomp.UserRolesub.subscribe((data) => {
+      this.empRole = data;
+      console.log("role:" + this.empRole);
+    });
+  }
 
-	getUniqueDeviceID() {
-		this.uniqueDeviceID
-			.get()
-			.then((uuid: any) => {
-				console.log(uuid);
-				this.Deviceid = uuid;
+  getUniqueDeviceID() {
+    this.uniqueDeviceID
+      .get()
+      .then((uuid: any) => {
+        console.log(uuid);
+        this.Deviceid = uuid;
 
-				this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
-					this.userPin = device.data[0].PIN;
-					this.userID = device.data[0].UserID;
-				});
-			})
-			.catch((error: any) => {
-				console.log(error);
-				this.Deviceid = error;
-			});
-	}
+        this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
+          this.userPin = device.data[0].PIN;
+          this.userID = device.data[0].UserID;
+        });
+      })
+      .catch((error: any) => {
+        console.log(error);
+        this.Deviceid = error;
+      });
+  }
 
-	async firstSync() {
-		if (this.network.getCurrentNetworkStatus() == 1) {
-			this.log = 'You are currently not connected. Please connect to a network and try again.';
-			return;
-		}
+  async firstSync() {
+    if (this.network.getCurrentNetworkStatus() == 1) {
+      this.log =
+        "You are currently not connected. Please connect to a network and try again.";
+      return;
+    }
 
-		//loading spinner
-		const loading = await this.loadingCtrl.create({
-			message: 'Deleting data & Syncing...'
-		});
-		await loading.present();
+    //loading spinner
+    const loading = await this.loadingCtrl.create({
+      message: "Deleting data & Syncing...",
+    });
+    await loading.present();
 
-		try {
-			//import fully from mySQL
-			let imported = await this._mainService.fullImportAll();
+    try {
+      //import fully from mySQL
+      let imported = await this._mainService.fullImportAll();
 
-			// test Json object validity
-			let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
+      // test Json object validity
+      let result = await this._sqlite.isJsonValid(JSON.stringify(imported));
 
-			if (!result.result) {
-				return Promise.reject(new Error('IsJsonValid failed'));
-			}
+      if (!result.result) {
+        return Promise.reject(new Error("IsJsonValid failed"));
+      }
 
-			// full import
-			let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
+      // full import
+      let ret = await this._sqlite.importFromJson(JSON.stringify(imported));
 
-			if (ret.changes.changes === -1) {
-				return Promise.reject(new Error("ImportFromJson 'full' dataToImport failed"));
-			}
-			//connect to martis
-			const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
+      if (ret.changes.changes === -1) {
+        return Promise.reject(
+          new Error("ImportFromJson 'full' dataToImport failed")
+        );
+      }
+      //connect to martis
+      const db = await this._sqlite.createConnection(
+        "martis",
+        false,
+        "no-encryption",
+        1
+      );
 
-			//open martis
-			await db.open();
+      //open martis
+      await db.open();
 
-			//search for sync_table and create if not there
-			if (!(await db.isTable('sync_table')).result) {
-				ret = await db.createSyncTable();
-				console.log('$$$ createSyncTable ret.changes.changes in db ' + ret.changes.changes);
-			}
+      //search for sync_table and create if not there
+      if (!(await db.isTable("sync_table")).result) {
+        ret = await db.createSyncTable();
+        console.log(
+          "$$$ createSyncTable ret.changes.changes in db " + ret.changes.changes
+        );
+      }
 
-			//set sync date
-			let syncDate = new Date().toISOString();
-			await db.setSyncDate(syncDate);
+      //set sync date
+      let syncDate = new Date().toISOString();
+      await db.setSyncDate(syncDate);
 
-			// Close Connection to martis
-			await this._sqlite.closeConnection('martis');
+      // Close Connection to martis
+      await this._sqlite.closeConnection("martis");
 
-			//dismiss loader
-			await loading.dismiss();
-			this.log = 'Successfully Synced!';
+      //dismiss loader
+      await loading.dismiss();
+      this.log = "Successfully Synced!";
 
-			return Promise.resolve();
-		} catch (err) {
-			//dismiss loader
-			await loading.dismiss();
-			// Close Connection to martis
-			if (this._sqlite.sqlite.isConnection('martis')) {
-				await this._sqlite.closeConnection('martis');
-			}
-			//error message
-			this.showAlert({ head: 'Sync Failed', msg: err.message });
-			return Promise.reject(err);
-		}
-	}
+      return Promise.resolve();
+    } catch (err) {
+      //dismiss loader
+      await loading.dismiss();
+      // Close Connection to martis
+      if (this._sqlite.sqlite.isConnection("martis")) {
+        await this._sqlite.closeConnection("martis");
+      }
+      //error message
+      this.showAlert({ head: "Sync Failed", msg: err.message });
+      return Promise.reject(err);
+    }
+  }
 
-	async getTests(assetID, noOfTests) {
-		if (noOfTests == 0) return;
+  async getTests(assetID, noOfTests) {
+    if (noOfTests == 0) return;
 
-		//loading spinner
-		const loading = await this.loadingCtrl.create({
-			spinner: 'bubbles'
-		});
-		await loading.present();
+    //loading spinner
+    const loading = await this.loadingCtrl.create({
+      spinner: "bubbles",
+    });
+    await loading.present();
 
-		if (this.desktop) {
-			this.getTestsByAidSub = this.assetService.getAssignedTestsByAssetID(assetID).subscribe((data) => {
-				console.log(data.data);
-				this.tests = data.data;
-				this.repairs = [];
-				//dismiss loader
-				loading.dismiss();
-			});
-		} else {
-			try {
-				// initialize the connection
-				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
+    if (this.desktop) {
+      this.getTestsByAidSub = this.assetService
+        .getAssignedTestsByAssetID(assetID)
+        .subscribe((data) => {
+          console.log(data.data);
+          this.tests = data.data;
+          this.repairs = [];
+          //dismiss loader
+          loading.dismiss();
+        });
+    } else {
+      try {
+        // initialize the connection
+        const db = await this._sqlite.createConnection(
+          "martis",
+          false,
+          "no-encryption",
+          1
+        );
 
-				// open db martis
-				await db.open();
+        // open db martis
+        await db.open();
 
-				//fetch tests by asset id
-				let tests = await db.query(
-					`
+        //fetch tests by asset id
+        let tests = await db.query(
+          `
         SELECT t.id AS TestID, t.ManagerID, t.InspectorID, t.TestModID, (julianday(datetime(datetime(dateissued),'+' || (12/frequency) ||' month')) - julianday('now')) AS 'DueIn'
 				FROM test t
 				where (t.DateCompleted is null or t.DateCompleted = "NULL")
