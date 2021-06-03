@@ -30,13 +30,6 @@
                     disabled
                   ></ion-input>
                 </ion-item>
-                <div *ngFor="let error of errorMessage.testID">
-                  <ng-container
-                    *ngIf="testId.hasError(error.type) && (testId.dirty || testId.touched)"
-                  >
-                    <small class="error-message">{{error.message}}</small>
-                  </ng-container>
-                </div>
               </ion-col>
             </ion-row>
           </ion-card-content>

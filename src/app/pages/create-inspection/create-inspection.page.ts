@@ -51,17 +51,6 @@ export class CreateInspectionPage implements OnInit {
     return this.createInspectionForm.get("AssetID");
   }
 
-  public errorMessage = {
-    testID: [
-      { type: "required", message: "Test ID is required" },
-      { type: "pattern", message: "Must be in the form: T000" },
-    ],
-    empID: [
-      { type: "required", message: "Employee ID is required" },
-      { type: "pattern", message: "Must be in the form: EMP000" },
-    ],
-  };
-
   createInspectionForm = this.formBuilder.group({
     TestID: ["", [Validators.required, Validators.pattern("^T[0-9]{3}")]],
     AssetID: ["", [Validators.required]],
