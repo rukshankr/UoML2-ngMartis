@@ -25,7 +25,7 @@
 }
 
 .cardhead {
-	background-color: rgba(235, 235, 235, 0.699);
+	background-color: rgba(255, 218, 218, 0.699);
 }
 
 .slidecard {
@@ -38,11 +38,13 @@
 
 .zero{
 	background-color: rgb(255, 100, 100);
+	color:white;
 	border-radius: 45%;
 }
 
 .one{
 	background-color: lightseagreen;
+	color:white;
 	border-radius: 45%;
 }
 
@@ -67,4 +69,8 @@
 
 .swiper-slide, .swiper-pagination {
     bottom: 20px! important;
+}
+
+.pbar{
+	height: 10px;
 }

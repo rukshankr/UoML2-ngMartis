@@ -81,7 +81,13 @@ export class SelectionPage implements OnInit, OnDestroy {
 	mobSlideOpts = {
 		initialSlide: 0,
 		speed: 400,
-		slidesPerView: 2
+		slidesPerView: 2,
+		scrollbar: {
+			el: '.swiper-scrollbar',
+			draggable: true,
+			//clickable: true,
+			dragSize: 400
+		}
 	};
 	//to get role
 	empRole: string = '';
