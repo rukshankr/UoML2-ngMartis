@@ -48,20 +48,18 @@
                 <ion-label position="fixed"
                   >Asset ID: {{assetid? assetid : ""}}</ion-label
                 >
-                <ion-item [disabled]="assetid">
-                  <ion-select
-                    value="AssetID"
-                    interface="popover"
-                    formControlName="AssetID"
-                    [ngModel]="assetid"
+                <ion-select
+                  value="AssetID"
+                  interface="popover"
+                  formControlName="AssetID"
+                  [ngModel]="assetid"
+                >
+                  <ion-select-option
+                    *ngFor="let a of (desktop ? assets[0] : assets)"
+                    value="{{a.AssetID}}"
+                    >{{a.AssetID}}</ion-select-option
                   >
-                    <ion-select-option
-                      *ngFor="let a of (desktop ? assets[0] : assets)"
-                      value="{{a.AssetID}}"
-                      >{{a.AssetID}}</ion-select-option
-                    >
-                  </ion-select>
-                </ion-item>
+                </ion-select>
               </ion-col>
             </ion-row>
           </ion-card-content>
@@ -115,19 +113,17 @@
                 </ion-col>
                 <ion-col>
                   <ion-label position="fixed">Manager:</ion-label>
-                  <ion-item>
-                    <ion-select
-                      value="supervisorID"
-                      interface="popover"
-                      formControlName="SupervisorID"
+                  <ion-select
+                    value="supervisorID"
+                    interface="popover"
+                    formControlName="SupervisorID"
+                  >
+                    <ion-select-option
+                      *ngFor="let e of Managers"
+                      value="{{e.UserID}}"
+                      >{{e.UserID}} : {{e.Name}}</ion-select-option
                     >
-                      <ion-select-option
-                        *ngFor="let e of Managers"
-                        value="{{e.UserID}}"
-                        >{{e.UserID}} : {{e.Name}}</ion-select-option
-                      >
-                    </ion-select>
-                  </ion-item>
+                  </ion-select>
                 </ion-col>
               </ion-row>
             </div>
@@ -145,56 +141,50 @@
             <ion-row>
               <ion-col>
                 <ion-label position="fixed">Frequency:</ion-label>
-                <ion-item>
-                  <ion-select
-                    value="REGION"
-                    interface="popover"
-                    formControlName="Frequency"
-                  >
-                    <ion-select-option value="1">1Y</ion-select-option>
-                    <ion-select-option value="2">2Y</ion-select-option>
-                    <ion-select-option value="3">3Y</ion-select-option>
-                    <ion-select-option value="4">4Y</ion-select-option>
-                  </ion-select>
-                </ion-item>
+                <ion-select
+                  value="REGION"
+                  interface="popover"
+                  formControlName="Frequency"
+                >
+                  <ion-select-option value="1">1Y</ion-select-option>
+                  <ion-select-option value="2">2Y</ion-select-option>
+                  <ion-select-option value="3">3Y</ion-select-option>
+                  <ion-select-option value="4">4Y</ion-select-option>
+                </ion-select>
               </ion-col>
             </ion-row>
             <ion-row>
               <ion-col>
                 <ion-label position="fixed">Test Module:</ion-label>
-                <ion-item>
-                  <!-- <ion-input formControlName="TestModID"></ion-input> -->
-                  <ion-select
-                    value="TestModID"
-                    interface="popover"
-                    formControlName="TestModID"
+                <!-- <ion-input formControlName="TestModID"></ion-input> -->
+                <ion-select
+                  value="TestModID"
+                  interface="popover"
+                  formControlName="TestModID"
+                >
+                  <ion-select-option value="TM101"
+                    >Grounds Test</ion-select-option
                   >
-                    <ion-select-option value="TM101"
-                      >Grounds Test</ion-select-option
-                    >
-                    <ion-select-option value="TM102"
-                      >Signal Test</ion-select-option
-                    >
-                  </ion-select>
-                </ion-item>
+                  <ion-select-option value="TM102"
+                    >Signal Test</ion-select-option
+                  >
+                </ion-select>
               </ion-col>
             </ion-row>
             <ion-row>
               <ion-col>
                 <ion-label position="fixed">Priority:</ion-label>
-                <ion-item>
-                  <ion-select
-                    value="REGION"
-                    interface="popover"
-                    formControlName="Priority"
-                  >
-                    <ion-select-option value="1">1</ion-select-option>
-                    <ion-select-option value="2">2</ion-select-option>
-                    <ion-select-option value="3">3</ion-select-option>
-                    <ion-select-option value="4">4</ion-select-option>
-                    <ion-select-option value="5">5</ion-select-option>
-                  </ion-select>
-                </ion-item>
+                <ion-select
+                  value="REGION"
+                  interface="popover"
+                  formControlName="Priority"
+                >
+                  <ion-select-option value="1">1</ion-select-option>
+                  <ion-select-option value="2">2</ion-select-option>
+                  <ion-select-option value="3">3</ion-select-option>
+                  <ion-select-option value="4">4</ion-select-option>
+                  <ion-select-option value="5">5</ion-select-option>
+                </ion-select>
               </ion-col>
             </ion-row>
           </ion-card-content>

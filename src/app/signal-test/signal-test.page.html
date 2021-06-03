@@ -140,10 +140,11 @@
                     <ion-label position="fixed">Inspector ID:</ion-label>
                     <ion-item>
                       <ion-input
+                        [ngModel]="EmpID"
                         formControlName="InspectorID"
                         autofocus="true"
-                        enterkeyhint="next"
                         type="text"
+                        disabled
                       ></ion-input>
                     </ion-item>
                   </div>

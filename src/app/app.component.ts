@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
   public Deviceid;
   public EmpId;
 
-  UserID: BehaviorSubject<string> = new BehaviorSubject("EMP100");
+  UserID: BehaviorSubject<string> = new BehaviorSubject("EMP102");
   UserIDsub = this.UserID.asObservable();
   EmpRole: BehaviorSubject<string> = new BehaviorSubject("Inspector");
   UserRolesub = this.EmpRole.asObservable();
@@ -52,6 +52,7 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.userRole = this.EmpRole.value;
     this.desktop =
       this.platform.is("mobile") ||
       this.platform.is("android") ||
@@ -60,16 +61,12 @@ export class AppComponent implements OnInit {
         : true;
     if (this.desktop) {
       this.isAuthenticated = await this.oktaAuth.isAuthenticated();
-      console.log(this.isAuthenticated);
       const userClaims = await this.oktaAuth
         .getUser()
         .then((data) => {
-          console.log(data);
           this.userRole = data.family_name.split(" ")[0];
           this.EmpRole.next(this.userRole);
-          console.log("split 0 role :" + this.userRole);
           this.EmpId = data.family_name.split(" ")[2];
-          console.log("split 2 id : " + this.EmpId);
           this.UserID.next(this.EmpId);
           this.userName = data.given_name;
         })
@@ -88,7 +85,6 @@ export class AppComponent implements OnInit {
     this.uniqueDeviceID
       .get()
       .then((uuid: any) => {
-        console.log(uuid);
         this.Deviceid = uuid;
 
         this.deviceAuth.getDevice(this.Deviceid).subscribe((device) => {
@@ -103,7 +99,6 @@ export class AppComponent implements OnInit {
         });
       })
       .catch((error: any) => {
-        console.log(error);
         this.Deviceid = error;
       });
   }
