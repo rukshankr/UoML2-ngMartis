@@ -249,7 +249,8 @@ export class SelectionPage implements OnInit, OnDestroy {
 							}
 						}
 					}
-				]
+				],
+				backdropDismiss: false
 			});
 			(await alert).present();
 		}
