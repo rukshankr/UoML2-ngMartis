@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { SqliteService } from '../services/sqlite.service';
 import { DatePipe } from '@angular/common';
 import { delay, throwIfEmpty } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-grounds-test',
@@ -18,6 +19,9 @@ export class GroundsTestPage implements OnInit {
 	assetid: String;
 	testid: String;
 	desktop: boolean;
+
+	SetResultSub: Subscription;
+	GetLatestTest: Subscription;
 
 	//confirm date
 	confirm: boolean = false;
@@ -32,8 +36,8 @@ export class GroundsTestPage implements OnInit {
 		AssetID: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
 		TestID: [ '', [ Validators.required, Validators.pattern('^T[0-9]{3}'), Validators.maxLength(4) ] ],
 		comments: [ '' ],
-		Result: [ '' ],
-		DateCompleted: [ '' ],
+		Result: [ '', [ Validators.required ] ],
+		DateCompleted: [ '', [ Validators.required ] ],
 		InspectorID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}'), Validators.maxLength(6) ] ]
 	});
 
@@ -70,12 +74,11 @@ export class GroundsTestPage implements OnInit {
 		}
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
-			
 		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
 		}
 		if (this.testid == null) {
-			this.getLatestTestIncrement();		
+			this.getLatestTestIncrement();
 		}
 	}
 
@@ -90,7 +93,7 @@ export class GroundsTestPage implements OnInit {
 		console.log('Page Saved', this.opost);
 		if (this.desktop) {
 			if (this.nonScheduleTest == false) {
-				this.setresult.patch(this.opost).subscribe((data) => {
+				this.SetResultSub = this.setresult.patch(this.opost).subscribe((data) => {
 					console.log('Post method success?: ', data);
 					if (data) {
 						this.showAlert(true);
@@ -105,7 +108,7 @@ export class GroundsTestPage implements OnInit {
 				console.log('Page Saved', this.opost);
 				const data1 = await this.setresult.post(this.opost).toPromise();
 				console.log(data1);
-				this.setresult.patch(this.opost).subscribe((data) => {
+				this.SetResultSub = this.setresult.patch(this.opost).subscribe((data) => {
 					console.log('Post method 2 success?: ', data);
 					if (data) {
 						this.showAlert(true);
@@ -199,50 +202,57 @@ export class GroundsTestPage implements OnInit {
 			.then((res) => res.present());
 	}
 
-	async getLatestTestIncrement(){
-		if(!this.desktop){
-			try{
+	async getLatestTestIncrement() {
+		if (!this.desktop) {
+			try {
 				//connect
 				const db = await this._sqlite.createConnection('martis', false, 'no-encryption', 1);
-				
+
 				//open
 				await db.open();
-				
+
 				//query
-				let sqlcmd: string ="SELECT id FROM test ORDER BY id DESC limit 1;";
+				let sqlcmd: string = 'SELECT id FROM test ORDER BY id DESC limit 1;';
 				let ret: any = await db.query(sqlcmd);
-	
+
 				//check insert
 				if (ret.values.length === 0) {
 					return Promise.reject(new Error('Query failed'));
 				}
-				
-				console.log("last asset: "+ret.values[0].id);
-	
+
+				console.log('last asset: ' + ret.values[0].id);
+
 				//disconnect
 				await this._sqlite.closeConnection('martis');
-	
+
 				this.testid = ret.values[0].id;
 				let num = parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
 				this.testid = this.testid[0] + num.toString();
-	
+
 				return Promise.resolve();
-			}
-			catch(err){
+			} catch (err) {
 				//disconnect martis
-				if(this._sqlite.sqlite.isConnection("martis")){
+				if (this._sqlite.sqlite.isConnection('martis')) {
 					await this._sqlite.closeConnection('martis');
 				}
 				return Promise.reject();
 			}
-		}
-		else{
-			this.setresult.getLatestTest().subscribe((data) => {
+		} else {
+			this.GetLatestTest = this.setresult.getLatestTest().subscribe((data) => {
 				this.testid = data.data[0].TestID;
 				let num = parseInt(this.testid[1] + this.testid[2] + this.testid[3]) + 1;
 				this.testid = this.testid[0] + num.toString();
 				console.log(this.testid);
 			});
+		}
+	}
+
+	ngOnDestroy(): void {
+		if (this.GetLatestTest) {
+			this.GetLatestTest.unsubscribe();
+		}
+		if (this.SetResultSub) {
+			this.SetResultSub.unsubscribe();
 		}
 	}
 

@@ -7,6 +7,7 @@ import { DatePipe } from '@angular/common';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { Subscription } from 'rxjs';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -32,8 +33,8 @@ export class ReportGenerationPage implements OnInit {
 				Validators.minLength(6)
 			]
 		],
-		initialDate: [ '' ],
-		finalDate: [ '' ]
+		initialDate: [ '', [ Validators.required ] ],
+		finalDate: [ '', [ Validators.required ] ]
 	});
 
 	constructor(
@@ -48,6 +49,9 @@ export class ReportGenerationPage implements OnInit {
 	lst: any = [];
 	assets = [];
 	users: any = [];
+	GetReportSub: Subscription;
+	GetEmpSub: Subscription;
+	ReaderSub: Subscription;
 
 	doRefresh(event) {
 		window.location.reload();
@@ -67,7 +71,7 @@ export class ReportGenerationPage implements OnInit {
 				.transform(this.opost.finalDate, 'yyyy-MM-dd HH:mm:ss', 'utc')
 				.toString();
 			console.log('Page Saved', this.opost);
-			this.createReport.post(this.opost).subscribe((data) => {
+			this.GetReportSub = this.createReport.post(this.opost).subscribe((data) => {
 				console.log('Post method success?: ', data);
 				if (data) {
 					this.lst = data;
@@ -165,19 +169,26 @@ export class ReportGenerationPage implements OnInit {
 	// }
 
 	loadLocalAssetToBase64() {
-		this.http.get('../assets/1200px-Wabtec_Logo.svg.png', { responseType: 'blob' }).subscribe((res) => {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				this.logoData = reader.result;
-			};
-			reader.readAsDataURL(res);
-		});
+		this.ReaderSub = this.http
+			.get('../assets/1200px-Wabtec_Logo.svg.png', { responseType: 'blob' })
+			.subscribe((res) => {
+				const reader = new FileReader();
+				reader.onloadend = () => {
+					this.logoData = reader.result;
+				};
+				reader.readAsDataURL(res);
+			});
 	}
 
 	downloadPdf() {
 		let logo = { image: this.logoData, width: 100 };
 		const docDefinition = {
-			watermark: { text: 'M.A.R.T.I.S', color: 'blue', opacity: 0.1, bold: true },
+			watermark: {
+				text: 'M.A.R.T.I.S',
+				color: 'blue',
+				opacity: 0.1,
+				bold: true
+			},
 			content: [
 				{
 					columns: [
@@ -239,7 +250,10 @@ export class ReportGenerationPage implements OnInit {
 						}
 					]
 				},
-				{ text: '----------------------------------------------------------------------', style: 'header' },
+				{
+					text: '----------------------------------------------------------------------',
+					style: 'header'
+				},
 				{
 					columns: [
 						{
@@ -316,7 +330,7 @@ export class ReportGenerationPage implements OnInit {
 			await this.getEmpsAssets();
 		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
-			this.createReport.getEmps().subscribe((data) => {
+			this.GetEmpSub = this.createReport.getEmps().subscribe((data) => {
 				this.users = Array.of(data.data);
 			});
 		}
@@ -351,6 +365,21 @@ export class ReportGenerationPage implements OnInit {
 			//error message
 			await this.showAlert(false, err.message);
 			return Promise.reject(err);
+		}
+	}
+
+	ngOnDestroy(): void {
+		if (this.GetEmpSub) {
+			this.GetEmpSub.unsubscribe();
+			console.log('Done');
+		}
+		if (this.GetReportSub) {
+			this.GetReportSub.unsubscribe();
+			console.log('Done');
+		}
+		if (this.ReaderSub) {
+			this.ReaderSub.unsubscribe();
+			console.log('Done');
 		}
 	}
 }

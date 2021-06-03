@@ -60,14 +60,22 @@
           </ion-item>
           <ion-item
             routerLink="/grounds-test"
-            *ngIf="userRole == 'Manager' || userRole == 'Engineer'"
+            *ngIf="
+              userRole == 'Manager' ||
+              userRole == 'Engineer' ||
+              userRole == 'Inspector'
+            "
           >
             <ion-icon name="close-circle" slot="start"></ion-icon>
             Grounds Tests
           </ion-item>
           <ion-item
             routerLink="/signal-test"
-            *ngIf="userRole == 'Manager' || userRole == 'Engineer'"
+            *ngIf="
+              userRole == 'Manager' ||
+              userRole == 'Engineer' ||
+              userRole == 'Inspector'
+            "
           >
             <ion-icon name="megaphone" slot="start"></ion-icon>
             Signal Tests
@@ -85,13 +93,6 @@
           >
             <ion-icon name="list" slot="start"></ion-icon>
             Repairs List</ion-item
-          >
-          <ion-item
-            routerLink="/repair-form"
-            *ngIf="userRole == 'Manager' || userRole == 'Inspector'"
-          >
-            <ion-icon name="add" slot="start"></ion-icon>
-            Create Repair</ion-item
           >
           <ion-item
             routerLink="/report-generation"

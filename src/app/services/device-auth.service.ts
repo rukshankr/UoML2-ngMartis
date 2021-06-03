@@ -10,7 +10,7 @@ export class DeviceAuthService {
 
   getDevice(DeviceId): Observable<any> {
     return this.http.post(
-      "https://martiswabtec.herokuapp.com/device/getDeviceByID",
+      "https://martisapiversion1.herokuapp.com/device/getDeviceByID",
       {
         deviceId: DeviceId,
       }
@@ -19,7 +19,7 @@ export class DeviceAuthService {
 
   setPin(DeviceId, DevicePin, UserID): Observable<any> {
     return this.http.post(
-      "https://martiswabtec.herokuapp.com/device/setDevicePinByID",
+      "https://martisapiversion1.herokuapp.com/device/setDevicePinByID",
       {
         deviceId: DeviceId,
         devicePin: DevicePin,
@@ -30,7 +30,7 @@ export class DeviceAuthService {
 
   getUserNameAndRole(EmpID): Observable<any> {
     return this.http.post(
-      "https://martiswabtec.herokuapp.com/user/getUserNameAndRole",
+      "https://martisapiversion1.herokuapp.com/user/getUserNameAndRole",
       {
         EmpId: EmpID,
       }

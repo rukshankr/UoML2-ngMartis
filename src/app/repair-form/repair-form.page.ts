@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { CreateRepairService } from 'src/app/services/create-repair.service';
 import { SqliteService } from '../services/sqlite.service';
+import { AppComponent } from '../app.component';
+import { Subject, Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-repair-form',
@@ -22,6 +24,9 @@ export class RepairFormPage implements OnInit {
 	opost = new Posts();
 	log: string = '';
 
+	GetUserIDSub: Subscription;
+	SetRepairSub: Subscription;
+
 	//platform
 	desktop: boolean = true;
 
@@ -31,10 +36,10 @@ export class RepairFormPage implements OnInit {
 	createRepairForm = this.formBuilder.group({
 		AssetId: [ '', [ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4) ] ],
 		EngineerID: [ '', [ Validators.required, Validators.pattern('^EMP[0-9]{3}') ] ],
-		CreatedDate: [ '' ],
-		CompletedDate: [ '' ],
+		CreatedDate: [ '', [ Validators.required ] ],
+		CompletedDate: [ '', [ Validators.required ] ],
 		comments: [ '' ],
-		Result: [ '' ]
+		Result: [ '', [ Validators.required ] ]
 	});
 
 	get createdDate() {
@@ -46,12 +51,14 @@ export class RepairFormPage implements OnInit {
 	}
 
 	ngOnInit() {
+		this.GetUserIDSub = this.app.UserIDsub.subscribe((data) => {
+			this.engineerid = data;
+			console.log(this.engineerid);
+		});
 		console.log(this.route.snapshot.params.assetid);
 		let date = new Date(this.route.snapshot.params.createddate);
 		console.log(date);
 		this.assetid = this.route.snapshot.params.assetid;
-		this.engineerid = this.route.snapshot.params.engineerid;
-		this.comments = this.route.snapshot.params.comments;
 		this.createddate = this.route.snapshot.params.createddate;
 		if (this.plt.is('mobile') || this.plt.is('android') || this.plt.is('ios')) {
 			this.desktop = false;
@@ -67,7 +74,8 @@ export class RepairFormPage implements OnInit {
 		private _sqlite: SqliteService,
 		private route: ActivatedRoute,
 		private datePipe: DatePipe,
-		private plt: Platform
+		private plt: Platform,
+		private app: AppComponent
 	) {}
 
 	async onSave() {
@@ -87,13 +95,14 @@ export class RepairFormPage implements OnInit {
 				await db.open();
 				console.log(
 					' // db opened // ComD8:' +
-					this.opost.CreatedDate +
-					', comments:' +
-					this.opost.comments +
-					', id:' +
-					this.opost.AssetId +
-					', completedD8:' +
-					this.completedDate);
+						this.opost.CreatedDate +
+						', comments:' +
+						this.opost.comments +
+						', id:' +
+						this.opost.AssetId +
+						', completedD8:' +
+						this.completedDate
+				);
 				//update
 				let sqlcmd: string =
 					"UPDATE repair SET CompletedDate = ?, comments = ?, last_modified = (strftime('%s', 'now')) WHERE id = ? AND CreatedDate = ?";
@@ -123,21 +132,20 @@ export class RepairFormPage implements OnInit {
 				return Promise.resolve();
 			} catch (err) {
 				// Close Connection MyDB
-				if(this._sqlite.sqlite.isConnection("martis")){
+				if (this._sqlite.sqlite.isConnection('martis')) {
 					await this._sqlite.closeConnection('martis');
 				}
-				
+
 				this.log += "\n> closeConnection 'martis' successful\n";
 				//error message
 				return await this.showAlert(false, err.message, true);
 			}
-			
 		}
 		this.opost.CreatedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'utc').toString();
 		this.opost.CompletedDate = this.datePipe.transform(this.opost.CompletedDate, 'yyyy-MM-dd HH:mm:ss');
 		console.log(this.opost.CompletedDate);
 		console.log('Page Saved', this.opost);
-		this.setRepair.put(this.opost).subscribe((data) => {
+		this.SetRepairSub = this.setRepair.put(this.opost).subscribe((data) => {
 			console.log('Post method success?: ', data);
 			if (data) {
 				this.showAlert(true);
@@ -164,6 +172,15 @@ export class RepairFormPage implements OnInit {
 				]
 			})
 			.then((res) => res.present());
+	}
+
+	ngOnDestroy(): void {
+		if (this.GetUserIDSub) {
+			this.GetUserIDSub.unsubscribe();
+		}
+		if (this.SetRepairSub) {
+			this.SetRepairSub.unsubscribe();
+		}
 	}
 
 	confirmer() {

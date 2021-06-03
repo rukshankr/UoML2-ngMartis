@@ -11,27 +11,11 @@ import { AutoCompleteService } from "ionic4-auto-complete";
 @Injectable({
   providedIn: "root",
 })
-export class CreateReportEmpidService implements AutoCompleteService {
+export class CreateReportEmpidService {
   labelAttribute = "name";
   formValueAttribute = "numericCode";
 
   constructor(private http: HttpClient) {}
-
-  getResults(keyword: string) {
-    if (!keyword) {
-      return false;
-    }
-
-    return this.http
-      .get("https://restcountries.eu/rest/v2/name/" + keyword)
-      .pipe(
-        map((result: any[]) => {
-          return result.filter((item) => {
-            return item.name.toLowerCase().startsWith(keyword.toLowerCase());
-          });
-        })
-      );
-  }
 
   post(opost: Posts): Observable<any> {
     return this.http.post(
@@ -42,7 +26,7 @@ export class CreateReportEmpidService implements AutoCompleteService {
 
   getEmps(): Observable<any> {
     return this.http.get(
-      "https://martisapiversion1.herokuapp.com/user/getEmps"
+      "https://martisapiversion1.herokuapp.com/user/getInspectors"
     );
   }
 

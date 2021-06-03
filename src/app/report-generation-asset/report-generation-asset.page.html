@@ -2,7 +2,11 @@
   <ion-toolbar color="danger">
     <ion-title>Asset Report Generation</ion-title>
     <ion-buttons slot="start">
-      <ion-menu-button menu="first" aria-disabled="false" aria-hidden="false"></ion-menu-button>
+      <ion-menu-button
+        menu="first"
+        aria-disabled="false"
+        aria-hidden="false"
+      ></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -12,13 +16,15 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <div>
-     <ion-row>
+    <ion-row>
       <ion-col>
-        <ion-segment 
-          color="danger"
-          value="asset">
-          <ion-segment-button  [routerLink]="['/','report-generation']" value="inspector">Inspector</ion-segment-button>
-          <ion-segment-button value="asset" >Asset</ion-segment-button>
+        <ion-segment color="danger" value="asset">
+          <ion-segment-button
+            [routerLink]="['/','report-generation']"
+            value="inspector"
+            >Inspector</ion-segment-button
+          >
+          <ion-segment-button value="asset">Asset</ion-segment-button>
         </ion-segment>
       </ion-col>
     </ion-row>
@@ -26,67 +32,88 @@
 
   <ion-grid className="ion-text-center ion-margin">
     <form [formGroup]="createReportForm" (ngSubmit)="onSave()">
-    <ion-row>
-      <ion-col>
-        <ion-card>
-          <ion-card-header mode="ios" className="cardhead">
-            <ion-card-title>Search for Reports</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-row>
-              <ion-col>
-                <ion-item>
-                  <ion-label position="floating">Asset ID: </ion-label>
-                  <ion-select
-                    value="assetID"
-                    interface="popover"
-                    formControlName="assetID"
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-card-header mode="ios" className="cardhead">
+              <ion-card-title>Search for Reports</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating">Asset ID: </ion-label>
+                    <ion-select
+                      value="assetID"
+                      interface="popover"
+                      formControlName="assetID"
+                    >
+                      <ion-select-option
+                        *ngFor="let e of (desktop ? assets[0] : assets)"
+                        value="{{e.AssetID}}"
+                        >{{e.AssetID}} : {{e.Region}}</ion-select-option
+                      >
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label>From:</ion-label>
+                    <ion-input
+                      formControlName="initialDate"
+                      type="date"
+                      id="initialDate"
+                      min="2019-01-01"
+                      max="2029-12-31"
+                      placeholder="Any"
+                    ></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label>To:</ion-label>
+                    <ion-input
+                      formControlName="finalDate"
+                      type="date"
+                      id="finalDate"
+                      min="2019-01-01"
+                      max="2029-12-31"
+                      placeholder="Any"
+                    ></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-button
+                    type="submit"
+                    color="danger"
+                    [disabled]="!createReportForm.valid"
                   >
-                    <ion-select-option *ngFor="let e of (desktop ? assets[0] : assets)"
-                    value={{e.AssetID}}>{{e.AssetID}} : {{e.Region}}</ion-select-option>
-                  </ion-select>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
-                <ion-item>
-                  <ion-label>From:</ion-label>
-                  <ion-input formControlName="initialDate" type="date" id="initialDate" min="2019-01-01" max="2029-12-31" placeholder="Any"></ion-input>
-                </ion-item>
-              </ion-col>
-              <ion-col>
-                <ion-item>                  
-                  <ion-label>To:</ion-label>
-                  <ion-input formControlName="finalDate" type="date" id="finalDate"  min="2019-01-01" max="2029-12-31" placeholder="Any"></ion-input>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
-                <ion-button type="submit" color="danger">
-                  Search
-                </ion-button>
-              </ion-col>
-            </ion-row>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>    
-    </form >
+                    Search
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </form>
 
     <ion-row>
       <ion-col>
         <ion-card>
           <ion-card-header mode="ios" className="cardhead">
-            <ion-card-title>
-              Asset Details
-            </ion-card-title>
+            <ion-card-title> Asset Details </ion-card-title>
           </ion-card-header>
-          <ion-card-content *ngFor="let item of (desktop ? lst[0]: lst); let i = index">
+          <ion-card-content
+            *ngFor="let item of (desktop ? lst[0]: lst); let i = index"
+          >
             <ion-row *ngIf="i== 0">
               <ion-col>
-                <ion-label  position="fixed">
+                <ion-label position="fixed">
                   Asset's Region: {{item.Region}}
                 </ion-label>
               </ion-col>
@@ -97,21 +124,21 @@
                   GPS Latitude: {{item.GPSLatitude}}
                 </ion-label>
               </ion-col>
-            </ion-row> 
+            </ion-row>
             <ion-row *ngIf="i== 0">
               <ion-col>
                 <ion-label position="fixed">
                   GPS Longitude: {{item.GPSLongitude}}
                 </ion-label>
               </ion-col>
-            </ion-row>   
+            </ion-row>
             <ion-row *ngIf="i== 0">
               <ion-col>
                 <ion-label position="fixed">
-                 Asset Status: {{item.Status}}
+                  Asset Status: {{item.Status}}
                 </ion-label>
               </ion-col>
-            </ion-row>                      
+            </ion-row>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -140,29 +167,40 @@
           <ion-card-content *ngFor="let item of (desktop ? lst[0] : lst)">
             <ion-row>
               <ion-col>
-                <ion-label>{{item.TestID}}</ion-label> 
+                <ion-label>{{item.TestID}}</ion-label>
               </ion-col>
               <ion-col>
-                <ion-label>{{item.comments}}</ion-label> 
+                <ion-label>{{item.comments}}</ion-label>
               </ion-col>
               <ion-col>
-                <ion-label>{{item.Result}}</ion-label> 
+                <ion-label>{{item.Result}}</ion-label>
               </ion-col>
-            </ion-row>            
+            </ion-row>
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-button color="danger" size="large" expand="block" (click)="downloadPdf()">
+        <ion-button
+          color="danger"
+          size="large"
+          expand="block"
+          (click)="downloadPdf()"
+          [disabled]="(lst.length == 0)"
+        >
           Download as PDF
         </ion-button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-button color="primary" size="large" expand="block">
+        <ion-button
+          color="primary"
+          size="large"
+          expand="block"
+          [disabled]="(lst.length == 0)"
+        >
           Send to email
         </ion-button>
       </ion-col>

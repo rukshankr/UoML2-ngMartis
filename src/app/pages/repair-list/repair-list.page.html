@@ -25,14 +25,12 @@
           <ion-col *ngFor="let item of repairs">
             <ion-card>
               <ion-card-header class="cardhead">
-                <ion-card-title>
-                  AssetId:{{item.AssetID}}
-                </ion-card-title>
+                <ion-card-title> AssetId:{{item.AssetID}} </ion-card-title>
               </ion-card-header>
               <ion-card-content>
                 <ion-list>
                   <ion-item>
-                    <ion-label>Distance:{{item.distance}}m</ion-label>
+                    <ion-label>Distance:{{item.distance}} km</ion-label>
                   </ion-item>
                   <ion-item>
                     <ion-label>Created Date:{{item.CreatedDate}}</ion-label>
@@ -55,14 +53,12 @@
           <ion-col *ngFor="let item of lst[0]">
             <ion-card>
               <ion-card-header class="cardhead">
-                <ion-card-title>
-                  AssetID:{{item.AssetID}}
-                </ion-card-title>
+                <ion-card-title> AssetID:{{item.AssetID}} </ion-card-title>
               </ion-card-header>
               <ion-card-content>
                 <ion-list>
                   <ion-item>
-                    <ion-label>Distance:{{item.distance}}</ion-label>
+                    <ion-label>Distance:{{item.distance}} km</ion-label>
                   </ion-item>
                   <ion-item>
                     <ion-label>Created Date: {{this.datePipe.transform(item.CreatedDate, 'MMM d, y')}}</ion-label>

@@ -7,6 +7,7 @@ import { DatePipe } from '@angular/common';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { Subscription } from 'rxjs';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -22,13 +23,17 @@ export class ReportGenerationAssetPage implements OnInit {
 	photoPreview = null;
 	logoData = null;
 
+	GetReportSub: Subscription;
+	GetAssetSub: Subscription;
+	ReaderSub: Subscription;
+
 	createReportForm = this.formBuilder.group({
 		assetID: [
 			'',
-			[ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(6), Validators.minLength(6) ]
+			[ Validators.required, Validators.pattern('^A[0-9]{3}'), Validators.maxLength(4), Validators.minLength(4) ]
 		],
-		initialDate: [ '' ],
-		finalDate: [ '' ]
+		initialDate: [ '', [ Validators.required ] ],
+		finalDate: [ '', [ Validators.required ] ]
 	});
 
 	constructor(
@@ -54,7 +59,7 @@ export class ReportGenerationAssetPage implements OnInit {
 				.transform(this.opost.finalDate, 'yyyy-MM-dd HH:mm:ss', 'utc')
 				.toString();
 			console.log('Page Saved', this.opost);
-			this.createReport.getAssetReport(this.opost).subscribe((data) => {
+			this.GetReportSub = this.createReport.getAssetReport(this.opost).subscribe((data) => {
 				console.log('Post method success?: ', data);
 				if (data) {
 					this.lst = data;
@@ -140,27 +145,34 @@ export class ReportGenerationAssetPage implements OnInit {
 			await this.getEmpsAssets();
 		} else if (this.plt.is('desktop')) {
 			this.desktop = true;
-			this.createReport.getAssets().subscribe((data) => {
+			this.GetAssetSub = this.createReport.getAssets().subscribe((data) => {
 				this.assets = Array.of(data.data);
 			});
 		}
 	}
 
 	loadLocalAssetToBase64() {
-		this.http.get('./assets/1200px-Wabtec_Logo.svg.png', { responseType: 'blob' }).subscribe((res) => {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				this.logoData = reader.result;
-			};
-			reader.readAsDataURL(res);
-		});
+		this.ReaderSub = this.http
+			.get('./assets/1200px-Wabtec_Logo.svg.png', { responseType: 'blob' })
+			.subscribe((res) => {
+				const reader = new FileReader();
+				reader.onloadend = () => {
+					this.logoData = reader.result;
+				};
+				reader.readAsDataURL(res);
+			});
 	}
 
 	downloadPdf() {
 		let logo = { image: this.logoData, width: 100 };
 
 		const docDefinition = {
-			watermark: { text: 'M.A.R.T.I.S', color: 'blue', opacity: 0.1, bold: true },
+			watermark: {
+				text: 'M.A.R.T.I.S',
+				color: 'blue',
+				opacity: 0.1,
+				bold: true
+			},
 			content: [
 				{
 					columns: [
@@ -222,7 +234,10 @@ export class ReportGenerationAssetPage implements OnInit {
 						}
 					]
 				},
-				{ text: '----------------------------------------------------------------------', style: 'header' },
+				{
+					text: '----------------------------------------------------------------------',
+					style: 'header'
+				},
 				{
 					columns: [
 						{
@@ -322,6 +337,21 @@ export class ReportGenerationAssetPage implements OnInit {
 			//error message
 			await this.showAlert(false, err.message);
 			return Promise.reject(err);
+		}
+	}
+
+	ngOnDestroy(): void {
+		if (this.GetAssetSub) {
+			this.GetAssetSub.unsubscribe();
+			console.log('Done');
+		}
+		if (this.GetReportSub) {
+			this.GetReportSub.unsubscribe();
+			console.log('Done');
+		}
+		if (this.ReaderSub) {
+			this.ReaderSub.unsubscribe();
+			console.log('Done');
 		}
 	}
 }

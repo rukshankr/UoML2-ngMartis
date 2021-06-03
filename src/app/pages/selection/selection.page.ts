@@ -18,7 +18,6 @@ import { Subscription } from 'rxjs';
 	styleUrls: [ './selection.page.scss' ]
 })
 export class SelectionPage implements OnInit, OnDestroy {
-
 	log: string = '';
 	username: string;
 	userPin;
@@ -30,7 +29,7 @@ export class SelectionPage implements OnInit, OnDestroy {
 	userID;
 
 	//subscriptions
-	mainDashboardSub : Subscription;
+	mainDashboardSub: Subscription;
 	networkSub: Subscription;
 	setAssetAsFunctionalSub: Subscription;
 	getTestsByAidSub: Subscription;
@@ -72,8 +71,8 @@ export class SelectionPage implements OnInit, OnDestroy {
 		pagination: {
 			el: '.swiper-pagination',
 			clickable: true,
-			renderBullet: function (index, className) {
-			  return '<span class="' + className + '">' + (index + 1) + '</span>';
+			renderBullet: function(index, className) {
+				return '<span class="' + className + '">' + (index + 1) + '</span>';
 			}
 		}
 	};
@@ -151,7 +150,7 @@ export class SelectionPage implements OnInit, OnDestroy {
 
 		this.mainDashboardSub = this.assetService.getTestNoForAssets(this.page).subscribe((data) => {
 			this.nextpg = data.next ? data.next.page : null;
-			
+
 			this.table = this.table.concat(data.results);
 			console.log(this.table);
 
@@ -212,7 +211,7 @@ export class SelectionPage implements OnInit, OnDestroy {
 		}
 	}
 
-	//PIN errror alert
+	//PIN error alert
 	async showError(data: any) {
 		let alert = this.atrCtrl.create({
 			message: data,
@@ -242,25 +241,6 @@ export class SelectionPage implements OnInit, OnDestroy {
 					}
 				],
 				buttons: [
-					{
-						text: 'Forgot password',
-						role: 'cancel',
-						handler: async (data) => {
-							console.log('You forgot password');
-							let alert = this.atrCtrl.create({
-								message: 'Forgot Password?',
-								subHeader: 'Enter the email',
-								inputs: [
-									{
-										name: 'email',
-										placeholder: 'Enter email'
-									}
-								],
-								buttons: [ 'OK' ]
-							});
-							(await alert).present();
-						}
-					},
 					{
 						text: 'Login',
 						handler: (data) => {
@@ -548,17 +528,17 @@ export class SelectionPage implements OnInit, OnDestroy {
 		}
 	}
 
-	ngOnDestroy(){
-		if(this.mainDashboardSub){
+	ngOnDestroy() {
+		if (this.mainDashboardSub) {
 			this.mainDashboardSub.unsubscribe();
 		}
-		if(this.networkSub){
+		if (this.networkSub) {
 			this.networkSub.unsubscribe();
 		}
-		if(this.setAssetAsFunctionalSub){
+		if (this.setAssetAsFunctionalSub) {
 			this.setAssetAsFunctionalSub.unsubscribe();
 		}
-		if(this.getTestsByAidSub){
+		if (this.getTestsByAidSub) {
 			this.getTestsByAidSub.unsubscribe();
 		}
 	}
