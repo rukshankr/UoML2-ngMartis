@@ -276,7 +276,7 @@ export class ReportGenerationPage implements OnInit {
 						},
 						{
 							width: '45%',
-							text: 'Test describtion'
+							text: 'Test description'
 						},
 						{
 							width: '25%',

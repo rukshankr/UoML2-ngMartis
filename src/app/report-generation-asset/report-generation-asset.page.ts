@@ -165,14 +165,8 @@ export class ReportGenerationAssetPage implements OnInit {
 
 	downloadPdf() {
 		let logo = { image: this.logoData, width: 100 };
-
 		const docDefinition = {
-			watermark: {
-				text: 'M.A.R.T.I.S',
-				color: 'blue',
-				opacity: 0.1,
-				bold: true
-			},
+			watermark: { text: 'M.A.R.T.I.S', color: 'blue', opacity: 0.1, bold: true },
 			content: [
 				{
 					columns: [
@@ -188,7 +182,7 @@ export class ReportGenerationAssetPage implements OnInit {
 					columns: [
 						{
 							width: '50%',
-							text: 'Inspector Details',
+							text: 'Asset Details',
 							style: 'subheader'
 						},
 
@@ -201,23 +195,11 @@ export class ReportGenerationAssetPage implements OnInit {
 				{
 					columns: [
 						{
-							width: '50%',
-							text: 'Employee Name :'
-						},
-						{
-							width: '50%',
-							text: this.lst[0][0].Name
-						}
-					]
-				},
-				{
-					columns: [
-						{
-							width: '50%',
+							width: '20%',
 							text: 'Region :'
 						},
 						{
-							width: '50%',
+							width: '10%',
 							text: this.lst[0][0].Region
 						}
 					]
@@ -225,19 +207,37 @@ export class ReportGenerationAssetPage implements OnInit {
 				{
 					columns: [
 						{
-							width: '50%',
-							text: 'Email :'
+							width: '20%',
+							text: 'GPS Latitude:'
 						},
 						{
-							width: '50%',
-							text: this.lst[0][0].Email
+							width: '11%',
+							text: this.lst[0][0].GPSLatitude
+						},
+
+						{
+							width: '20%',
+							text: '  GPS Longitude:'
+						},
+						{
+							width: '12%',
+							text: this.lst[0][0].GPSLongitude
 						}
 					]
 				},
 				{
-					text: '----------------------------------------------------------------------',
-					style: 'header'
+					columns: [
+						{
+							width: '20%',
+							text: 'Asset Status:'
+						},
+						{
+							width: '11%',
+							text: this.lst[0][0].Status
+						}
+					]
 				},
+				{ text: '----------------------------------------------------------------------', style: 'header' },
 				{
 					columns: [
 						{
@@ -255,16 +255,24 @@ export class ReportGenerationAssetPage implements OnInit {
 				{
 					columns: [
 						{
-							width: '25%',
-							text: 'Test No '
+							width: '20%',
+							text: 'Test No ',
+							style: 'topic'
 						},
 						{
-							width: '45%',
-							text: 'Test describtion'
+							width: '40%',
+							text: 'Test description',
+							style: 'topic'
 						},
 						{
-							width: '25%',
-							text: 'Status'
+							width: '15%',
+							text: 'Employee ID',
+							style: 'topic'
+						},
+						{
+							width: '20%',
+							text: 'Status',
+							style: 'topic'
 						}
 					]
 				},
@@ -272,16 +280,21 @@ export class ReportGenerationAssetPage implements OnInit {
 					return {
 						columns: [
 							{
-								width: '25%',
+								width: '20%',
 
 								text: item.TestID
 							},
 							{
-								width: '45%',
+								width: '40%',
 								text: item.comments
 							},
+
 							{
-								width: '25%',
+								width: '15%',
+								text: item.InspectorID
+							},
+							{
+								width: '20%',
 								text: item.Result
 							}
 						]
@@ -298,6 +311,9 @@ export class ReportGenerationAssetPage implements OnInit {
 					fontSize: 14,
 					bold: true,
 					margin: [ 0, 15, 0, 0 ]
+				},
+				topic: {
+					bold: true
 				}
 			}
 		};
