@@ -36,7 +36,11 @@
           </ion-grid>
         </ion-item>
         <ion-menu-toggle>
-          <ion-item (click)="goToCreateAsset()" *ngIf="userRole == 'Manager'">
+          <ion-item
+            button
+            (click)="goToCreateAsset()"
+            *ngIf="userRole == 'Manager'"
+          >
             <ion-icon name="add" slot="start"></ion-icon>
             Create Asset</ion-item
           >
@@ -52,6 +56,7 @@
             Test Selection
           </ion-item>
           <ion-item
+            button
             (click)="goToCreateInspection()"
             *ngIf="userRole == 'Manager' || userRole == 'Inspector'"
           >
